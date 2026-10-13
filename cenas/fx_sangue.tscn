@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx_particulas.gd" id="1_fx"]
+
+[sub_resource type="Gradient" id="Gradient_fx_sangue"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.9, 0.1, 0.15, 1, 0.5, 0, 0.05, 0)
+
+[node name="FxSangue" type="CPUParticles2D"]
+emitting = true
+amount = 14
+lifetime = 0.45
+one_shot = true
+explosiveness = 1.0
+local_coords = false
+direction = Vector2(1, 0)
+spread = 60.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 120.0
+initial_velocity_max = 280.0
+damping_min = 350.0
+damping_max = 450.0
+scale_amount_min = 3.0
+scale_amount_max = 6.0
+color_ramp = SubResource("Gradient_fx_sangue")
+script = ExtResource("1_fx")

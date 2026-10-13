@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://d0c02m54jnxih"]
+
+[ext_resource type="Script" uid="uid://61jd4xguvy4e" path="res://scripts/acaro.gd" id="1_aca"]
+[ext_resource type="Texture2D" uid="uid://dtm5h7gbcgfik" path="res://artes/placeholders/italo.jpg" id="2_wqjyx"]
+[ext_resource type="PackedScene" path="res://cenas/fx_morte.tscn" id="3_fxm"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
+radius = 13.0
+
+[node name="Acaro" type="CharacterBody2D" unique_id=264832746 groups=["inimigos"]]
+collision_layer = 4
+collision_mask = 9
+motion_mode = 1
+script = ExtResource("1_aca")
+fx_morte = ExtResource("3_fxm")
+
+[node name="Visual" type="Node2D" parent="." unique_id=1830179812]
+
+[node name="Sprite" type="Sprite2D" parent="Visual" unique_id=1849560980]
+position = Vector2(0.49999976, -0.5)
+scale = Vector2(0.02, 0.015)
+texture = ExtResource("2_wqjyx")
+
+[node name="Colisao" type="CollisionShape2D" parent="." unique_id=239991184]
+shape = SubResource("CircleShape2D_corpo")

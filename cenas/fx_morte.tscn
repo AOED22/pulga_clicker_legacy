@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx_particulas.gd" id="1_fx"]
+
+[sub_resource type="Gradient" id="Gradient_fx_morte"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.6, 0.45, 0.35, 1, 0.3, 0.2, 0.15, 0)
+
+[node name="FxMorte" type="CPUParticles2D"]
+emitting = true
+amount = 22
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+local_coords = false
+direction = Vector2(0, -1)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 120.0
+initial_velocity_max = 320.0
+damping_min = 300.0
+damping_max = 400.0
+scale_amount_min = 4.0
+scale_amount_max = 8.0
+color_ramp = SubResource("Gradient_fx_morte")
+script = ExtResource("1_fx")

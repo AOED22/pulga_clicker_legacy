@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://b01ox4avjqi8y"]
+
+[ext_resource type="Script" uid="uid://2tiyc3lsofn5" path="res://scripts/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://cenas/jogador.tscn" id="2_jog"]
+[ext_resource type="PackedScene" path="res://cenas/acaro.tscn" id="3_aca"]
+[ext_resource type="PackedScene" path="res://cenas/obstaculo.tscn" id="4_obs"]
+[ext_resource type="PackedScene" path="res://cenas/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="6_fxp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_Topo"]
+size = Vector2(1800, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_Base"]
+size = Vector2(1800, 100)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_Esquerda"]
+size = Vector2(100, 1200)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_Direita"]
+size = Vector2(100, 1200)
+
+[node name="Main" type="Node2D" unique_id=1294752233]
+script = ExtResource("1_main")
+cena_acaro = ExtResource("3_aca")
+fx_spawn = ExtResource("6_fxp")
+
+[node name="Chao" type="Polygon2D" parent="." unique_id=360909430]
+color = Color(0.42, 0.18, 0.22, 1)
+polygon = PackedVector2Array(0, 0, 1600, 0, 1600, 1000, 0, 1000)
+
+[node name="Paredes" type="StaticBody2D" parent="." unique_id=1259750383]
+collision_mask = 0
+
+[node name="Topo" type="CollisionShape2D" parent="Paredes" unique_id=1955713601]
+position = Vector2(800, -50)
+shape = SubResource("RectangleShape2D_Topo")
+
+[node name="Base" type="CollisionShape2D" parent="Paredes" unique_id=676855300]
+position = Vector2(800, 1050)
+shape = SubResource("RectangleShape2D_Base")
+
+[node name="Esquerda" type="CollisionShape2D" parent="Paredes" unique_id=738627959]
+position = Vector2(-50, 500)
+shape = SubResource("RectangleShape2D_Esquerda")
+
+[node name="Direita" type="CollisionShape2D" parent="Paredes" unique_id=38963752]
+position = Vector2(1650, 500)
+shape = SubResource("RectangleShape2D_Direita")
+
+[node name="Obstaculos" type="Node2D" parent="." unique_id=145387451]
+
+[node name="Obstaculo1" parent="Obstaculos" unique_id=1438761925 instance=ExtResource("4_obs")]
+position = Vector2(480, 274)
+scale = Vector2(5, 1.5)
+
+[node name="Obstaculo2" parent="Obstaculos" unique_id=308661678 instance=ExtResource("4_obs")]
+position = Vector2(1024, 290)
+scale = Vector2(1.5, 6.875)
+
+[node name="Obstaculo3" parent="Obstaculos" unique_id=209265654 instance=ExtResource("4_obs")]
+position = Vector2(324, 750)
+scale = Vector2(1.5, 6.25)
+
+[node name="Obstaculo4" parent="Obstaculos" unique_id=1301872520 instance=ExtResource("4_obs")]
+position = Vector2(780, 290)
+scale = Vector2(1.25, 13.125)
+
+[node name="Obstaculo5" parent="Obstaculos" unique_id=1911933943 instance=ExtResource("4_obs")]
+position = Vector2(1200, 728)
+scale = Vector2(6.25, 1.75)
+
+[node name="Obstaculo6" parent="Obstaculos" unique_id=1958101969 instance=ExtResource("4_obs")]
+position = Vector2(648, 828)
+scale = Vector2(1.75, 1.75)
+
+[node name="Spawns" type="Node2D" parent="." unique_id=546257077]
+
+[node name="Spawn1" type="Marker2D" parent="Spawns" unique_id=351817980]
+position = Vector2(120, 120)
+
+[node name="Spawn2" type="Marker2D" parent="Spawns" unique_id=1624458333]
+position = Vector2(1480, 120)
+
+[node name="Spawn3" type="Marker2D" parent="Spawns" unique_id=947437834]
+position = Vector2(120, 880)
+
+[node name="Spawn4" type="Marker2D" parent="Spawns" unique_id=279894764]
+position = Vector2(1480, 880)
+
+[node name="Spawn5" type="Marker2D" parent="Spawns" unique_id=1492371650]
+position = Vector2(800, 940)
+
+[node name="Spawn6" type="Marker2D" parent="Spawns" unique_id=1384236430]
+position = Vector2(1300, 520)
+
+[node name="Jogador" parent="." unique_id=1564981020 instance=ExtResource("2_jog")]
+position = Vector2(900, 600)
+
+[node name="Hud" parent="." unique_id=1667279095 instance=ExtResource("5_hud")]

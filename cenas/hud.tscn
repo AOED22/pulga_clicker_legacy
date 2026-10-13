@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://c6y1di07u2vlw"]
+
+[ext_resource type="Script" uid="uid://dox6jpwj5k8g8" path="res://scripts/hud.gd" id="1_hud"]
+
+[node name="Hud" type="CanvasLayer" unique_id=317264249]
+script = ExtResource("1_hud")
+
+[node name="Painel" type="Control" parent="." unique_id=206549622]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="FlashDano" type="ColorRect" parent="Painel" unique_id=281997393]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.9, 0.1, 0.1, 0)
+
+[node name="BarraVida" type="ProgressBar" parent="Painel" unique_id=2008934208]
+modulate = Color(0.9, 0.25, 0.3, 1)
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 240.0
+offset_bottom = 38.0
+max_value = 10.0
+step = 1.0
+value = 10.0
+show_percentage = false
+
+[node name="BarraPoder" type="ProgressBar" parent="Painel" unique_id=566347662]
+modulate = Color(0.4, 0.6, 1, 1)
+layout_mode = 0
+offset_left = 20.0
+offset_top = 46.0
+offset_right = 240.0
+offset_bottom = 60.0
+step = 1.0
+show_percentage = false
+
+[node name="Controles" type="Label" parent="Painel" unique_id=2138196017]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 76.0
+offset_right = 520.0
+offset_bottom = 230.0
+theme_override_font_sizes/font_size = 13
+text = "WASD / Setas: andar
+Mouse direito: Dash (i-frames)
+Segure espaço e solte: Super Pulo (esmaga ao cair)
+Mouse esquerdo / J: agulha (golpes enchem o Poder)
+Inimigo piscando em amarelo: ta nas ultimas
+Q: Onda de Pulga (custa metade da segunda barra)
+R: reiniciar"
