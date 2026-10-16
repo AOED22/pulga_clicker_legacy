@@ -1,2 +1,5 @@
-res://cenas/acaro.tscn
-res://cenas/hud.tscn
+res://scripts/acaro.gd
+res://scripts/gota_acida.gd
+res://scripts/inimigo.gd
+res://cenas/main.tscn
+res://cenas/tapete_velho.tscn

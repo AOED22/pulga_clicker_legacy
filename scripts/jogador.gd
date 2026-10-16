@@ -4,6 +4,8 @@ extends CharacterBody2D
 # Avisam a HUD quando vida ou poder mudam
 signal vida_mudou(valor: int, maximo: int)
 signal poder_mudou(valor: float)
+# Avisa o que o jogador acabou de fazer (o tutorial usa para completar as dicas)
+signal acao_feita(nome: StringName)
 
 enum Estado { 
  LIVRE,
@@ -103,6 +105,7 @@ var atordoado := 0.0
 var flash := 0.0
 var buffer_dash := 0.0
 var mascara_base := 0
+var bateu_parede := false
 var tween_ataque: Tween
 
 @onready var colisao: CollisionShape2D = $Colisao
@@ -228,6 +231,7 @@ func _iniciar_dash(entrada: Vector2) -> void:
 	buffer_dash = 0.0
 	Efeitos.criar(fx_poeira, global_position, direcao_dash.angle() + PI)
 	Efeitos.tremer(0.12)
+	acao_feita.emit(&"dash")
 
 
 func _dash(delta: float) -> void:
@@ -277,6 +281,8 @@ func _iniciar_pulo(entrada: Vector2) -> void:
 	collision_mask = mascara_base & ~camada_obstaculo
 	visual.scale = Vector2(0.7, 1.35)
 	Efeitos.criar(fx_poeira, global_position)
+	bateu_parede = false
+	acao_feita.emit(&"super_pulo")
 
 
 func _pulo(delta: float) -> void:
@@ -285,6 +291,13 @@ func _pulo(delta: float) -> void:
 	altura = sin(t * PI) * pulo_altura
 	velocity = direcao_pulo * (distancia_pulo / pulo_duracao)
 	move_and_slide()
+	# Bateu numa parede alta no meio do pulo
+	if not bateu_parede and get_slide_collision_count() > 0:
+		bateu_parede = true
+		Efeitos.tremer(0.35)
+		Efeitos.criar(fx_poeira, global_position)
+		visual.scale = Vector2(1.4, 0.7)
+		acao_feita.emit(&"bateu")
 	if t >= 1.0:
 		_aterrissar()
 
@@ -299,8 +312,10 @@ func _aterrissar() -> void:
 	Efeitos.criar(fx_poeira, global_position)
 	Efeitos.tremer(0.55)
 	_mostrar_anel(pouso_raio)
+	acao_feita.emit(&"pouso")
 	if _atingir_inimigos(pouso_raio, pouso_dano, pouso_forca) > 0:
 		Efeitos.hit_stop(0.07)
+		acao_feita.emit(&"esmagou")
 
 
 # Empurra o jogador para fora caso tenha pousado dentro de um obstaculo
@@ -330,10 +345,11 @@ func _atacar() -> void:
 	# Da um pequeno avanço junto com o golpe
 	velocity += direcao_ataque * ataque_avanco
 	_mostrar_efeito_ataque()
+	acao_feita.emit(&"atacar")
 
 	var acertou := false
 	var matou := false
-	for alvo: Acaro in get_tree().get_nodes_in_group("inimigos"):
+	for alvo: Inimigo in get_tree().get_nodes_in_group("inimigos"):
 		if not _no_arco(alvo):
 			continue
 		var fraco := alvo.enfraquecido()
@@ -341,12 +357,28 @@ func _atacar() -> void:
 		Efeitos.criar(fx_hit, alvo.global_position, direcao_ataque.angle())
 		if fraco:
 			Efeitos.criar(fx_sangue, alvo.global_position, direcao_ataque.angle())
+			acao_feita.emit(&"execucao")
 		_sugar(fraco)
 		acertou = true
 		matou = matou or morreu
 	if acertou:
+		acao_feita.emit(&"acertou")
 		Efeitos.hit_stop(0.09 if matou else 0.045)
 		Efeitos.tremer(0.4 if matou else 0.2)
+
+	# a agulha tambem corta as gotas de acido que estiverem no arco
+	var cortou := false
+	for gota: GotaAcida in get_tree().get_nodes_in_group("projeteis"):
+		if not _no_arco(gota):
+			continue
+		Efeitos.criar(fx_hit, gota.global_position, direcao_ataque.angle())
+		gota.cortar()
+		cortou = true
+	if cortou:
+		acao_feita.emit(&"cortou")
+		if not acertou:
+			Efeitos.hit_stop(0.03)
+			Efeitos.tremer(0.15)
 
 
 func _no_arco(alvo: Node2D) -> bool:
@@ -366,6 +398,7 @@ func _habilidade() -> void:
 	if poder < custo_habilidade:
 		return
 	poder -= custo_habilidade
+	acao_feita.emit(&"habilidade")
 	visual.scale = Vector2(1.3, 0.8)
 	_mostrar_anel(onda_raio)
 	Efeitos.tremer(0.5)
@@ -376,7 +409,7 @@ func _habilidade() -> void:
 # Da dano todos os inimigos dentro do raio e devolve quantos foram atingidos
 func _atingir_inimigos(raio: float, dano: int, forca: float) -> int:
 	var acertos := 0
-	for alvo: Acaro in get_tree().get_nodes_in_group("inimigos"):
+	for alvo: Inimigo in get_tree().get_nodes_in_group("inimigos"):
 		var ate := alvo.global_position - global_position
 		if ate.length() > raio:
 			continue

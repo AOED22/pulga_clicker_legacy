@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Pulga Clicker Legacy"
-run/main_scene="res://cenas/main.tscn"
+run/main_scene="res://cenas/tapete_velho.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]

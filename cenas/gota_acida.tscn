@@ -1,0 +1,43 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/gota_acida.gd" id="1_gota"]
+[ext_resource type="PackedScene" path="res://cenas/fx_acido.tscn" id="2_fxa"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gota"]
+radius = 5.0
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gota"]
+size = Vector2(14, 9)
+
+[sub_resource type="Gradient" id="Gradient_rastro"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.6, 1, 0.3, 0.8, 0.3, 0.7, 0.1, 0)
+
+[node name="GotaAcida" type="Area2D"]
+collision_layer = 0
+collision_mask = 9
+monitorable = false
+script = ExtResource("1_gota")
+fx_splat = ExtResource("2_fxa")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_gota")
+
+[node name="Rastro" type="CPUParticles2D" parent="."]
+amount = 10
+lifetime = 0.25
+local_coords = false
+direction = Vector2(-1, 0)
+spread = 20.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+scale_amount_min = 2.0
+scale_amount_max = 3.5
+color_ramp = SubResource("Gradient_rastro")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+modulate = Color(0.55, 0.95, 0.25, 1)
+texture = SubResource("PlaceholderTexture2D_gota")

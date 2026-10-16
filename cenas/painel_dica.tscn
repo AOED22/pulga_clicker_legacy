@@ -1,0 +1,48 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/painel_dica.gd" id="1_pd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_painel"]
+bg_color = Color(0.05, 0.03, 0.05, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+
+[node name="PainelDica" type="CanvasLayer" groups=["painel_dica"]]
+layer = 2
+script = ExtResource("1_pd")
+
+[node name="Margem" type="MarginContainer" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_bottom = 36
+layout_mode = 3
+
+[node name="Centro" type="CenterContainer" parent="Margem"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Painel" type="PanelContainer" parent="Margem/Centro"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_painel")
+
+[node name="Texto" type="RichTextLabel" parent="Margem/Centro/Painel"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+fit_content = true
+scroll_active = false

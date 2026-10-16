@@ -1,10 +1,12 @@
 extends Node2D
 
 @export var cena_acaro: PackedScene
+@export var cena_formiga: PackedScene
 @export var fx_spawn: PackedScene
 @export var limites := Rect2i(0, 0, 1600, 1000)
 @export var entre_ondas := 3.0
 @export var acaros_base := 3
+@export var formigas_max := 3
 @export var variacao_spawn := 30.0
 
 var onda := 0
@@ -32,15 +34,25 @@ func _unhandled_input(evento: InputEvent) -> void:
 		get_tree().reload_current_scene()
 
 
-# Cria os acaros nos pontos de spawn (cada onda traz mais um)
+# Cria os inimigos nos pontos de spawn (cada onda traz mais um acaro)
 func _gerar_onda() -> void:
 	onda += 1
 	espera = 0.0
 	var pontos := spawns.get_children()
 	for i in acaros_base + onda:
 		var ponto: Marker2D = pontos[i % pontos.size()]
-		var variacao := Vector2(randf_range(-variacao_spawn, variacao_spawn), randf_range(-variacao_spawn, variacao_spawn))
-		var acaro: Acaro = cena_acaro.instantiate()
-		acaro.position = ponto.position + variacao
-		add_child(acaro)
-		Efeitos.criar(fx_spawn, acaro.position)
+		_criar_inimigo(cena_acaro, ponto)
+	# A partir da segunda onda chegam formigas
+	for i in mini(onda - 1, formigas_max):
+		var ponto: Marker2D = pontos[(i + 3) % pontos.size()]
+		_criar_inimigo(cena_formiga, ponto)
+
+
+func _criar_inimigo(cena: PackedScene, ponto: Marker2D) -> void:
+	if cena == null:
+		return
+	var variacao := Vector2(randf_range(-variacao_spawn, variacao_spawn), randf_range(-variacao_spawn, variacao_spawn))
+	var inimigo: Inimigo = cena.instantiate()
+	inimigo.position = ponto.position + variacao
+	add_child(inimigo)
+	Efeitos.criar(fx_spawn, inimigo.position)

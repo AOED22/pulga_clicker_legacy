@@ -1,0 +1,573 @@
+[gd_scene format=3 uid="uid://bkbd8t87p1il2"]
+
+[ext_resource type="PackedScene" uid="uid://d0c02m54jnxih" path="res://cenas/acaro.tscn" id="acaro"]
+[ext_resource type="PackedScene" path="res://cenas/anel_choque.tscn" id="anel"]
+[ext_resource type="Script" uid="uid://mmihb0hffxe4" path="res://scripts/arena.gd" id="arena"]
+[ext_resource type="Script" uid="uid://btcikc675lmmg" path="res://scripts/checkpoint.gd" id="check"]
+[ext_resource type="Script" uid="uid://uw2q4pc7kcyy" path="res://scripts/dica.gd" id="dica"]
+[ext_resource type="Script" uid="uid://cj2d72adhngv4" path="res://scripts/tapete_velho.gd" id="fase"]
+[ext_resource type="PackedScene" uid="uid://c6y1di07u2vlw" path="res://cenas/hud.tscn" id="hud"]
+[ext_resource type="PackedScene" uid="uid://s7kovbrw6wnn" path="res://cenas/jogador.tscn" id="jog"]
+[ext_resource type="PackedScene" path="res://cenas/nota.tscn" id="nota"]
+[ext_resource type="PackedScene" path="res://cenas/obstaculo.tscn" id="obst"]
+[ext_resource type="PackedScene" path="res://cenas/painel_dica.tscn" id="painel"]
+[ext_resource type="PackedScene" path="res://cenas/parede_alta.tscn" id="parede"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="poeira"]
+[ext_resource type="PackedScene" path="res://cenas/portao.tscn" id="portao"]
+[ext_resource type="Script" uid="uid://l0xvf0oq3pap" path="res://scripts/saida.gd" id="saida"]
+[ext_resource type="Script" uid="uid://diob3h8itl4fy" path="res://scripts/spawn_inimigo.gd" id="spawn"]
+
+[sub_resource type="PlaceholderTexture2D" id="Placeholder_1"]
+size = Vector2(5200, 600)
+
+[sub_resource type="RectangleShape2D" id="Forma_1"]
+size = Vector2(5400, 100)
+
+[sub_resource type="RectangleShape2D" id="Forma_2"]
+size = Vector2(100, 800)
+
+[sub_resource type="Gradient" id="GradMarca"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 0.35, 1, 1, 1, 0.35, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="TexMarca"]
+gradient = SubResource("GradMarca")
+width = 200
+height = 200
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="GradLuz"]
+colors = PackedColorArray(1, 1, 1, 0.55, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="TexLuz"]
+gradient = SubResource("GradLuz")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="RectangleShape2D" id="Forma_3"]
+size = Vector2(500, 600)
+
+[sub_resource type="RectangleShape2D" id="Forma_4"]
+size = Vector2(40, 600)
+
+[sub_resource type="RectangleShape2D" id="Forma_5"]
+size = Vector2(450, 600)
+
+[sub_resource type="RectangleShape2D" id="Forma_6"]
+size = Vector2(550, 600)
+
+[sub_resource type="RectangleShape2D" id="Forma_7"]
+size = Vector2(540, 600)
+
+[sub_resource type="RectangleShape2D" id="Forma_8"]
+size = Vector2(200, 200)
+
+[sub_resource type="RectangleShape2D" id="Forma_9"]
+size = Vector2(600, 600)
+
+[sub_resource type="Resource" id="Resource_lulp4"]
+metadata/__load_path__ = "res://cenas/formiga.tscn"
+
+[sub_resource type="Resource" id="Resource_q7mrq"]
+metadata/__load_path__ = "res://cenas/formiga.tscn"
+
+[sub_resource type="RectangleShape2D" id="Forma_10"]
+size = Vector2(100, 600)
+
+[sub_resource type="Gradient" id="GradSombra"]
+colors = PackedColorArray(0, 0, 0, 0.8, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="TexSombra"]
+gradient = SubResource("GradSombra")
+width = 800
+height = 600
+fill_from = Vector2(0, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="TapeteVelho" type="Node2D" unique_id=1979715921]
+script = ExtResource("fase")
+texto_abertura = "Quando o mundo dos pequenos está em perigo,
+o Deus Pulga abençoa uma pulga.
+
+Outras vieram antes de você."
+texto_final = "O Tapete Sem Fim não acaba aqui.
+Mas algo no fundo dele já sabe que você está vindo."
+
+[node name="Tapete" type="Sprite2D" parent="." unique_id=2072525577]
+modulate = Color(0.42, 0.18, 0.22, 1)
+texture = SubResource("Placeholder_1")
+centered = false
+
+[node name="Paredes" type="StaticBody2D" parent="." unique_id=1506187044]
+collision_mask = 0
+
+[node name="Topo" type="CollisionShape2D" parent="Paredes" unique_id=1311990791]
+position = Vector2(2600, -50)
+shape = SubResource("Forma_1")
+
+[node name="Base" type="CollisionShape2D" parent="Paredes" unique_id=1212306321]
+position = Vector2(2600, 650)
+shape = SubResource("Forma_1")
+
+[node name="Esquerda" type="CollisionShape2D" parent="Paredes" unique_id=328526552]
+position = Vector2(-50, 300)
+shape = SubResource("Forma_2")
+
+[node name="Direita" type="CollisionShape2D" parent="Paredes" unique_id=1510358487]
+position = Vector2(5250, 300)
+shape = SubResource("Forma_2")
+
+[node name="Cenario" type="Node2D" parent="." unique_id=2137962271]
+
+[node name="MarcaPouso" type="Sprite2D" parent="Cenario" unique_id=975365171]
+modulate = Color(0.15, 0.03, 0.06, 1)
+position = Vector2(2850, 300)
+texture = SubResource("TexMarca")
+
+[node name="LuzArena" type="Sprite2D" parent="Cenario" unique_id=48564696]
+modulate = Color(1, 0.88, 0.5, 0.5)
+position = Vector2(4450, 300)
+scale = Vector2(3, 3)
+texture = SubResource("TexLuz")
+
+[node name="LuzSaida" type="Sprite2D" parent="Cenario" unique_id=7699666]
+modulate = Color(1, 0.92, 0.6, 0.7)
+position = Vector2(5120, 300)
+scale = Vector2(2.4, 2.4)
+texture = SubResource("TexLuz")
+
+[node name="SofaCima" parent="Cenario" unique_id=587529076 instance=ExtResource("parede")]
+position = Vector2(315, 75)
+scale = Vector2(20.938, 5.938)
+
+[node name="SofaBaixo" parent="Cenario" unique_id=1350449248 instance=ExtResource("parede")]
+position = Vector2(315, 525)
+scale = Vector2(20.938, 5.938)
+
+[node name="MigalhaSofa1" parent="Cenario" unique_id=1425766975 instance=ExtResource("obst")]
+modulate = Color(2.4, 2.1, 1.1, 1)
+position = Vector2(330, 225)
+scale = Vector2(0.875, 0.875)
+
+[node name="MigalhaSofa2" parent="Cenario" unique_id=1807153688 instance=ExtResource("obst")]
+modulate = Color(2.4, 2.1, 1.1, 1)
+position = Vector2(470, 372)
+scale = Vector2(1.125, 0.812)
+
+[node name="MigalhaSala" parent="Cenario" unique_id=1113326555 instance=ExtResource("obst")]
+modulate = Color(2.4, 2.1, 1.1, 1)
+position = Vector2(770, 170)
+scale = Vector2(0.875, 0.875)
+
+[node name="Chinelo" parent="Cenario" unique_id=631474890 instance=ExtResource("obst")]
+position = Vector2(850, 440)
+scale = Vector2(3.75, 1.688)
+
+[node name="PeDaMesa1" parent="Cenario" unique_id=612883181 instance=ExtResource("obst")]
+position = Vector2(1300, 150)
+scale = Vector2(1.5, 1.5)
+
+[node name="PeDaMesa2" parent="Cenario" unique_id=1582104500 instance=ExtResource("obst")]
+position = Vector2(1380, 460)
+scale = Vector2(1.5, 1.5)
+
+[node name="MigalhaMesa" parent="Cenario" unique_id=88317740 instance=ExtResource("obst")]
+modulate = Color(2.4, 2.1, 1.1, 1)
+position = Vector2(1560, 300)
+scale = Vector2(1.25, 1.25)
+
+[node name="Caixa1" parent="Cenario" unique_id=1683718846 instance=ExtResource("obst")]
+position = Vector2(1830, 170)
+scale = Vector2(2, 2)
+
+[node name="Caixa2" parent="Cenario" unique_id=857146999 instance=ExtResource("obst")]
+position = Vector2(1830, 440)
+scale = Vector2(2, 2)
+
+[node name="PortaCima1" parent="Cenario" unique_id=1160161764 instance=ExtResource("parede")]
+position = Vector2(2000, 100)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaBaixo1" parent="Cenario" unique_id=682891333 instance=ExtResource("parede")]
+position = Vector2(2000, 500)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaCima2" parent="Cenario" unique_id=32206994 instance=ExtResource("parede")]
+position = Vector2(3000, 100)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaBaixo2" parent="Cenario" unique_id=1785701229 instance=ExtResource("parede")]
+position = Vector2(3000, 500)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaCima3" parent="Cenario" unique_id=471660663 instance=ExtResource("parede")]
+position = Vector2(4000, 100)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaBaixo3" parent="Cenario" unique_id=872134200 instance=ExtResource("parede")]
+position = Vector2(4000, 500)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaCima4" parent="Cenario" unique_id=1090256555 instance=ExtResource("parede")]
+position = Vector2(4900, 100)
+scale = Vector2(1.25, 7.5)
+
+[node name="PortaBaixo4" parent="Cenario" unique_id=1937240281 instance=ExtResource("parede")]
+position = Vector2(4900, 500)
+scale = Vector2(1.25, 7.5)
+
+[node name="DobraDoTapete" parent="Cenario" unique_id=1950858120 instance=ExtResource("obst")]
+position = Vector2(2650, 300)
+scale = Vector2(7, 20)
+
+[node name="Estante" parent="Cenario" unique_id=967656135 instance=ExtResource("parede")]
+position = Vector2(3500, 190)
+scale = Vector2(1.875, 13.125)
+
+[node name="CoberturaFormiga" parent="Cenario" unique_id=706792492 instance=ExtResource("obst")]
+position = Vector2(3650, 440)
+scale = Vector2(1.5, 3)
+
+[node name="MigalhaFormiga1" parent="Cenario" unique_id=1557404055 instance=ExtResource("obst")]
+modulate = Color(2.4, 2.1, 1.1, 1)
+position = Vector2(3720, 200)
+scale = Vector2(0.875, 0.875)
+
+[node name="MigalhaFormiga2" parent="Cenario" unique_id=1705995648 instance=ExtResource("obst")]
+modulate = Color(2.4, 2.1, 1.1, 1)
+position = Vector2(3830, 330)
+scale = Vector2(1.125, 0.875)
+
+[node name="Pilar1" parent="Cenario" unique_id=605722945 instance=ExtResource("obst")]
+position = Vector2(4350, 150)
+scale = Vector2(2, 3)
+
+[node name="Pilar2" parent="Cenario" unique_id=1399176751 instance=ExtResource("obst")]
+position = Vector2(4350, 450)
+scale = Vector2(2, 3)
+
+[node name="Zonas" type="Node2D" parent="." unique_id=2094408398]
+
+[node name="Zona1" type="Node2D" parent="Zonas" unique_id=503269802]
+
+[node name="Nota1" parent="Zonas/Zona1" unique_id=695755577 instance=ExtResource("nota")]
+position = Vector2(170, 215)
+texto = "Se você lê isto, foi escolhido.
+A esperança é você."
+
+[node name="Nota2" parent="Zonas/Zona1" unique_id=1304765895 instance=ExtResource("nota")]
+position = Vector2(520, 215)
+texto = "Aqui embaixo ainda é quente.
+É o último lugar que lembra o lar."
+
+[node name="Nota3" parent="Zonas/Zona1" unique_id=700948673 instance=ExtResource("nota")]
+position = Vector2(900, 160)
+texto = "A casa está vazia há muito tempo.
+O tapete cresceu sem ninguém olhando."
+
+[node name="DicaMover" type="Area2D" parent="Zonas/Zona1" unique_id=1538638248]
+position = Vector2(250, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "[color=#ffd966]WASD[/color] ou [color=#ffd966]setas[/color] para andar."
+atraso = 6.0
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona1/DicaMover" unique_id=1080318042]
+shape = SubResource("Forma_3")
+
+[node name="Zona2" type="Node2D" parent="Zonas" unique_id=924895039]
+
+[node name="Checkpoint" type="Area2D" parent="Zonas/Zona2" unique_id=1939773720]
+position = Vector2(1060, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("check")
+cena_anel = ExtResource("anel")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona2/Checkpoint" unique_id=1103845511]
+shape = SubResource("Forma_4")
+
+[node name="Nota4" parent="Zonas/Zona2" unique_id=1217798693 instance=ExtResource("nota")]
+position = Vector2(1180, 120)
+texto = "Os ácaros não eram assim.
+Quando ele se encolhe e avermelha, vai investir. Saia do caminho."
+
+[node name="Nota5" parent="Zonas/Zona2" unique_id=1572508320 instance=ExtResource("nota")]
+position = Vector2(1700, 500)
+texto = "Quando ele amarela, falta pouco.
+Finalize-o e beba de seu sangue. É assim que continuamos de pé."
+
+[node name="DicaDash" type="Area2D" parent="Zonas/Zona2" unique_id=2036208906]
+position = Vector2(1225, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "[color=#ffd966]Botão direito[/color] do mouse: dash.
+Você fica invulnerável durante o movimento."
+acoes = PackedStringArray("dash")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona2/DicaDash" unique_id=74355836]
+shape = SubResource("Forma_5")
+
+[node name="DicaAgulha" type="Area2D" parent="Zonas/Zona2" unique_id=628203242]
+position = Vector2(1725, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "[color=#ffd966]Botão esquerdo[/color] (ou [color=#ffd966]J[/color]): agulha.
+Ela segue o mouse."
+acoes = PackedStringArray("atacar")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona2/DicaAgulha" unique_id=1464560879]
+shape = SubResource("Forma_6")
+
+[node name="Acaro1" parent="Zonas/Zona2" unique_id=2069347271 instance=ExtResource("acaro")]
+position = Vector2(1700, 300)
+alcance_visao = 340.0
+
+[node name="Acaro2" parent="Zonas/Zona2" unique_id=1137485586 instance=ExtResource("acaro")]
+position = Vector2(1920, 330)
+alcance_visao = 300.0
+
+[node name="Zona3" type="Node2D" parent="Zonas" unique_id=1280195423]
+
+[node name="Checkpoint" type="Area2D" parent="Zonas/Zona3" unique_id=1010375221]
+position = Vector2(2060, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("check")
+indice = 2
+cena_anel = ExtResource("anel")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona3/Checkpoint" unique_id=765652348]
+shape = SubResource("Forma_4")
+
+[node name="Nota6" parent="Zonas/Zona3" unique_id=1067503576 instance=ExtResource("nota")]
+position = Vector2(2300, 200)
+texto = "Uma grande dobra no tapete, parece saltável.
+Segure espaço para realizar o super pulo"
+
+[node name="Nota7" parent="Zonas/Zona3" unique_id=1221434400 instance=ExtResource("nota")]
+position = Vector2(2850, 480)
+texto = "Nada sobrevive embaixo de quem cai do alto.
+Transforme o peso do legado em sua arma"
+
+[node name="DicaPulo" type="Area2D" parent="Zonas/Zona3" unique_id=993296949]
+position = Vector2(2270, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "Segure [color=#ffd966]espaço[/color] e solte para o super pulo.
+Quanto mais tempo, mais longe."
+atraso = 7.0
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona3/DicaPulo" unique_id=1967399882]
+shape = SubResource("Forma_7")
+
+[node name="AcaroDormindo1" parent="Zonas/Zona3" unique_id=499521455 instance=ExtResource("acaro")]
+position = Vector2(2840, 260)
+alcance_visao = 170.0
+
+[node name="AcaroDormindo2" parent="Zonas/Zona3" unique_id=1005538391 instance=ExtResource("acaro")]
+position = Vector2(2860, 340)
+alcance_visao = 170.0
+
+[node name="AcaroDormindo3" parent="Zonas/Zona3" unique_id=1793232775 instance=ExtResource("acaro")]
+position = Vector2(2900, 300)
+alcance_visao = 170.0
+
+[node name="Zona4" type="Node2D" parent="Zonas" unique_id=1710123451]
+
+[node name="Checkpoint" type="Area2D" parent="Zonas/Zona4" unique_id=887481336]
+position = Vector2(3060, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("check")
+indice = 3
+cena_anel = ExtResource("anel")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/Checkpoint" unique_id=77593870]
+shape = SubResource("Forma_4")
+
+[node name="Nota8" parent="Zonas/Zona4" unique_id=1996756549 instance=ExtResource("nota")]
+position = Vector2(3320, 330)
+texto = "Tentei esta estante uma vez. É alta demais."
+
+[node name="Nota9" parent="Zonas/Zona4" unique_id=327767215 instance=ExtResource("nota")]
+position = Vector2(3600, 540)
+texto = "Estas formigas só carregavam migalhas.
+Agora cospem ácido e não param. O fungo as move.
+Corte a gota com a agulha, ou desvie."
+
+[node name="DicaFormiga" type="Area2D" parent="Zonas/Zona4" unique_id=1694791990]
+position = Vector2(3420, 500)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "Desvie com o [color=#ffd966]dash[/color] ou corte a gota com a agulha."
+acoes = PackedStringArray("dash", "cortou")
+atraso = 4.0
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/DicaFormiga" unique_id=757056381]
+shape = SubResource("Forma_8")
+
+[node name="Zona5" type="Node2D" parent="Zonas" unique_id=747287216]
+
+[node name="Checkpoint" type="Area2D" parent="Zonas/Zona5" unique_id=1128351297]
+position = Vector2(4060, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("check")
+indice = 4
+cena_anel = ExtResource("anel")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona5/Checkpoint" unique_id=701287396]
+shape = SubResource("Forma_4")
+
+[node name="Nota10" parent="Zonas/Zona5" unique_id=1063998970 instance=ExtResource("nota")]
+position = Vector2(4200, 170)
+texto = "Toda pulga passa por esta luz.
+A Rainha sabe quando uma delas chega."
+
+[node name="DicaOnda" type="Area2D" parent="Zonas/Zona5" unique_id=587033955]
+position = Vector2(4450, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "A barra azul está cheia.
+[color=#ffd966]Q[/color] libera a Onda de Pulga."
+acoes = PackedStringArray("habilidade")
+atraso = 4.0
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona5/DicaOnda" unique_id=31729563]
+shape = SubResource("Forma_9")
+
+[node name="Arena" type="Area2D" parent="Zonas/Zona5" unique_id=1781689147]
+position = Vector2(4450, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("arena")
+fx_spawn = ExtResource("poeira")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona5/Arena" unique_id=185954217]
+shape = SubResource("Forma_9")
+
+[node name="Ondas" type="Node2D" parent="Zonas/Zona5/Arena" unique_id=309030752]
+
+[node name="Onda1" type="Node2D" parent="Zonas/Zona5/Arena/Ondas" unique_id=1021194327]
+
+[node name="Spawn1" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda1" unique_id=1129993663]
+position = Vector2(110, -150)
+script = ExtResource("spawn")
+cena = ExtResource("acaro")
+
+[node name="Spawn2" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda1" unique_id=62217739]
+position = Vector2(110, 150)
+script = ExtResource("spawn")
+cena = ExtResource("acaro")
+
+[node name="Spawn3" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda1" unique_id=226987347]
+position = Vector2(270, 0)
+script = ExtResource("spawn")
+cena = ExtResource("acaro")
+
+[node name="Onda2" type="Node2D" parent="Zonas/Zona5/Arena/Ondas" unique_id=1042498622]
+
+[node name="Spawn1" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda2" unique_id=642560112]
+position = Vector2(330, -180)
+script = ExtResource("spawn")
+cena = SubResource("Resource_lulp4")
+
+[node name="Spawn2" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda2" unique_id=466565950]
+position = Vector2(330, 180)
+script = ExtResource("spawn")
+cena = SubResource("Resource_q7mrq")
+
+[node name="Spawn3" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda2" unique_id=151715932]
+position = Vector2(200, 0)
+script = ExtResource("spawn")
+cena = ExtResource("acaro")
+
+[node name="Portoes" type="Node2D" parent="Zonas/Zona5/Arena" unique_id=980356155]
+
+[node name="Entrada" parent="Zonas/Zona5/Arena/Portoes" unique_id=2065731176 instance=ExtResource("portao")]
+position = Vector2(-450, 0)
+
+[node name="Saida" parent="Zonas/Zona5/Arena/Portoes" unique_id=1854466034 instance=ExtResource("portao")]
+position = Vector2(450, 0)
+
+[node name="Saida" type="Area2D" parent="Zonas/Zona5" unique_id=695493958]
+position = Vector2(5100, 300)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("saida")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona5/Saida" unique_id=1737001353]
+shape = SubResource("Forma_10")
+
+[node name="Jogador" parent="." unique_id=1436543318 instance=ExtResource("jog")]
+position = Vector2(160, 300)
+
+[node name="Poeira" type="CPUParticles2D" parent="." unique_id=81516997]
+position = Vector2(2600, 300)
+amount = 260
+lifetime = 10.0
+preprocess = 10.0
+emission_shape = 3
+emission_rect_extents = Vector2(2600, 300)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 12.0
+scale_amount_min = 1.5
+scale_amount_max = 2.5
+color = Color(1, 0.92, 0.75, 0.25)
+
+[node name="SombraSofa" type="Sprite2D" parent="." unique_id=1071502772]
+texture = SubResource("TexSombra")
+centered = false
+
+[node name="Hud" parent="." unique_id=1966869805 instance=ExtResource("hud")]
+
+[node name="PainelDica" parent="." unique_id=1118855730 instance=ExtResource("painel")]
+
+[node name="Transicao" type="CanvasLayer" parent="." unique_id=1181586793]
+layer = 10
+
+[node name="Fade" type="ColorRect" parent="Transicao" unique_id=1075883199]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Titulo" type="Label" parent="Transicao" unique_id=2127249213]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.8, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1
