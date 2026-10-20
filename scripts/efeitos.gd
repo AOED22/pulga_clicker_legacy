@@ -1,10 +1,8 @@
 extends Node
 
-# Evita hit stops sobrepostos
 var parado := false
 
 
-# Congela o jogo por um instante pra dar peso ao impacto
 func hit_stop(duracao := 0.05, escala := 0.05) -> void:
 	if parado:
 		return
@@ -15,14 +13,12 @@ func hit_stop(duracao := 0.05, escala := 0.05) -> void:
 	parado = false
 
 
-# Treme a camera (trauma de 0 a 1)
-func tremer(trauma: float) -> void:
+func tremer(tremida: float) -> void:
 	var camera: CameraJogador = get_tree().get_first_node_in_group("camera")
 	if camera:
-		camera.adicionar_trauma(trauma)
+		camera.adicionar_tremida(tremida)
 
 
-# Cria uma cena de efeito na posicao indicada
 func criar(cena: PackedScene, posicao: Vector2, rotacao := 0.0) -> Node2D:
 	if cena == null:
 		return null
@@ -31,3 +27,13 @@ func criar(cena: PackedScene, posicao: Vector2, rotacao := 0.0) -> Node2D:
 	instancia.rotation = rotacao
 	get_tree().current_scene.add_child(instancia)
 	return instancia
+
+
+func criar_anel(cena: PackedScene, posicao: Vector2, raio: float, cor := Color.WHITE) -> void:
+	if cena == null:
+		return
+	var anel: AnelChoque = cena.instantiate()
+	anel.raio = raio
+	anel.modulate = cor
+	anel.position = posicao
+	get_tree().current_scene.add_child(anel)

@@ -1,21 +1,31 @@
 [gd_scene format=3 uid="uid://bkbd8t87p1il2"]
 
 [ext_resource type="PackedScene" uid="uid://d0c02m54jnxih" path="res://cenas/acaro.tscn" id="acaro"]
-[ext_resource type="PackedScene" path="res://cenas/anel_choque.tscn" id="anel"]
+[ext_resource type="PackedScene" path="res://cenas/acaro_grande.tscn" id="acaro_grande"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/agulha_caida.tscn" id="agulha"]
 [ext_resource type="Script" uid="uid://mmihb0hffxe4" path="res://scripts/arena.gd" id="arena"]
-[ext_resource type="Script" uid="uid://btcikc675lmmg" path="res://scripts/checkpoint.gd" id="check"]
+[ext_resource type="PackedScene" path="res://cenas/formiga_atiradora.tscn" id="atiradora"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/caixa.tscn" id="caixa"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/casca_pulga.tscn" id="casca"]
+[ext_resource type="PackedScene" path="res://cenas/checkpoint.tscn" id="check"]
 [ext_resource type="Script" uid="uid://uw2q4pc7kcyy" path="res://scripts/dica.gd" id="dica"]
 [ext_resource type="Script" uid="uid://cj2d72adhngv4" path="res://scripts/tapete_velho.gd" id="fase"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/formiga_morta.tscn" id="formiga_morta"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/fungo.tscn" id="fungo"]
 [ext_resource type="PackedScene" uid="uid://c6y1di07u2vlw" path="res://cenas/hud.tscn" id="hud"]
 [ext_resource type="PackedScene" uid="uid://s7kovbrw6wnn" path="res://cenas/jogador.tscn" id="jog"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/migalha.tscn" id="migalha"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/migalha_grande.tscn" id="migalha_g"]
 [ext_resource type="PackedScene" path="res://cenas/nota.tscn" id="nota"]
 [ext_resource type="PackedScene" path="res://cenas/obstaculo.tscn" id="obst"]
+[ext_resource type="PackedScene" path="res://cenas/formiga_operaria.tscn" id="operaria"]
 [ext_resource type="PackedScene" path="res://cenas/painel_dica.tscn" id="painel"]
 [ext_resource type="PackedScene" path="res://cenas/parede_alta.tscn" id="parede"]
 [ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="poeira"]
 [ext_resource type="PackedScene" path="res://cenas/portao.tscn" id="portao"]
 [ext_resource type="Script" uid="uid://l0xvf0oq3pap" path="res://scripts/saida.gd" id="saida"]
 [ext_resource type="Script" uid="uid://diob3h8itl4fy" path="res://scripts/spawn_inimigo.gd" id="spawn"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/tufo_pelo.tscn" id="tufo"]
 
 [sub_resource type="PlaceholderTexture2D" id="Placeholder_1"]
 size = Vector2(5200, 600)
@@ -38,6 +48,19 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
+[sub_resource type="Gradient" id="GradSombra"]
+colors = PackedColorArray(0, 0, 0, 0.8, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="TexSombraV"]
+gradient = SubResource("GradSombra")
+fill_from = Vector2(0.5, 0)
+fill_to = Vector2(0.5, 1)
+
+[sub_resource type="GradientTexture2D" id="TexSombraH"]
+gradient = SubResource("GradSombra")
+fill_from = Vector2(0, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [sub_resource type="Gradient" id="GradLuz"]
 colors = PackedColorArray(1, 1, 1, 0.55, 1, 1, 1, 0)
 
@@ -49,11 +72,20 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
+[sub_resource type="Gradient" id="GradLuzPonto"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.35, 0.35, 0.35, 0.35, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="TexLuzPonto"]
+gradient = SubResource("GradLuzPonto")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [sub_resource type="RectangleShape2D" id="Forma_3"]
 size = Vector2(500, 600)
-
-[sub_resource type="RectangleShape2D" id="Forma_4"]
-size = Vector2(40, 600)
 
 [sub_resource type="RectangleShape2D" id="Forma_5"]
 size = Vector2(450, 600)
@@ -67,20 +99,18 @@ size = Vector2(540, 600)
 [sub_resource type="RectangleShape2D" id="Forma_8"]
 size = Vector2(200, 200)
 
+[sub_resource type="RectangleShape2D" id="Forma_grande"]
+size = Vector2(300, 240)
+
 [sub_resource type="RectangleShape2D" id="Forma_9"]
 size = Vector2(600, 600)
-
-[sub_resource type="Resource" id="Resource_lulp4"]
-metadata/__load_path__ = "res://cenas/formiga.tscn"
-
-[sub_resource type="Resource" id="Resource_q7mrq"]
-metadata/__load_path__ = "res://cenas/formiga.tscn"
 
 [sub_resource type="RectangleShape2D" id="Forma_10"]
 size = Vector2(100, 600)
 
-[sub_resource type="Gradient" id="GradSombra"]
-colors = PackedColorArray(0, 0, 0, 0.8, 0, 0, 0, 0)
+[sub_resource type="Gradient" id="GradFade"]
+offsets = PackedFloat32Array(0, 0.25, 0.75, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
 
 [sub_resource type="GradientTexture2D" id="TexSombra"]
 gradient = SubResource("GradSombra")
@@ -97,6 +127,10 @@ o Deus Pulga abençoa uma pulga.
 Outras vieram antes de você."
 texto_final = "O Tapete Sem Fim não acaba aqui.
 Mas algo no fundo dele já sabe que você está vindo."
+nome_fase = "O Tapete Sem Fim"
+
+[node name="Ambiente" type="CanvasModulate" parent="." unique_id=1590874175]
+color = Color(0.93, 0.9, 0.96, 1)
 
 [node name="Tapete" type="Sprite2D" parent="." unique_id=2072525577]
 modulate = Color(0.42, 0.18, 0.22, 1)
@@ -122,6 +156,511 @@ shape = SubResource("Forma_2")
 position = Vector2(5250, 300)
 shape = SubResource("Forma_2")
 
+[node name="Chao" type="Node2D" parent="." unique_id=1109912455]
+
+[node name="ManchaVinho" type="Sprite2D" parent="Chao" unique_id=1008847688]
+modulate = Color(0.08, 0.02, 0.05, 0.5)
+position = Vector2(1500, 420)
+scale = Vector2(2.2, 1.4)
+texture = SubResource("TexMarca")
+
+[node name="ManchaClara" type="Sprite2D" parent="Chao" unique_id=1928666447]
+modulate = Color(0.9, 0.75, 0.5, 0.35)
+position = Vector2(2300, 180)
+scale = Vector2(1.6, 1.6)
+texture = SubResource("TexMarca")
+
+[node name="ManchaEscura" type="Sprite2D" parent="Chao" unique_id=1514550348]
+modulate = Color(0.05, 0.02, 0.04, 0.5)
+position = Vector2(3300, 480)
+scale = Vector2(2.5, 1.5)
+texture = SubResource("TexMarca")
+
+[node name="ManchaFungo1" type="Sprite2D" parent="Chao" unique_id=583607786]
+modulate = Color(0.2, 0.5, 0.25, 0.6)
+position = Vector2(3950, 150)
+scale = Vector2(1.6, 1.2)
+texture = SubResource("TexMarca")
+
+[node name="ManchaFungo2" type="Sprite2D" parent="Chao" unique_id=651854755]
+modulate = Color(0.2, 0.55, 0.3, 0.6)
+position = Vector2(4800, 420)
+scale = Vector2(3, 2)
+texture = SubResource("TexMarca")
+
+[node name="SombraSofaCima" type="Sprite2D" parent="Chao" unique_id=1369297470]
+modulate = Color(1, 1, 1, 0.4)
+position = Vector2(-20, 170)
+scale = Vector2(10.5, 0.8)
+texture = SubResource("TexSombraV")
+centered = false
+
+[node name="SombraSofaBaixo" type="Sprite2D" parent="Chao" unique_id=1039421163]
+modulate = Color(1, 1, 1, 0.4)
+position = Vector2(-20, 379)
+scale = Vector2(10.5, 0.8)
+texture = SubResource("TexSombraV")
+centered = false
+flip_v = true
+
+[node name="SombraDobra" type="Sprite2D" parent="Chao" unique_id=840861815]
+modulate = Color(1, 1, 1, 0.45)
+position = Vector2(2762, 0)
+scale = Vector2(2, 9.4)
+texture = SubResource("TexSombraH")
+centered = false
+
+[node name="SombraEstante" type="Sprite2D" parent="Chao" unique_id=1920817268]
+modulate = Color(1, 1, 1, 0.5)
+position = Vector2(3530, 0)
+scale = Vector2(4.2, 6.25)
+texture = SubResource("TexSombraH")
+centered = false
+
+[node name="Detalhes" type="Node2D" parent="." unique_id=475567165]
+
+[node name="Tufo1" parent="Detalhes" unique_id=61672862 instance=ExtResource("tufo")]
+position = Vector2(100, 200)
+rotation = 0.37
+scale = Vector2(1.07, 1.07)
+
+[node name="Tufo2" parent="Detalhes" unique_id=1296150709 instance=ExtResource("tufo")]
+position = Vector2(130, 385)
+rotation = -0.21
+scale = Vector2(1.35, 1.35)
+
+[node name="Tufo3" parent="Detalhes" unique_id=135060746 instance=ExtResource("tufo")]
+position = Vector2(240, 185)
+rotation = 0.54
+scale = Vector2(1.1, 1.1)
+
+[node name="Tufo4" parent="Detalhes" unique_id=846845400 instance=ExtResource("tufo")]
+position = Vector2(300, 412)
+rotation = 0.07
+scale = Vector2(0.91, 0.91)
+
+[node name="Tufo5" parent="Detalhes" unique_id=576723454 instance=ExtResource("tufo")]
+position = Vector2(420, 200)
+rotation = 1.82
+scale = Vector2(1.18, 1.18)
+
+[node name="Tufo6" parent="Detalhes" unique_id=507408794 instance=ExtResource("tufo")]
+position = Vector2(560, 395)
+rotation = -1.22
+scale = Vector2(0.86, 0.86)
+
+[node name="Tufo7" parent="Detalhes" unique_id=1367819715 instance=ExtResource("tufo")]
+position = Vector2(690, 250)
+rotation = 1.92
+scale = Vector2(0.85, 0.85)
+
+[node name="Tufo8" parent="Detalhes" unique_id=301398471 instance=ExtResource("tufo")]
+position = Vector2(780, 235)
+rotation = -2.84
+scale = Vector2(1.22, 1.22)
+
+[node name="Tufo9" parent="Detalhes" unique_id=2085608260 instance=ExtResource("tufo")]
+position = Vector2(1130, 520)
+rotation = 2.88
+scale = Vector2(1.39, 1.39)
+
+[node name="Tufo10" parent="Detalhes" unique_id=2106262602 instance=ExtResource("tufo")]
+position = Vector2(1250, 70)
+rotation = 0.72
+scale = Vector2(1.19, 1.19)
+
+[node name="Tufo11" parent="Detalhes" unique_id=311920902 instance=ExtResource("tufo")]
+position = Vector2(1420, 330)
+rotation = -3.01
+scale = Vector2(0.89, 0.89)
+
+[node name="Tufo12" parent="Detalhes" unique_id=1158404020 instance=ExtResource("tufo")]
+position = Vector2(1600, 530)
+rotation = -2.73
+scale = Vector2(1.12, 1.12)
+
+[node name="Tufo13" parent="Detalhes" unique_id=551123932 instance=ExtResource("tufo")]
+position = Vector2(1880, 60)
+rotation = -1.6
+scale = Vector2(0.91, 0.91)
+
+[node name="Tufo14" parent="Detalhes" unique_id=1148321653 instance=ExtResource("tufo")]
+position = Vector2(2200, 480)
+rotation = -0.22
+scale = Vector2(0.82, 0.82)
+
+[node name="Tufo15" parent="Detalhes" unique_id=405237603 instance=ExtResource("tufo")]
+position = Vector2(2380, 90)
+rotation = 2.12
+scale = Vector2(1.06, 1.06)
+
+[node name="Tufo16" parent="Detalhes" unique_id=1292398573 instance=ExtResource("tufo")]
+position = Vector2(2560, 540)
+rotation = 0.87
+scale = Vector2(1.11, 1.11)
+
+[node name="Tufo17" parent="Detalhes" unique_id=1218627738 instance=ExtResource("tufo")]
+position = Vector2(2760, 70)
+rotation = 1.01
+scale = Vector2(1.1, 1.1)
+
+[node name="Tufo18" parent="Detalhes" unique_id=921111135 instance=ExtResource("tufo")]
+position = Vector2(3140, 120)
+rotation = -1.38
+scale = Vector2(1.07, 1.07)
+
+[node name="Tufo19" parent="Detalhes" unique_id=1673506697 instance=ExtResource("tufo")]
+position = Vector2(3250, 520)
+rotation = 3.07
+scale = Vector2(1.4, 1.4)
+
+[node name="Tufo20" parent="Detalhes" unique_id=455221301 instance=ExtResource("tufo")]
+position = Vector2(3980, 420)
+rotation = 1.29
+scale = Vector2(1.3, 1.3)
+
+[node name="Tufo21" parent="Detalhes" unique_id=1654408868 instance=ExtResource("tufo")]
+position = Vector2(4150, 500)
+rotation = -1.68
+scale = Vector2(0.99, 0.99)
+
+[node name="Tufo22" parent="Detalhes" unique_id=1107494419 instance=ExtResource("tufo")]
+position = Vector2(4600, 80)
+rotation = -2.66
+scale = Vector2(0.97, 0.97)
+
+[node name="Tufo23" parent="Detalhes" unique_id=1016233760 instance=ExtResource("tufo")]
+position = Vector2(4750, 500)
+rotation = -0.62
+scale = Vector2(1.26, 1.26)
+
+[node name="Tufo24" parent="Detalhes" unique_id=267356323 instance=ExtResource("tufo")]
+position = Vector2(5050, 120)
+rotation = -0.7
+scale = Vector2(1.31, 1.31)
+
+[node name="Migalhas" type="Node2D" parent="Detalhes" unique_id=1971089415]
+
+[node name="Migalha1" parent="Detalhes/Migalhas" unique_id=1243707826 instance=ExtResource("migalha")]
+modulate = Color(0.89, 0.89, 0.89, 1)
+position = Vector2(178, 406)
+rotation = 2.87
+scale = Vector2(0.51, 0.51)
+
+[node name="Migalha2" parent="Detalhes/Migalhas" unique_id=1481184774 instance=ExtResource("migalha")]
+modulate = Color(1.08, 1.08, 1.08, 1)
+position = Vector2(468, 310)
+rotation = 1.3
+scale = Vector2(0.41, 0.41)
+
+[node name="Migalha3" parent="Detalhes/Migalhas" unique_id=972731079 instance=ExtResource("migalha")]
+modulate = Color(0.91, 0.91, 0.91, 1)
+position = Vector2(4678, 233)
+rotation = 0.27
+scale = Vector2(0.53, 0.53)
+
+[node name="Migalha4" parent="Detalhes/Migalhas" unique_id=1753940577 instance=ExtResource("migalha")]
+modulate = Color(1.1, 1.1, 1.1, 1)
+position = Vector2(2764, 45)
+rotation = 0.37
+scale = Vector2(0.59, 0.59)
+
+[node name="Migalha5" parent="Detalhes/Migalhas" unique_id=827672443 instance=ExtResource("migalha")]
+modulate = Color(0.99, 0.99, 0.99, 1)
+position = Vector2(2058, 133)
+rotation = 1.51
+scale = Vector2(0.3, 0.3)
+
+[node name="Migalha6" parent="Detalhes/Migalhas" unique_id=1426533069 instance=ExtResource("migalha")]
+modulate = Color(0.88, 0.88, 0.88, 1)
+position = Vector2(4621, 222)
+rotation = 2.27
+scale = Vector2(0.43, 0.43)
+
+[node name="Migalha7" parent="Detalhes/Migalhas" unique_id=1026885743 instance=ExtResource("migalha")]
+modulate = Color(0.85, 0.85, 0.85, 1)
+position = Vector2(1112, 459)
+rotation = 1.3
+scale = Vector2(0.49, 0.49)
+
+[node name="Migalha8" parent="Detalhes/Migalhas" unique_id=117261407 instance=ExtResource("migalha")]
+modulate = Color(1.19, 1.19, 1.19, 1)
+position = Vector2(1783, 30)
+rotation = 2.49
+scale = Vector2(0.38, 0.38)
+
+[node name="Migalha9" parent="Detalhes/Migalhas" unique_id=894581591 instance=ExtResource("migalha")]
+modulate = Color(0.96, 0.96, 0.96, 1)
+position = Vector2(2531, 50)
+rotation = 2.65
+scale = Vector2(0.36, 0.36)
+
+[node name="Migalha10" parent="Detalhes/Migalhas" unique_id=1049891845 instance=ExtResource("migalha")]
+modulate = Color(0.86, 0.86, 0.86, 1)
+position = Vector2(4766, 132)
+rotation = 1.37
+scale = Vector2(0.31, 0.31)
+
+[node name="Migalha11" parent="Detalhes/Migalhas" unique_id=1310176299 instance=ExtResource("migalha")]
+modulate = Color(1.13, 1.13, 1.13, 1)
+position = Vector2(118, 387)
+rotation = 1.2
+scale = Vector2(0.48, 0.48)
+
+[node name="Migalha12" parent="Detalhes/Migalhas" unique_id=198684919 instance=ExtResource("migalha")]
+modulate = Color(1.05, 1.05, 1.05, 1)
+position = Vector2(648, 213)
+rotation = 0.05
+scale = Vector2(0.36, 0.36)
+
+[node name="Migalha13" parent="Detalhes/Migalhas" unique_id=402281305 instance=ExtResource("migalha")]
+modulate = Color(0.85, 0.85, 0.85, 1)
+position = Vector2(3060, 410)
+rotation = 1.82
+scale = Vector2(0.49, 0.49)
+
+[node name="Migalha14" parent="Detalhes/Migalhas" unique_id=65355181 instance=ExtResource("migalha")]
+modulate = Color(0.87, 0.87, 0.87, 1)
+position = Vector2(4746, 168)
+rotation = 0.48
+scale = Vector2(0.56, 0.56)
+
+[node name="Migalha15" parent="Detalhes/Migalhas" unique_id=743322802 instance=ExtResource("migalha")]
+modulate = Color(0.86, 0.86, 0.86, 1)
+position = Vector2(1910, 285)
+rotation = 1.95
+scale = Vector2(0.52, 0.52)
+
+[node name="Migalha16" parent="Detalhes/Migalhas" unique_id=1340081845 instance=ExtResource("migalha")]
+modulate = Color(0.96, 0.96, 0.96, 1)
+position = Vector2(4577, 231)
+rotation = 1.5
+scale = Vector2(0.51, 0.51)
+
+[node name="Migalha17" parent="Detalhes/Migalhas" unique_id=1777976160 instance=ExtResource("migalha")]
+modulate = Color(0.84, 0.84, 0.84, 1)
+position = Vector2(683, 461)
+rotation = 1.59
+scale = Vector2(0.31, 0.31)
+
+[node name="Migalha18" parent="Detalhes/Migalhas" unique_id=923540165 instance=ExtResource("migalha")]
+modulate = Color(0.96, 0.96, 0.96, 1)
+position = Vector2(2130, 274)
+rotation = 1.3
+scale = Vector2(0.52, 0.52)
+
+[node name="Migalha19" parent="Detalhes/Migalhas" unique_id=1006906222 instance=ExtResource("migalha")]
+modulate = Color(0.87, 0.87, 0.87, 1)
+position = Vector2(4926, 532)
+rotation = 2.23
+scale = Vector2(0.39, 0.39)
+
+[node name="Migalha20" parent="Detalhes/Migalhas" unique_id=1754485630 instance=ExtResource("migalha")]
+modulate = Color(1.02, 1.02, 1.02, 1)
+position = Vector2(603, 222)
+rotation = 2.64
+scale = Vector2(0.37, 0.37)
+
+[node name="Migalha21" parent="Detalhes/Migalhas" unique_id=2017184468 instance=ExtResource("migalha")]
+modulate = Color(1.17, 1.17, 1.17, 1)
+position = Vector2(5072, 105)
+rotation = 0.63
+scale = Vector2(0.38, 0.38)
+
+[node name="Migalha22" parent="Detalhes/Migalhas" unique_id=1360564563 instance=ExtResource("migalha")]
+modulate = Color(0.98, 0.98, 0.98, 1)
+position = Vector2(175, 207)
+rotation = 0.19
+scale = Vector2(0.38, 0.38)
+
+[node name="Migalha23" parent="Detalhes/Migalhas" unique_id=971847424 instance=ExtResource("migalha")]
+modulate = Color(1.03, 1.03, 1.03, 1)
+position = Vector2(1483, 318)
+rotation = 0.41
+scale = Vector2(0.41, 0.41)
+
+[node name="Migalha24" parent="Detalhes/Migalhas" unique_id=1141355699 instance=ExtResource("migalha")]
+modulate = Color(1.19, 1.19, 1.19, 1)
+position = Vector2(3006, 171)
+rotation = 2.04
+scale = Vector2(0.57, 0.57)
+
+[node name="Migalha25" parent="Detalhes/Migalhas" unique_id=1441877836 instance=ExtResource("migalha")]
+modulate = Color(1.17, 1.17, 1.17, 1)
+position = Vector2(4315, 173)
+rotation = 1.47
+scale = Vector2(0.48, 0.48)
+
+[node name="Migalha26" parent="Detalhes/Migalhas" unique_id=1108211878 instance=ExtResource("migalha")]
+modulate = Color(0.81, 0.81, 0.81, 1)
+position = Vector2(2968, 349)
+rotation = 1.97
+scale = Vector2(0.59, 0.59)
+
+[node name="Migalha27" parent="Detalhes/Migalhas" unique_id=1003514580 instance=ExtResource("migalha")]
+modulate = Color(0.93, 0.93, 0.93, 1)
+position = Vector2(3990, 98)
+rotation = 3.1
+scale = Vector2(0.52, 0.52)
+
+[node name="Migalha28" parent="Detalhes/Migalhas" unique_id=49616055 instance=ExtResource("migalha")]
+modulate = Color(1.09, 1.09, 1.09, 1)
+position = Vector2(656, 493)
+rotation = 2.79
+scale = Vector2(0.46, 0.46)
+
+[node name="Migalha29" parent="Detalhes/Migalhas" unique_id=1242983703 instance=ExtResource("migalha")]
+modulate = Color(1.07, 1.07, 1.07, 1)
+position = Vector2(1101, 379)
+rotation = 2.79
+scale = Vector2(0.41, 0.41)
+
+[node name="Migalha30" parent="Detalhes/Migalhas" unique_id=527818766 instance=ExtResource("migalha")]
+modulate = Color(1.03, 1.03, 1.03, 1)
+position = Vector2(3457, 60)
+rotation = 1.94
+scale = Vector2(0.56, 0.56)
+
+[node name="Migalha31" parent="Detalhes/Migalhas" unique_id=867419871 instance=ExtResource("migalha")]
+modulate = Color(1.04, 1.04, 1.04, 1)
+position = Vector2(3172, 418)
+rotation = 0.25
+scale = Vector2(0.47, 0.47)
+
+[node name="Migalha32" parent="Detalhes/Migalhas" unique_id=614307564 instance=ExtResource("migalha")]
+modulate = Color(1.09, 1.09, 1.09, 1)
+position = Vector2(986, 293)
+rotation = 1.2
+scale = Vector2(0.56, 0.56)
+
+[node name="Migalha33" parent="Detalhes/Migalhas" unique_id=1131377342 instance=ExtResource("migalha")]
+modulate = Color(1.14, 1.14, 1.14, 1)
+position = Vector2(4799, 498)
+rotation = 0.26
+scale = Vector2(0.43, 0.43)
+
+[node name="Migalha34" parent="Detalhes/Migalhas" unique_id=1290185814 instance=ExtResource("migalha")]
+modulate = Color(0.84, 0.84, 0.84, 1)
+position = Vector2(4255, 60)
+rotation = 0.07
+scale = Vector2(0.39, 0.39)
+
+[node name="Migalha35" parent="Detalhes/Migalhas" unique_id=1376457331 instance=ExtResource("migalha")]
+modulate = Color(1.06, 1.06, 1.06, 1)
+position = Vector2(964, 539)
+rotation = 1.51
+scale = Vector2(0.53, 0.53)
+
+[node name="Migalha36" parent="Detalhes/Migalhas" unique_id=1443213348 instance=ExtResource("migalha")]
+modulate = Color(1.07, 1.07, 1.07, 1)
+position = Vector2(132, 284)
+rotation = 0.63
+scale = Vector2(0.39, 0.39)
+
+[node name="Agulha1" parent="Detalhes" unique_id=1258118906 instance=ExtResource("agulha")]
+position = Vector2(120, 392)
+rotation = 0.7
+
+[node name="Agulha2" parent="Detalhes" unique_id=1675103944 instance=ExtResource("agulha")]
+position = Vector2(160, 398)
+rotation = 0.5
+
+[node name="Agulha3" parent="Detalhes" unique_id=937471808 instance=ExtResource("agulha")]
+position = Vector2(200, 390)
+rotation = 0.8
+
+[node name="Agulha4" parent="Detalhes" unique_id=1854905180 instance=ExtResource("agulha")]
+position = Vector2(280, 396)
+rotation = 0.6
+
+[node name="Agulha5" parent="Detalhes" unique_id=858548636 instance=ExtResource("agulha")]
+position = Vector2(570, 200)
+rotation = -0.5
+
+[node name="Agulha6" parent="Detalhes" unique_id=1140573292 instance=ExtResource("agulha")]
+position = Vector2(600, 215)
+rotation = -0.3
+
+[node name="Agulha7" parent="Detalhes" unique_id=1388493031 instance=ExtResource("agulha")]
+position = Vector2(630, 196)
+rotation = -0.7
+
+[node name="Agulha8" parent="Detalhes" unique_id=289000145 instance=ExtResource("agulha")]
+position = Vector2(1100, 95)
+rotation = 0.4
+
+[node name="Agulha9" parent="Detalhes" unique_id=70662508 instance=ExtResource("agulha")]
+position = Vector2(1480, 505)
+rotation = 1.0
+
+[node name="Agulha10" parent="Detalhes" unique_id=533492815 instance=ExtResource("agulha")]
+position = Vector2(2810, 160)
+rotation = -0.6
+
+[node name="Agulha11" parent="Detalhes" unique_id=892748772 instance=ExtResource("agulha")]
+position = Vector2(3445, 355)
+rotation = 0.9
+
+[node name="Agulha12" parent="Detalhes" unique_id=842712986 instance=ExtResource("agulha")]
+position = Vector2(4150, 205)
+rotation = 0.5
+
+[node name="Agulha13" parent="Detalhes" unique_id=1393194325 instance=ExtResource("agulha")]
+position = Vector2(4185, 210)
+rotation = 0.3
+
+[node name="Agulha14" parent="Detalhes" unique_id=259253361 instance=ExtResource("agulha")]
+position = Vector2(4220, 203)
+rotation = 0.6
+
+[node name="Agulha15" parent="Detalhes" unique_id=1122035723 instance=ExtResource("agulha")]
+position = Vector2(4255, 210)
+rotation = 0.4
+
+[node name="Agulha16" parent="Detalhes" unique_id=1527234582 instance=ExtResource("agulha")]
+position = Vector2(4290, 204)
+rotation = 0.5
+
+[node name="Casca1" parent="Detalhes" unique_id=179050842 instance=ExtResource("casca")]
+position = Vector2(240, 388)
+rotation = 2.2
+
+[node name="Casca2" parent="Detalhes" unique_id=1232664278 instance=ExtResource("casca")]
+position = Vector2(520, 365)
+rotation = 0.8
+
+[node name="Casca3" parent="Detalhes" unique_id=2096651788 instance=ExtResource("casca")]
+position = Vector2(1450, 520)
+rotation = -1.0
+
+[node name="Casca4" parent="Detalhes" unique_id=1744072899 instance=ExtResource("casca")]
+position = Vector2(2790, 150)
+rotation = 1.9
+
+[node name="Casca5" parent="Detalhes" unique_id=93463185 instance=ExtResource("casca")]
+position = Vector2(3430, 345)
+rotation = 2.6
+
+[node name="Casca6" parent="Detalhes" unique_id=1606591888 instance=ExtResource("casca")]
+position = Vector2(4170, 225)
+rotation = 0.4
+
+[node name="Casca7" parent="Detalhes" unique_id=1316451758 instance=ExtResource("casca")]
+position = Vector2(4900, 60)
+rotation = -2.0
+
+[node name="FormigaMorta1" parent="Detalhes" unique_id=734852810 instance=ExtResource("formiga_morta")]
+position = Vector2(3720, 300)
+rotation = 0.3
+
+[node name="FormigaMorta2" parent="Detalhes" unique_id=1261948976 instance=ExtResource("formiga_morta")]
+position = Vector2(3880, 380)
+rotation = 2.4
+
+[node name="FormigaMorta3" parent="Detalhes" unique_id=1293448174 instance=ExtResource("formiga_morta")]
+position = Vector2(4090, 260)
+rotation = -0.6
+
 [node name="Cenario" type="Node2D" parent="." unique_id=2137962271]
 
 [node name="MarcaPouso" type="Sprite2D" parent="Cenario" unique_id=975365171]
@@ -142,90 +681,101 @@ scale = Vector2(2.4, 2.4)
 texture = SubResource("TexLuz")
 
 [node name="SofaCima" parent="Cenario" unique_id=587529076 instance=ExtResource("parede")]
+modulate = Color(1.5, 0.9, 1.3, 1)
 position = Vector2(315, 75)
 scale = Vector2(20.938, 5.938)
 
 [node name="SofaBaixo" parent="Cenario" unique_id=1350449248 instance=ExtResource("parede")]
+modulate = Color(1.5, 0.9, 1.3, 1)
 position = Vector2(315, 525)
 scale = Vector2(20.938, 5.938)
 
-[node name="MigalhaSofa1" parent="Cenario" unique_id=1425766975 instance=ExtResource("obst")]
-modulate = Color(2.4, 2.1, 1.1, 1)
+[node name="MigalhaSofa1" parent="Cenario" unique_id=1425766975 instance=ExtResource("migalha_g")]
 position = Vector2(330, 225)
 scale = Vector2(0.875, 0.875)
 
-[node name="MigalhaSofa2" parent="Cenario" unique_id=1807153688 instance=ExtResource("obst")]
-modulate = Color(2.4, 2.1, 1.1, 1)
+[node name="MigalhaSofa2" parent="Cenario" unique_id=1807153688 instance=ExtResource("migalha_g")]
 position = Vector2(470, 372)
 scale = Vector2(1.125, 0.812)
 
-[node name="MigalhaSala" parent="Cenario" unique_id=1113326555 instance=ExtResource("obst")]
-modulate = Color(2.4, 2.1, 1.1, 1)
+[node name="MigalhaSala" parent="Cenario" unique_id=1113326555 instance=ExtResource("migalha_g")]
 position = Vector2(770, 170)
 scale = Vector2(0.875, 0.875)
 
 [node name="Chinelo" parent="Cenario" unique_id=631474890 instance=ExtResource("obst")]
+modulate = Color(1.5, 1, 1, 1)
 position = Vector2(850, 440)
 scale = Vector2(3.75, 1.688)
 
 [node name="PeDaMesa1" parent="Cenario" unique_id=612883181 instance=ExtResource("obst")]
+modulate = Color(1.3, 1, 0.7, 1)
 position = Vector2(1300, 150)
 scale = Vector2(1.5, 1.5)
 
 [node name="PeDaMesa2" parent="Cenario" unique_id=1582104500 instance=ExtResource("obst")]
+modulate = Color(1.3, 1, 0.7, 1)
 position = Vector2(1380, 460)
 scale = Vector2(1.5, 1.5)
 
-[node name="MigalhaMesa" parent="Cenario" unique_id=88317740 instance=ExtResource("obst")]
-modulate = Color(2.4, 2.1, 1.1, 1)
+[node name="MigalhaMesa" parent="Cenario" unique_id=88317740 instance=ExtResource("migalha_g")]
 position = Vector2(1560, 300)
 scale = Vector2(1.25, 1.25)
 
-[node name="Caixa1" parent="Cenario" unique_id=1683718846 instance=ExtResource("obst")]
+[node name="Caixa1" parent="Cenario" unique_id=1683718846 instance=ExtResource("caixa")]
 position = Vector2(1830, 170)
 scale = Vector2(2, 2)
 
-[node name="Caixa2" parent="Cenario" unique_id=857146999 instance=ExtResource("obst")]
+[node name="Caixa2" parent="Cenario" unique_id=857146999 instance=ExtResource("caixa")]
 position = Vector2(1830, 440)
 scale = Vector2(2, 2)
 
 [node name="PortaCima1" parent="Cenario" unique_id=1160161764 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(2000, 100)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaBaixo1" parent="Cenario" unique_id=682891333 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(2000, 500)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaCima2" parent="Cenario" unique_id=32206994 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(3000, 100)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaBaixo2" parent="Cenario" unique_id=1785701229 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(3000, 500)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaCima3" parent="Cenario" unique_id=471660663 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(4000, 100)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaBaixo3" parent="Cenario" unique_id=872134200 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(4000, 500)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaCima4" parent="Cenario" unique_id=1090256555 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(4900, 100)
 scale = Vector2(1.25, 7.5)
 
 [node name="PortaBaixo4" parent="Cenario" unique_id=1937240281 instance=ExtResource("parede")]
+modulate = Color(1.2, 1.1, 1, 1)
 position = Vector2(4900, 500)
 scale = Vector2(1.25, 7.5)
 
 [node name="DobraDoTapete" parent="Cenario" unique_id=1950858120 instance=ExtResource("obst")]
+modulate = Color(1.4, 0.85, 1.2, 1)
 position = Vector2(2650, 300)
 scale = Vector2(7, 20)
 
 [node name="Estante" parent="Cenario" unique_id=967656135 instance=ExtResource("parede")]
+modulate = Color(1.3, 1, 0.8, 1)
 position = Vector2(3500, 190)
 scale = Vector2(1.875, 13.125)
 
@@ -233,23 +783,129 @@ scale = Vector2(1.875, 13.125)
 position = Vector2(3650, 440)
 scale = Vector2(1.5, 3)
 
-[node name="MigalhaFormiga1" parent="Cenario" unique_id=1557404055 instance=ExtResource("obst")]
-modulate = Color(2.4, 2.1, 1.1, 1)
+[node name="MigalhaFormiga1" parent="Cenario" unique_id=1557404055 instance=ExtResource("migalha_g")]
 position = Vector2(3720, 200)
 scale = Vector2(0.875, 0.875)
 
-[node name="MigalhaFormiga2" parent="Cenario" unique_id=1705995648 instance=ExtResource("obst")]
-modulate = Color(2.4, 2.1, 1.1, 1)
+[node name="MigalhaFormiga2" parent="Cenario" unique_id=1705995648 instance=ExtResource("migalha_g")]
 position = Vector2(3830, 330)
 scale = Vector2(1.125, 0.875)
 
 [node name="Pilar1" parent="Cenario" unique_id=605722945 instance=ExtResource("obst")]
+modulate = Color(1, 1, 1.1, 1)
 position = Vector2(4350, 150)
 scale = Vector2(2, 3)
 
 [node name="Pilar2" parent="Cenario" unique_id=1399176751 instance=ExtResource("obst")]
+modulate = Color(1, 1, 1.1, 1)
 position = Vector2(4350, 450)
 scale = Vector2(2, 3)
+
+[node name="Fungos" type="Node2D" parent="." unique_id=1789843580]
+
+[node name="Fungo1" parent="Fungos" unique_id=1659694025 instance=ExtResource("fungo")]
+position = Vector2(3485, 415)
+
+[node name="Fungo2" parent="Fungos" unique_id=569985699 instance=ExtResource("fungo")]
+position = Vector2(3520, 422)
+
+[node name="Fungo3" parent="Fungos" unique_id=1698900727 instance=ExtResource("fungo")]
+position = Vector2(3660, 392)
+
+[node name="Fungo4" parent="Fungos" unique_id=504642878 instance=ExtResource("fungo")]
+position = Vector2(3720, 296)
+
+[node name="Fungo5" parent="Fungos" unique_id=1852389107 instance=ExtResource("fungo")]
+position = Vector2(3880, 376)
+
+[node name="Fungo6" parent="Fungos" unique_id=1576674939 instance=ExtResource("fungo")]
+position = Vector2(4000, 232)
+
+[node name="Fungo7" parent="Fungos" unique_id=1590048179 instance=ExtResource("fungo")]
+position = Vector2(4005, 368)
+
+[node name="Fungo8" parent="Fungos" unique_id=1793385133 instance=ExtResource("fungo")]
+position = Vector2(4090, 258)
+
+[node name="Fungo9" parent="Fungos" unique_id=1289785689 instance=ExtResource("fungo")]
+position = Vector2(4350, 96)
+
+[node name="Fungo10" parent="Fungos" unique_id=1370940491 instance=ExtResource("fungo")]
+position = Vector2(4350, 506)
+
+[node name="Fungo11" parent="Fungos" unique_id=465767921 instance=ExtResource("fungo")]
+position = Vector2(4960, 230)
+
+[node name="Fungo12" parent="Fungos" unique_id=956814589 instance=ExtResource("fungo")]
+position = Vector2(5000, 62)
+
+[node name="Fungo13" parent="Fungos" unique_id=57066353 instance=ExtResource("fungo")]
+position = Vector2(5060, 540)
+
+[node name="Fungo14" parent="Fungos" unique_id=378629788 instance=ExtResource("fungo")]
+position = Vector2(5150, 200)
+
+[node name="Fungo15" parent="Fungos" unique_id=1886947829 instance=ExtResource("fungo")]
+position = Vector2(5150, 400)
+
+[node name="Luzes" type="Node2D" parent="." unique_id=1234176356]
+
+[node name="LuzNinho" type="PointLight2D" parent="Luzes" unique_id=1684074815]
+position = Vector2(170, 300)
+scale = Vector2(1.6, 1.6)
+color = Color(1, 0.72, 0.42, 1)
+energy = 0.5
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzFimDoSofa" type="PointLight2D" parent="Luzes" unique_id=769417353]
+position = Vector2(760, 300)
+scale = Vector2(3.2, 2.6)
+color = Color(1, 0.88, 0.65, 1)
+energy = 0.5
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzJanela" type="PointLight2D" parent="Luzes" unique_id=1170986588]
+position = Vector2(1800, 300)
+rotation = 0.45
+scale = Vector2(5.5, 3)
+color = Color(1, 0.93, 0.72, 1)
+energy = 0.65
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzDobra" type="PointLight2D" parent="Luzes" unique_id=344769786]
+position = Vector2(2600, 300)
+scale = Vector2(3, 3.5)
+color = Color(0.85, 0.85, 1, 1)
+energy = 0.3
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzPouso" type="PointLight2D" parent="Luzes" unique_id=1298731193]
+position = Vector2(2880, 300)
+scale = Vector2(2.4, 2.4)
+color = Color(1, 0.8, 0.55, 1)
+energy = 0.35
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzEstante" type="PointLight2D" parent="Luzes" unique_id=915532772]
+position = Vector2(3700, 300)
+scale = Vector2(3.5, 2.5)
+color = Color(0.6, 1, 0.7, 1)
+energy = 0.3
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzArena" type="PointLight2D" parent="Luzes" unique_id=215629550]
+position = Vector2(4450, 300)
+scale = Vector2(5, 4)
+color = Color(1, 0.85, 0.5, 1)
+energy = 0.55
+texture = SubResource("TexLuzPonto")
+
+[node name="LuzSaida" type="PointLight2D" parent="Luzes" unique_id=1023830646]
+position = Vector2(5120, 300)
+scale = Vector2(3, 3.2)
+color = Color(1, 0.92, 0.6, 1)
+energy = 0.7
+texture = SubResource("TexLuzPonto")
 
 [node name="Zonas" type="Node2D" parent="." unique_id=2094408398]
 
@@ -268,7 +924,7 @@ texto = "Aqui embaixo ainda é quente.
 [node name="Nota3" parent="Zonas/Zona1" unique_id=700948673 instance=ExtResource("nota")]
 position = Vector2(900, 160)
 texto = "A casa está vazia há muito tempo.
-O tapete cresceu sem ninguém olhando."
+O tapete mudou sem ninguém olhando."
 
 [node name="DicaMover" type="Area2D" parent="Zonas/Zona1" unique_id=1538638248]
 position = Vector2(250, 300)
@@ -284,16 +940,8 @@ shape = SubResource("Forma_3")
 
 [node name="Zona2" type="Node2D" parent="Zonas" unique_id=924895039]
 
-[node name="Checkpoint" type="Area2D" parent="Zonas/Zona2" unique_id=1939773720]
+[node name="Checkpoint" parent="Zonas/Zona2" unique_id=1939773720 instance=ExtResource("check")]
 position = Vector2(1060, 300)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-script = ExtResource("check")
-cena_anel = ExtResource("anel")
-
-[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona2/Checkpoint" unique_id=1103845511]
-shape = SubResource("Forma_4")
 
 [node name="Nota4" parent="Zonas/Zona2" unique_id=1217798693 instance=ExtResource("nota")]
 position = Vector2(1180, 120)
@@ -303,7 +951,7 @@ Quando ele se encolhe e avermelha, vai investir. Saia do caminho."
 [node name="Nota5" parent="Zonas/Zona2" unique_id=1572508320 instance=ExtResource("nota")]
 position = Vector2(1700, 500)
 texto = "Quando ele amarela, falta pouco.
-Finalize-o e beba de seu sangue. É assim que continuamos de pé."
+Finalize-o para beber de seu sangue. É assim que continuamos de pé."
 
 [node name="DicaDash" type="Area2D" parent="Zonas/Zona2" unique_id=2036208906]
 position = Vector2(1225, 300)
@@ -341,17 +989,9 @@ alcance_visao = 300.0
 
 [node name="Zona3" type="Node2D" parent="Zonas" unique_id=1280195423]
 
-[node name="Checkpoint" type="Area2D" parent="Zonas/Zona3" unique_id=1010375221]
+[node name="Checkpoint" parent="Zonas/Zona3" unique_id=1010375221 instance=ExtResource("check")]
 position = Vector2(2060, 300)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-script = ExtResource("check")
 indice = 2
-cena_anel = ExtResource("anel")
-
-[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona3/Checkpoint" unique_id=765652348]
-shape = SubResource("Forma_4")
 
 [node name="Nota6" parent="Zonas/Zona3" unique_id=1067503576 instance=ExtResource("nota")]
 position = Vector2(2300, 200)
@@ -362,6 +1002,11 @@ Segure espaço para realizar o super pulo"
 position = Vector2(2850, 480)
 texto = "Nada sobrevive embaixo de quem cai do alto.
 Transforme o peso do legado em sua arma"
+
+[node name="Nota8" parent="Zonas/Zona3" unique_id=1630074638 instance=ExtResource("nota")]
+position = Vector2(2830, 110)
+texto = "Esta pulou no escuro e caiu na boca dos ácaros.
+Olhe onde vai pousar."
 
 [node name="DicaPulo" type="Area2D" parent="Zonas/Zona3" unique_id=993296949]
 position = Vector2(2270, 300)
@@ -390,29 +1035,21 @@ alcance_visao = 170.0
 
 [node name="Zona4" type="Node2D" parent="Zonas" unique_id=1710123451]
 
-[node name="Checkpoint" type="Area2D" parent="Zonas/Zona4" unique_id=887481336]
+[node name="Checkpoint" parent="Zonas/Zona4" unique_id=887481336 instance=ExtResource("check")]
 position = Vector2(3060, 300)
-collision_layer = 0
-collision_mask = 2
-monitorable = false
-script = ExtResource("check")
 indice = 3
-cena_anel = ExtResource("anel")
 
-[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/Checkpoint" unique_id=77593870]
-shape = SubResource("Forma_4")
-
-[node name="Nota8" parent="Zonas/Zona4" unique_id=1996756549 instance=ExtResource("nota")]
+[node name="Nota9" parent="Zonas/Zona4" unique_id=1996756549 instance=ExtResource("nota")]
 position = Vector2(3320, 330)
-texto = "Tentei esta estante uma vez. É alta demais."
+texto = "Outros já tentaram pular esta estante. É alta demais."
 
-[node name="Nota9" parent="Zonas/Zona4" unique_id=327767215 instance=ExtResource("nota")]
+[node name="Nota10" parent="Zonas/Zona4" unique_id=327767215 instance=ExtResource("nota")]
 position = Vector2(3600, 540)
 texto = "Estas formigas só carregavam migalhas.
 Agora cospem ácido e não param. O fungo as move.
 Corte a gota com a agulha, ou desvie."
 
-[node name="DicaFormiga" type="Area2D" parent="Zonas/Zona4" unique_id=1694791990]
+[node name="DicaAtiradora" type="Area2D" parent="Zonas/Zona4" unique_id=1694791990]
 position = Vector2(3420, 500)
 collision_layer = 0
 collision_mask = 2
@@ -422,27 +1059,72 @@ texto = "Desvie com o [color=#ffd966]dash[/color] ou corte a gota com a agulha."
 acoes = PackedStringArray("dash", "cortou")
 atraso = 4.0
 
-[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/DicaFormiga" unique_id=757056381]
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/DicaAtiradora" unique_id=757056381]
 shape = SubResource("Forma_8")
 
-[node name="Zona5" type="Node2D" parent="Zonas" unique_id=747287216]
+[node name="FormigaAtiradora1" parent="Zonas/Zona4" unique_id=2037527258 instance=ExtResource("atiradora")]
+position = Vector2(3780, 260)
 
-[node name="Checkpoint" type="Area2D" parent="Zonas/Zona5" unique_id=1128351297]
-position = Vector2(4060, 300)
+[node name="Nota11" parent="Zonas/Zona4" unique_id=746110560 instance=ExtResource("nota")]
+position = Vector2(3200, 170)
+texto = "As operárias sempre carregaram migalhas.
+Agora usam como escudo. Elas demoram para virar."
+
+[node name="DicaOperaria" type="Area2D" parent="Zonas/Zona4" unique_id=1778404466]
+position = Vector2(3280, 300)
 collision_layer = 0
 collision_mask = 2
 monitorable = false
-script = ExtResource("check")
+script = ExtResource("dica")
+texto = "A migalha [color=#ffd966]bloqueia golpes de frente[/color].
+Dê o [color=#ffd966]dash[/color] para trás dela e ataque.
+Se ela investir e bater na parede, fica tonta!"
+acoes = PackedStringArray("acertou")
+atraso = 6.0
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/DicaOperaria" unique_id=1933218567]
+shape = SubResource("Forma_grande")
+
+[node name="FormigaOperaria1" parent="Zonas/Zona4" unique_id=763104326 instance=ExtResource("operaria")]
+position = Vector2(3400, 280)
+
+[node name="Nota12" parent="Zonas/Zona4" unique_id=43032983 instance=ExtResource("nota")]
+position = Vector2(3860, 545)
+texto = "O fungo infecta tudo que toca. Este ácaro cresceu demais.
+Quando o chão ficar vermelho, saia de perto"
+
+[node name="DicaAcaroGrande" type="Area2D" parent="Zonas/Zona4" unique_id=2076354777]
+position = Vector2(3760, 440)
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+script = ExtResource("dica")
+texto = "O [color=#ff6a5a]vermelho[/color] mostra onde ele vai bater.
+Saia da área com o [color=#ffd966]dash[/color] ou pule por cima.
+Depois da porrada ele fica preso: ataque!"
+acoes = PackedStringArray("dash", "super_pulo")
+
+[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona4/DicaAcaroGrande" unique_id=684807031]
+shape = SubResource("Forma_grande")
+
+[node name="AcaroGrande1" parent="Zonas/Zona4" unique_id=1453109765 instance=ExtResource("acaro_grande")]
+position = Vector2(3920, 440)
+
+[node name="Zona5" type="Node2D" parent="Zonas" unique_id=747287216]
+
+[node name="Checkpoint" parent="Zonas/Zona5" unique_id=1128351297 instance=ExtResource("check")]
+position = Vector2(4060, 300)
 indice = 4
-cena_anel = ExtResource("anel")
 
-[node name="Forma" type="CollisionShape2D" parent="Zonas/Zona5/Checkpoint" unique_id=701287396]
-shape = SubResource("Forma_4")
-
-[node name="Nota10" parent="Zonas/Zona5" unique_id=1063998970 instance=ExtResource("nota")]
+[node name="Nota13" parent="Zonas/Zona5" unique_id=1063998970 instance=ExtResource("nota")]
 position = Vector2(4200, 170)
 texto = "Toda pulga passa por esta luz.
 A Rainha sabe quando uma delas chega."
+
+[node name="Nota14" parent="Zonas/Zona5" unique_id=1152088152 instance=ExtResource("nota")]
+position = Vector2(5000, 440)
+texto = "Atrás da luz, a Rainha espera.
+Todas as outras entraram sozinhas."
 
 [node name="DicaOnda" type="Area2D" parent="Zonas/Zona5" unique_id=587033955]
 position = Vector2(4450, 300)
@@ -493,15 +1175,49 @@ cena = ExtResource("acaro")
 [node name="Spawn1" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda2" unique_id=642560112]
 position = Vector2(330, -180)
 script = ExtResource("spawn")
-cena = SubResource("Resource_lulp4")
+cena = ExtResource("atiradora")
 
 [node name="Spawn2" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda2" unique_id=466565950]
 position = Vector2(330, 180)
 script = ExtResource("spawn")
-cena = SubResource("Resource_q7mrq")
+cena = ExtResource("atiradora")
 
 [node name="Spawn3" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda2" unique_id=151715932]
 position = Vector2(200, 0)
+script = ExtResource("spawn")
+cena = ExtResource("acaro")
+
+[node name="Onda3" type="Node2D" parent="Zonas/Zona5/Arena/Ondas" unique_id=1758676449]
+
+[node name="Spawn1" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda3" unique_id=201936156]
+position = Vector2(300, -170)
+script = ExtResource("spawn")
+cena = ExtResource("operaria")
+
+[node name="Spawn2" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda3" unique_id=933824826]
+position = Vector2(300, 170)
+script = ExtResource("spawn")
+cena = ExtResource("operaria")
+
+[node name="Spawn3" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda3" unique_id=1193439444]
+position = Vector2(150, 0)
+script = ExtResource("spawn")
+cena = ExtResource("acaro")
+
+[node name="Onda4" type="Node2D" parent="Zonas/Zona5/Arena/Ondas" unique_id=402321602]
+
+[node name="Spawn1" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda4" unique_id=44471729]
+position = Vector2(250, 0)
+script = ExtResource("spawn")
+cena = ExtResource("acaro_grande")
+
+[node name="Spawn2" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda4" unique_id=595266742]
+position = Vector2(330, -180)
+script = ExtResource("spawn")
+cena = ExtResource("operaria")
+
+[node name="Spawn3" type="Marker2D" parent="Zonas/Zona5/Arena/Ondas/Onda4" unique_id=705681367]
+position = Vector2(330, 180)
 script = ExtResource("spawn")
 cena = ExtResource("acaro")
 
@@ -541,7 +1257,59 @@ scale_amount_min = 1.5
 scale_amount_max = 2.5
 color = Color(1, 0.92, 0.75, 0.25)
 
+[node name="PoeiraLuz" type="CPUParticles2D" parent="." unique_id=1066665583]
+position = Vector2(1800, 300)
+amount = 70
+lifetime = 7.0
+preprocess = 7.0
+emission_shape = 3
+emission_rect_extents = Vector2(260, 140)
+direction = Vector2(0.3, 1)
+spread = 60.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 3.0
+initial_velocity_max = 9.0
+scale_amount_min = 1.5
+scale_amount_max = 3.5
+color = Color(1, 0.95, 0.75, 0.55)
+color_ramp = SubResource("GradFade")
+
+[node name="Esporos" type="CPUParticles2D" parent="." unique_id=1901188086]
+position = Vector2(4300, 300)
+amount = 90
+lifetime = 9.0
+preprocess = 9.0
+emission_shape = 3
+emission_rect_extents = Vector2(1000, 310)
+direction = Vector2(0, -1)
+spread = 35.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 5.0
+initial_velocity_max = 14.0
+scale_amount_min = 1.5
+scale_amount_max = 3.0
+color = Color(0.6, 1, 0.65, 0.5)
+color_ramp = SubResource("GradFade")
+
+[node name="SonoAcaros" type="CPUParticles2D" parent="." unique_id=1031235384]
+position = Vector2(2865, 300)
+amount = 6
+lifetime = 3.0
+preprocess = 3.0
+emission_shape = 3
+emission_rect_extents = Vector2(45, 30)
+direction = Vector2(0.3, -1)
+spread = 20.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 8.0
+initial_velocity_max = 14.0
+scale_amount_min = 1.5
+scale_amount_max = 2.5
+color = Color(0.7, 0.8, 1, 0.6)
+color_ramp = SubResource("GradFade")
+
 [node name="SombraSofa" type="Sprite2D" parent="." unique_id=1071502772]
+modulate = Color(1, 1, 1, 0.3)
 texture = SubResource("TexSombra")
 centered = false
 
@@ -571,3 +1339,39 @@ theme_override_colors/font_color = Color(1, 0.92, 0.8, 1)
 theme_override_font_sizes/font_size = 28
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="AvisoFase" type="Control" parent="Transicao" unique_id=1345670482]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 70.0
+offset_bottom = 140.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Nome" type="Label" parent="Transicao/AvisoFase" unique_id=2140888116]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 48.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.04, 0.05, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Linha" type="ColorRect" parent="Transicao/AvisoFase" unique_id=1098895396]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -140.0
+offset_top = 54.0
+offset_right = 140.0
+offset_bottom = 55.0
+grow_horizontal = 2
+mouse_filter = 2
+color = Color(1, 0.85, 0.6, 0.5)

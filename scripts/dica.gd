@@ -1,11 +1,8 @@
 class_name Dica
 extends Area2D
 
-# ajuda que so aparece se o jogador ficar parado na area sem fazer a acao
 @export_multiline var texto := ""
-# acoes que completam a dica (dash, atacar, acertou, execucao, cortou, super_pulo, pouso, esmagou, habilidade)
 @export var acoes := PackedStringArray()
-# segundos dentro da area ate a dica aparecer
 @export var atraso := 5.0
 
 var dentro := false
@@ -25,12 +22,15 @@ func _process(delta: float) -> void:
 	if not dentro or feita or mostrando:
 		return
 	tempo += delta
-	if tempo >= atraso:
+	if tempo < atraso:
+		return
+	var painel := _painel()
+	if painel:
 		mostrando = true
-		_painel().mostrar(self, texto)
+		painel.mostrar(self, texto)
 
 
-func _painel() -> PainelDica:
+func _painel() -> Node:
 	return get_tree().get_first_node_in_group("painel_dica")
 
 
@@ -46,14 +46,17 @@ func _ao_sair(corpo: Node2D) -> void:
 	dentro = false
 	if mostrando:
 		mostrando = false
-		_painel().esconder(self)
+		var painel := _painel()
+		if painel:
+			painel.esconder(self)
 
 
-# se o jogador ja fez a acao sozinho a dica nunca aparece
 func _ao_acao(nome: StringName) -> void:
 	if not dentro or feita or not (String(nome) in acoes):
 		return
 	feita = true
 	if mostrando:
 		mostrando = false
-		_painel().concluir(self)
+		var painel := _painel()
+		if painel:
+			painel.concluir(self)

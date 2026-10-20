@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
+[ext_resource type="PackedScene" path="res://cenas/fx_pelos.tscn" id="2_fx"]
+
+[sub_resource type="PlaceholderTexture2D" id="TexFio"]
+size = Vector2(2, 20)
+
+[sub_resource type="CircleShape2D" id="Forma"]
+radius = 16.0
+
+[node name="TufoPelo" type="StaticBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_obj")
+vida = 0
+reacao = 1
+reagir_ao_passar = true
+fx_hit = ExtResource("2_fx")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Fio1" type="Sprite2D" parent="Visual"]
+modulate = Color(0.62, 0.46, 0.32, 0.8)
+position = Vector2(-5, 0)
+rotation = -0.5
+texture = SubResource("TexFio")
+
+[node name="Fio2" type="Sprite2D" parent="Visual"]
+modulate = Color(0.55, 0.4, 0.28, 0.8)
+position = Vector2(0, 2)
+texture = SubResource("TexFio")
+
+[node name="Fio3" type="Sprite2D" parent="Visual"]
+modulate = Color(0.68, 0.5, 0.35, 0.8)
+position = Vector2(5, 0)
+rotation = 0.45
+texture = SubResource("TexFio")
+
+[node name="Fio4" type="Sprite2D" parent="Visual"]
+modulate = Color(0.58, 0.43, 0.3, 0.8)
+position = Vector2(9, 3)
+rotation = 0.9
+texture = SubResource("TexFio")
+
+[node name="Contato" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Forma" type="CollisionShape2D" parent="Contato"]
+shape = SubResource("Forma")

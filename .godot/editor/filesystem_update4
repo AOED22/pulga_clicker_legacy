@@ -1,5 +1,8 @@
-res://scripts/acaro.gd
-res://scripts/gota_acida.gd
-res://scripts/inimigo.gd
-res://cenas/main.tscn
-res://cenas/tapete_velho.tscn
+res://cenas/fx_esporos.tscn
+res://cenas/fx_acido.tscn
+res://cenas/fx_migalhas.tscn
+res://cenas/fx_hit.tscn
+res://cenas/fx_morte.tscn
+res://cenas/fx_pelos.tscn
+res://cenas/fx_poeira.tscn
+res://cenas/fx_sangue.tscn

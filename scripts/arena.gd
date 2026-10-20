@@ -22,7 +22,6 @@ func _ao_entrar(corpo: Node2D) -> void:
 	if iniciada or not (corpo is Jogador):
 		return
 	iniciada = true
-	# os portoes fecham e a barra de poder vem cheia
 	for portao: Portao in portoes.get_children():
 		portao.fechar()
 	jogador.poder = jogador.poder_max
@@ -37,7 +36,6 @@ func _proxima_onda() -> void:
 	var onda := ondas.get_child(indice)
 	indice += 1
 	vivos = onda.get_child_count()
-	# os inimigos nascem um de cada vez
 	for filho in onda.get_children():
 		var ponto := filho as SpawnInimigo
 		var inimigo: Inimigo = ponto.cena.instantiate()

@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="2_hit"]
+[ext_resource type="PackedScene" path="res://cenas/fx_migalhas.tscn" id="3_que"]
+
+[sub_resource type="RectangleShape2D" id="Forma"]
+size = Vector2(32, 32)
+
+[sub_resource type="PlaceholderTexture2D" id="Tex"]
+size = Vector2(32, 32)
+
+[node name="Caixa" type="StaticBody2D"]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("1_obj")
+vida = 3
+fx_hit = ExtResource("2_hit")
+fx_quebra = ExtResource("3_que")
+tremor_quebra = 0.2
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+shape = SubResource("Forma")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+modulate = Color(0.55, 0.4, 0.25, 1)
+texture = SubResource("Tex")

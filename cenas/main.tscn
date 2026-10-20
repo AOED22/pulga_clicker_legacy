@@ -1,14 +1,12 @@
 [gd_scene format=3 uid="uid://b01ox4avjqi8y"]
 
 [ext_resource type="Script" uid="uid://2tiyc3lsofn5" path="res://scripts/main.gd" id="1_main"]
-[ext_resource type="PackedScene" uid="uid://s7kovbrw6wnn" path="res://cenas/jogador.tscn" id="2_jog"]
-[ext_resource type="PackedScene" uid="uid://d0c02m54jnxih" path="res://cenas/acaro.tscn" id="3_aca"]
+[ext_resource type="PackedScene" path="res://cenas/jogador.tscn" id="2_jog"]
+[ext_resource type="PackedScene" path="res://cenas/acaro.tscn" id="3_aca"]
 [ext_resource type="PackedScene" path="res://cenas/obstaculo.tscn" id="4_obs"]
-[ext_resource type="PackedScene" uid="uid://c6y1di07u2vlw" path="res://cenas/hud.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://cenas/hud.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="6_fxp"]
-
-[sub_resource type="Resource" id="Resource_bhvw8"]
-metadata/__load_path__ = "res://cenas/formiga.tscn"
+[ext_resource type="PackedScene" path="res://cenas/formiga_atiradora.tscn" id="7_for"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_Topo"]
 size = Vector2(1800, 100)
@@ -25,7 +23,7 @@ size = Vector2(100, 1200)
 [node name="Main" type="Node2D" unique_id=1294752233]
 script = ExtResource("1_main")
 cena_acaro = ExtResource("3_aca")
-cena_formiga = SubResource("Resource_bhvw8")
+cena_atiradora = ExtResource("7_for")
 fx_spawn = ExtResource("6_fxp")
 
 [node name="Chao" type="Polygon2D" parent="." unique_id=360909430]

@@ -1,0 +1,89 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/acaro_grande.gd" id="1_ag"]
+[ext_resource type="Texture2D" uid="uid://dtm5h7gbcgfik" path="res://artes/placeholders/italo.jpg" id="2_tex"]
+[ext_resource type="PackedScene" path="res://cenas/fx_morte.tscn" id="3_fxm"]
+[ext_resource type="PackedScene" path="res://cenas/anel_choque.tscn" id="4_anel"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="5_fxp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
+radius = 26.0
+
+[sub_resource type="Gradient" id="GradArea"]
+offsets = PackedFloat32Array(0, 0.9, 0.94, 1)
+colors = PackedColorArray(1, 0.15, 0.1, 0.2, 1, 0.15, 0.1, 0.2, 1, 0.3, 0.2, 0.85, 1, 0.3, 0.2, 0)
+
+[sub_resource type="GradientTexture2D" id="TexArea"]
+gradient = SubResource("GradArea")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="GradPreenche"]
+offsets = PackedFloat32Array(0, 0.95, 1)
+colors = PackedColorArray(1, 0.1, 0.05, 0.5, 1, 0.1, 0.05, 0.5, 1, 0.1, 0.05, 0)
+
+[sub_resource type="GradientTexture2D" id="TexPreenche"]
+gradient = SubResource("GradPreenche")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="GradSombra"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0, 0, 0, 0.5, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="TexSombra"]
+gradient = SubResource("GradSombra")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="AcaroGrande" type="CharacterBody2D" groups=["inimigos"]]
+collision_layer = 4
+collision_mask = 9
+motion_mode = 1
+script = ExtResource("1_ag")
+vida = 8
+alcance_contato = 46.0
+recarga_contato = 1.2
+tempo_atordoamento = 0.12
+atrito_impulso = 1400.0
+resistencia_empurrao = 0.35
+atordoamento_spawn = 0.9
+raio_separacao = 70.0
+forca_separacao = 160.0
+fx_morte = ExtResource("3_fxm")
+cena_anel = ExtResource("4_anel")
+fx_poeira = ExtResource("5_fxp")
+fx_dano = ExtResource("5_fxp")
+
+[node name="Alerta" type="Node2D" parent="."]
+top_level = true
+
+[node name="Area" type="Sprite2D" parent="Alerta"]
+texture = SubResource("TexArea")
+
+[node name="Preenchimento" type="Sprite2D" parent="Alerta"]
+texture = SubResource("TexPreenche")
+
+[node name="Sombra" type="Sprite2D" parent="."]
+position = Vector2(0, 14)
+scale = Vector2(1.5, 0.75)
+texture = SubResource("TexSombra")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+position = Vector2(1.2, -1.2)
+scale = Vector2(0.048, 0.036)
+texture = ExtResource("2_tex")
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_corpo")

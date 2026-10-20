@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
+[ext_resource type="Script" path="res://scripts/luz_pulsante.gd" id="2_luz"]
+[ext_resource type="PackedScene" path="res://cenas/fx_esporos.tscn" id="3_fx"]
+
+[sub_resource type="PlaceholderTexture2D" id="TexHaste"]
+size = Vector2(3, 16)
+
+[sub_resource type="PlaceholderTexture2D" id="TexChapeu"]
+size = Vector2(9, 5)
+
+[sub_resource type="Gradient" id="GradLuz"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.35, 0.35, 0.35, 0.35, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="TexLuz"]
+gradient = SubResource("GradLuz")
+width = 256
+height = 256
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="Fungo" type="StaticBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_obj")
+fx_hit = ExtResource("3_fx")
+fx_quebra = ExtResource("3_fx")
+tremor_quebra = 0.0
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Haste1" type="Sprite2D" parent="Visual"]
+modulate = Color(0.5, 0.4, 0.55, 1)
+position = Vector2(0, -8)
+texture = SubResource("TexHaste")
+
+[node name="Chapeu1" type="Sprite2D" parent="Visual"]
+modulate = Color(0.9, 1.7, 0.8, 1)
+position = Vector2(0, -17)
+texture = SubResource("TexChapeu")
+
+[node name="Haste2" type="Sprite2D" parent="Visual"]
+modulate = Color(0.45, 0.35, 0.5, 1)
+position = Vector2(8, -5)
+rotation = 0.35
+scale = Vector2(1, 0.65)
+texture = SubResource("TexHaste")
+
+[node name="Chapeu2" type="Sprite2D" parent="Visual"]
+modulate = Color(0.8, 1.5, 0.7, 1)
+position = Vector2(10, -11)
+scale = Vector2(0.8, 0.8)
+texture = SubResource("TexChapeu")
+
+[node name="Luz" type="PointLight2D" parent="."]
+position = Vector2(4, -10)
+color = Color(0.55, 1, 0.65, 1)
+energy = 0.45
+texture = SubResource("TexLuz")
+texture_scale = 0.55
+script = ExtResource("2_luz")

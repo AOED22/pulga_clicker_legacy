@@ -9,7 +9,6 @@ var raio := 80.0
 
 
 func _ready() -> void:
-	# Cresce ate o raio final e some
 	var escala_final := raio * 2.0 / sprite.texture.get_size().x
 	scale = Vector2.ONE * 0.1
 	var tween := create_tween().set_parallel()

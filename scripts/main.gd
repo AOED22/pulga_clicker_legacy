@@ -1,7 +1,7 @@
 extends Node2D
 
 @export var cena_acaro: PackedScene
-@export var cena_formiga: PackedScene
+@export var cena_atiradora: PackedScene
 @export var fx_spawn: PackedScene
 @export var limites := Rect2i(0, 0, 1600, 1000)
 @export var entre_ondas := 3.0
@@ -22,7 +22,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	# Quando nao sobra inimigo, espera um pouco e chama a proxima onda
 	if get_tree().get_nodes_in_group("inimigos").is_empty():
 		espera += delta
 		if espera >= entre_ondas:
@@ -34,7 +33,6 @@ func _unhandled_input(evento: InputEvent) -> void:
 		get_tree().reload_current_scene()
 
 
-# Cria os inimigos nos pontos de spawn (cada onda traz mais um acaro)
 func _gerar_onda() -> void:
 	onda += 1
 	espera = 0.0
@@ -42,10 +40,9 @@ func _gerar_onda() -> void:
 	for i in acaros_base + onda:
 		var ponto: Marker2D = pontos[i % pontos.size()]
 		_criar_inimigo(cena_acaro, ponto)
-	# A partir da segunda onda chegam formigas
 	for i in mini(onda - 1, formigas_max):
 		var ponto: Marker2D = pontos[(i + 3) % pontos.size()]
-		_criar_inimigo(cena_formiga, ponto)
+		_criar_inimigo(cena_atiradora, ponto)
 
 
 func _criar_inimigo(cena: PackedScene, ponto: Marker2D) -> void:

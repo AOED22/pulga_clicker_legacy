@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
+[ext_resource type="PackedScene" path="res://cenas/fx_migalhas.tscn" id="2_fx"]
+
+[sub_resource type="PlaceholderTexture2D" id="Tex"]
+size = Vector2(16, 16)
+
+[sub_resource type="CircleShape2D" id="Forma"]
+radius = 24.0
+
+[node name="Migalha" type="StaticBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_obj")
+quebra_no_dash = true
+fx_quebra = ExtResource("2_fx")
+tremor_quebra = 0.0
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+modulate = Color(1.5, 1.3, 0.75, 0.9)
+texture = SubResource("Tex")
+
+[node name="Contato" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Forma" type="CollisionShape2D" parent="Contato"]
+shape = SubResource("Forma")

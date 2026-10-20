@@ -1,7 +1,6 @@
 class_name FormigaAtiradora
 extends Inimigo
 
-# formiga atiradora: mantem distancia e cospe acido (o acaro e o corpo a corpo)
 enum Estado { ANDANDO, MIRANDO, RECUPERANDO }
 
 @export_group("Movimento")
@@ -32,12 +31,10 @@ var olhando := Vector2.RIGHT
 
 func _ready() -> void:
 	super()
-	# tempos diferentes para as formigas nao atirarem juntas
 	recarga = randf_range(0.8, 1.6)
 	lado = 1.0 if randf() < 0.5 else -1.0
 
 
-# levar dano interrompe a mira e atrasa o proximo cuspe
 func _ao_ser_atingido() -> void:
 	recarga = maxf(recarga, 0.9)
 	estado = Estado.ANDANDO
@@ -58,12 +55,10 @@ func _comportamento(delta: float) -> Vector2:
 					estado = Estado.MIRANDO
 					tempo_estado = tempo_mira
 					return Vector2.ZERO
-				# sem visao: chega mais perto para achar um angulo
 				return direcao * velocidade
 			return _manter_distancia(direcao, distancia) + _separacao()
 		Estado.MIRANDO:
 			tempo_estado -= delta
-			# a mira acompanha o jogador e trava no final (da tempo de desviar)
 			if tempo_estado > tempo_travar_mira:
 				olhando = direcao
 			if tempo_estado <= 0.0:
@@ -77,7 +72,6 @@ func _comportamento(delta: float) -> Vector2:
 	return Vector2.ZERO
 
 
-# anda para ficar na distancia ideal, rodeando o jogador de lado
 func _manter_distancia(direcao: Vector2, distancia: float) -> Vector2:
 	var lateral := direcao.orthogonal() * lado
 	if distancia < distancia_min:
@@ -87,7 +81,6 @@ func _manter_distancia(direcao: Vector2, distancia: float) -> Vector2:
 	return lateral * velocidade * 0.6
 
 
-# so atira se nao tiver parede ou obstaculo no caminho
 func _tem_visao() -> bool:
 	var consulta := PhysicsRayQueryParameters2D.create(global_position, jogador.global_position, 9)
 	return get_world_2d().direct_space_state.intersect_ray(consulta).is_empty()
@@ -96,7 +89,6 @@ func _tem_visao() -> bool:
 func _cuspir() -> void:
 	recarga = recarga_cuspe
 	lado = -lado
-	# recuo e amassadinho junto com o cuspe
 	impulso = -olhando * recuo_cuspe
 	visual.scale = Vector2(1.3, 0.7)
 	Efeitos.tremer(0.1)
@@ -117,25 +109,19 @@ func _atualizar_visual(delta: float) -> void:
 			if velocity.length() > 10.0:
 				pulinho = absf(sin(tempo * 14.0)) * 1.5
 		Estado.MIRANDO:
-			# levanta o corpo e pisca em verde antes de cuspir
 			escala_alvo = Vector2(0.85, 1.3)
 			if int(tempo * 20.0) % 2 == 0:
 				cor = Color(0.8, 1.7, 0.7)
 		Estado.RECUPERANDO:
 			escala_alvo = Vector2(1.2, 0.8)
 
-	# amarelo piscando = enfraquecido (pode ser executado)
-	if enfraquecido() and estado != Estado.MIRANDO:
-		cor = Color.WHITE.lerp(Color(1.6, 1.4, 0.6), 0.5 + 0.5 * sin(tempo * 12.0))
-	if flash > 0.0:
-		cor = Color(3.0, 3.0, 3.0)
+	cor = _cor_com_status(cor, estado == Estado.MIRANDO)
 
 	visual.scale = visual.scale.lerp(escala_alvo, suavizacao)
 	visual.position.y = -pulinho
 	visual.modulate = cor
 	sprite.rotation = lerp_angle(sprite.rotation, olhando.angle(), suavizacao)
 
-	# linha que mostra para onde o cuspe vai (fica forte quando trava)
 	mira.visible = estado == Estado.MIRANDO
 	mira.rotation = olhando.angle()
 	mira.modulate.a = 1.0 if tempo_estado <= tempo_travar_mira else 0.45

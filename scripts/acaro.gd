@@ -23,7 +23,6 @@ func _ao_ser_atingido() -> void:
 	_mudar_estado(Estado.PERSEGUINDO)
 
 
-# persegue, prepara, investe e descansa
 func _comportamento(delta: float) -> Vector2:
 	var ate := jogador.global_position - global_position
 	var distancia := ate.length()
@@ -35,7 +34,6 @@ func _comportamento(delta: float) -> Vector2:
 			elif distancia < alcance_visao:
 				return direcao * velocidade + _separacao()
 		Estado.PREPARANDO:
-			# fica parado avisando o ataque (da tempo de desviar)
 			tempo_estado -= delta
 			if tempo_estado <= 0.0:
 				direcao_investida = direcao
@@ -74,18 +72,13 @@ func _atualizar_visual(delta: float) -> void:
 			if velocity.length() > 10.0:
 				pulinho = absf(sin(tempo * 12.0)) * 2.0
 		Estado.PREPARANDO:
-			# encolhe e pisca em vermelho antes de investir
 			escala_alvo = Vector2(1.25, 0.75)
 			if int(tempo * 20.0) % 2 == 0:
 				cor = Color(1.8, 0.7, 0.7)
 		Estado.INVESTINDO:
 			escala_alvo = Vector2(0.8, 1.25)
 
-	# amarelo piscando = enfraquecido (pode ser executado)
-	if enfraquecido() and estado != Estado.PREPARANDO:
-		cor = Color.WHITE.lerp(Color(1.6, 1.4, 0.6), 0.5 + 0.5 * sin(tempo * 12.0))
-	if flash > 0.0:
-		cor = Color(3.0, 3.0, 3.0)
+	cor = _cor_com_status(cor, estado == Estado.PREPARANDO)
 
 	visual.scale = visual.scale.lerp(escala_alvo, suavizacao)
 	visual.position.y = -pulinho

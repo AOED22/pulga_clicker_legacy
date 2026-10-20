@@ -1,8 +1,6 @@
-class_name PainelDica
 extends CanvasLayer
 
 var tween: Tween
-# quem esta usando o painel agora
 var dono: Object
 
 @onready var painel: PanelContainer = $Margem/Centro/Painel
@@ -21,7 +19,6 @@ func mostrar(quem: Object, bbcode: String) -> void:
 	_animar(1.0, 0.0)
 
 
-# o jogador fez o que a dica pedia: brilha em verde e some
 func concluir(quem: Object) -> void:
 	if dono != quem:
 		return
@@ -30,7 +27,7 @@ func concluir(quem: Object) -> void:
 	_animar(0.0, 0.5)
 
 
-func esconder(quem) -> void:
+func esconder(quem: Object) -> void:
 	if dono != quem:
 		return
 	dono = null

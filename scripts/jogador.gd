@@ -1,20 +1,12 @@
 class_name Jogador
 extends CharacterBody2D
 
-# Avisam a HUD quando vida ou poder mudam
 signal vida_mudou(valor: int, maximo: int)
 signal poder_mudou(valor: float)
-# Avisa o que o jogador acabou de fazer (o tutorial usa para completar as dicas)
 signal acao_feita(nome: StringName)
 
-enum Estado { 
- LIVRE,
- DASH, 
- CARGA, 
- PULO
- }
+enum Estado { LIVRE, DASH, CARGA, PULO }
 
-# Camada de fisica dos obstaculos (o super pulo passa por cima deles)
 var camada_obstaculo := 8
 
 @export_group("Movimento")
@@ -26,7 +18,7 @@ var camada_obstaculo := 8
 @export_group("Dash")
 @export var dash_velocidade := 720.0
 @export var dash_duracao := 0.18
-@export var dash_recarga := 0.4
+@export var dash_recarga := 0.8
 @export var dash_graca := 0.06
 @export var fantasma_intervalo := 0.03
 @export var buffer_tempo := 0.12
@@ -46,7 +38,7 @@ var camada_obstaculo := 8
 @export_group("Combate")
 @export var vida_max := 10
 @export var poder_max := 100.0
-@export var ataque_recarga := 0.3
+@export var ataque_recarga := 0.5
 @export var ataque_alcance := 72.0
 @export var ataque_arco := 0.9
 @export var ataque_forca := 320.0
@@ -107,6 +99,7 @@ var buffer_dash := 0.0
 var mascara_base := 0
 var bateu_parede := false
 var tween_ataque: Tween
+var luz_base := 0.3
 
 @onready var colisao: CollisionShape2D = $Colisao
 @onready var visual: Node2D = $Visual
@@ -116,6 +109,7 @@ var tween_ataque: Tween
 @onready var efeito_ataque: Node2D = $EfeitoAtaque
 @onready var poeira: CPUParticles2D = $Poeira
 @onready var camera: CameraJogador = $Camera2D
+@onready var luz: PointLight2D = $Luz
 @onready var escala_sombra := sombra.scale
 
 
@@ -135,7 +129,6 @@ func _physics_process(delta: float) -> void:
 	var entrada := Input.get_vector("esquerda", "direita", "cima", "baixo")
 	if entrada != Vector2.ZERO:
 		olhando = entrada.normalized()
-	# Guarda o dash apertado um pouco antes da hora
 	if Input.is_action_just_pressed("dash"):
 		buffer_dash = buffer_tempo
 	match estado:
@@ -151,7 +144,11 @@ func _physics_process(delta: float) -> void:
 
 
 func _atualizar_temporizadores(delta: float) -> void:
+	var tinha_recarga_dash := recarga_dash > 0.0
 	recarga_dash = maxf(recarga_dash - delta, 0.0)
+	if tinha_recarga_dash and recarga_dash <= 0.0 and not morto:
+		visual.scale = Vector2(1.15, 0.9)
+		luz.energy += 0.3
 	recarga_ataque = maxf(recarga_ataque - delta, 0.0)
 	invencibilidade = maxf(invencibilidade - delta, 0.0)
 	graca_dash = maxf(graca_dash - delta, 0.0)
@@ -160,7 +157,9 @@ func _atualizar_temporizadores(delta: float) -> void:
 	buffer_dash = maxf(buffer_dash - delta, 0.0)
 
 
-# Dano 
+func em_dash() -> bool:
+	return estado == Estado.DASH
+
 
 func pode_ser_atingido() -> bool:
 	return not morto and invencibilidade <= 0.0 and graca_dash <= 0.0 and estado != Estado.DASH and altura < altura_imune
@@ -189,14 +188,13 @@ func _morrer() -> void:
 	morto = true
 	visual.visible = false
 	sombra.visible = false
+	luz.visible = false
 	Efeitos.criar(fx_sangue, global_position)
 	Efeitos.tremer(1.0)
 	Efeitos.hit_stop(0.6, 0.15)
 	await get_tree().create_timer(1.2, true, false, true).timeout
 	get_tree().reload_current_scene()
 
-
-# Estados
 
 func _livre(entrada: Vector2, delta: float) -> void:
 	_mover(entrada * velocidade, delta)
@@ -213,7 +211,6 @@ func _livre(entrada: Vector2, delta: float) -> void:
 		_habilidade()
 
 
-# Acelera e freia suavao
 func _mover(alvo: Vector2, delta: float) -> void:
 	if atordoado > 0.0:
 		alvo = Vector2.ZERO
@@ -236,7 +233,6 @@ func _iniciar_dash(entrada: Vector2) -> void:
 
 func _dash(delta: float) -> void:
 	tempo_estado -= delta
-	# O dash começa rapido e desacelera no final
 	var progresso := 1.0 - tempo_estado / dash_duracao
 	velocity = direcao_dash * dash_velocidade * lerpf(1.0, 0.3, progresso * progresso)
 	move_and_slide()
@@ -246,7 +242,6 @@ func _dash(delta: float) -> void:
 		graca_dash = dash_graca
 
 
-# Deixa uma copia do sprite para tras durante o dash
 func _criar_fantasma(delta: float) -> void:
 	tempo_fantasma -= delta
 	if tempo_fantasma > 0.0:
@@ -277,7 +272,6 @@ func _iniciar_pulo(entrada: Vector2) -> void:
 	distancia_pulo = lerpf(pulo_distancia_min, pulo_distancia_max, carga / carga_max)
 	estado = Estado.PULO
 	tempo_estado = 0.0
-	# Durante o pulo ignora obstaculos baixos
 	collision_mask = mascara_base & ~camada_obstaculo
 	visual.scale = Vector2(0.7, 1.35)
 	Efeitos.criar(fx_poeira, global_position)
@@ -291,7 +285,6 @@ func _pulo(delta: float) -> void:
 	altura = sin(t * PI) * pulo_altura
 	velocity = direcao_pulo * (distancia_pulo / pulo_duracao)
 	move_and_slide()
-	# Bateu numa parede alta no meio do pulo
 	if not bateu_parede and get_slide_collision_count() > 0:
 		bateu_parede = true
 		Efeitos.tremer(0.35)
@@ -311,14 +304,13 @@ func _aterrissar() -> void:
 	visual.scale = Vector2(1.5, 0.55)
 	Efeitos.criar(fx_poeira, global_position)
 	Efeitos.tremer(0.55)
-	_mostrar_anel(pouso_raio)
+	Efeitos.criar_anel(cena_anel, global_position, pouso_raio)
 	acao_feita.emit(&"pouso")
 	if _atingir_inimigos(pouso_raio, pouso_dano, pouso_forca) > 0:
 		Efeitos.hit_stop(0.07)
 		acao_feita.emit(&"esmagou")
 
 
-# Empurra o jogador para fora caso tenha pousado dentro de um obstaculo
 func _sair_de_obstaculo() -> void:
 	var tentativas := 0
 	while _preso_em_obstaculo() and tentativas < 80:
@@ -334,23 +326,26 @@ func _preso_em_obstaculo() -> bool:
 	return not get_world_2d().direct_space_state.intersect_shape(consulta, 1).is_empty()
 
 
-# Combate 
-
 func _atacar() -> void:
 	recarga_ataque = ataque_recarga
 	direcao_ataque = (get_global_mouse_position() - global_position).normalized()
 	if direcao_ataque == Vector2.ZERO:
 		direcao_ataque = olhando
 	olhando = direcao_ataque
-	# Da um pequeno avanço junto com o golpe
 	velocity += direcao_ataque * ataque_avanco
 	_mostrar_efeito_ataque()
 	acao_feita.emit(&"atacar")
 
 	var acertou := false
 	var matou := false
+	var bloqueou := false
 	for alvo: Inimigo in get_tree().get_nodes_in_group("inimigos"):
 		if not _no_arco(alvo):
+			continue
+		if alvo.bloqueia(direcao_ataque):
+			alvo.receber_bloqueio(direcao_ataque * ataque_forca)
+			velocity -= direcao_ataque * 200.0
+			bloqueou = true
 			continue
 		var fraco := alvo.enfraquecido()
 		var morreu := alvo.receber_dano(1, direcao_ataque * ataque_forca)
@@ -361,12 +356,22 @@ func _atacar() -> void:
 		_sugar(fraco)
 		acertou = true
 		matou = matou or morreu
+	if bloqueou and not acertou:
+		acao_feita.emit(&"bloqueado")
 	if acertou:
 		acao_feita.emit(&"acertou")
 		Efeitos.hit_stop(0.09 if matou else 0.045)
 		Efeitos.tremer(0.4 if matou else 0.2)
 
-	# a agulha tambem corta as gotas de acido que estiverem no arco
+	var bateu := false
+	for objeto: ObjetoCenario in get_tree().get_nodes_in_group("objetos"):
+		if not _no_arco(objeto):
+			continue
+		objeto.atingido(direcao_ataque)
+		bateu = true
+	if bateu and not acertou:
+		Efeitos.tremer(0.08)
+
 	var cortou := false
 	for gota: GotaAcida in get_tree().get_nodes_in_group("projeteis"):
 		if not _no_arco(gota):
@@ -386,7 +391,6 @@ func _no_arco(alvo: Node2D) -> bool:
 	return ate.length() <= ataque_alcance and absf(direcao_ataque.angle_to(ate.normalized())) <= ataque_arco
 
 
-# Cada golpe enche a segunda barra, e matar um inimigo fraco cura
 func _sugar(executou: bool) -> void:
 	poder += poder_por_golpe
 	if executou:
@@ -400,13 +404,12 @@ func _habilidade() -> void:
 	poder -= custo_habilidade
 	acao_feita.emit(&"habilidade")
 	visual.scale = Vector2(1.3, 0.8)
-	_mostrar_anel(onda_raio)
+	Efeitos.criar_anel(cena_anel, global_position, onda_raio)
 	Efeitos.tremer(0.5)
 	if _atingir_inimigos(onda_raio, onda_dano, onda_forca) > 0:
 		Efeitos.hit_stop(0.06)
 
 
-# Da dano todos os inimigos dentro do raio e devolve quantos foram atingidos
 func _atingir_inimigos(raio: float, dano: int, forca: float) -> int:
 	var acertos := 0
 	for alvo: Inimigo in get_tree().get_nodes_in_group("inimigos"):
@@ -416,18 +419,11 @@ func _atingir_inimigos(raio: float, dano: int, forca: float) -> int:
 		alvo.receber_dano(dano, ate.normalized() * forca)
 		Efeitos.criar(fx_hit, alvo.global_position, ate.angle())
 		acertos += 1
+	for objeto: ObjetoCenario in get_tree().get_nodes_in_group("objetos"):
+		var ate := objeto.global_position - global_position
+		if ate.length() <= raio:
+			objeto.atingido(ate.normalized())
 	return acertos
-
-
-
-
-#  Visual 
-
-func _mostrar_anel(raio: float) -> void:
-	var anel: AnelChoque = cena_anel.instantiate()
-	anel.raio = raio
-	anel.position = global_position
-	get_parent().add_child(anel)
 
 
 func _mostrar_efeito_ataque() -> void:
@@ -446,38 +442,38 @@ func _mostrar_efeito_ataque() -> void:
 func _atualizar_visual(delta: float) -> void:
 	var suavizacao := 1.0 - exp(-18.0 * delta)
 
-	# Altura do pulo e sombra no chao
 	visual.position.y = -altura - _balanco_andando(delta)
 	sombra.scale = escala_sombra * maxf(1.0 - altura / (pulo_altura * 2.0), 0.5)
 
-	# Boing boing, volta sozinho ao normal
 	var escala_alvo := Vector2.ONE
 	if estado == Estado.CARGA:
 		var forca := carga / carga_max
 		escala_alvo = Vector2(1.0 + 0.2 * forca, 1.0 - 0.3 * forca)
 	visual.scale = visual.scale.lerp(escala_alvo, suavizacao)
 
-	# O sprite vira suavemente para onde o jogador olha
 	if girar_sprite:
 		sprite.rotation = lerp_angle(sprite.rotation, olhando.angle(), suavizacao)
 
-	# Flash ao levar dano e piscar durante os iframes
 	var piscando := invencibilidade > 0.0 and int(invencibilidade * 20.0) % 2 == 0
 	if flash > 0.0:
 		visual.modulate = Color(3.0, 3.0, 3.0)
 	else:
 		visual.modulate = Color(1.0, 1.0, 1.0, 0.4 if piscando else 1.0)
 
-	# Barra de carga do super pulo
 	indicador_carga.visible = estado == Estado.CARGA
 	indicador_carga.scale.x = maxf(carga / carga_max, 0.01)
 	indicador_carga.self_modulate = cor_carga_cheia if carga >= carga_max else cor_carga
 
-	# Poeira so enquanto corre no chao
+	var luz_alvo := luz_base
+	if estado == Estado.CARGA:
+		luz_alvo = luz_base + 0.7 * carga / carga_max
+	elif estado == Estado.DASH:
+		luz_alvo = luz_base + 0.6
+	luz.energy = lerpf(luz.energy, luz_alvo, suavizacao)
+
 	poeira.emitting = estado == Estado.LIVRE and velocity.length() > velocidade * 0.5
 
 
-# mini pulinho a cada passo
 func _balanco_andando(delta: float) -> float:
 	if estado != Estado.LIVRE or altura > 0.0:
 		return 0.0

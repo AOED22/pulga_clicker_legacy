@@ -9,7 +9,6 @@ var tween: Tween
 @onready var visual: Node2D = $Visual
 
 
-# comeca aberto
 func _ready() -> void:
 	colisao.disabled = true
 	visual.visible = false

@@ -1,18 +1,16 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://d37lmh314j6hs"]
 
-[ext_resource type="Script" path="res://scripts/fx_particulas.gd" id="1_fx"]
+[ext_resource type="Script" uid="uid://cx2w3ehw0gul3" path="res://scripts/fx_particulas.gd" id="1_fx"]
 
 [sub_resource type="Gradient" id="Gradient_fx_poeira"]
-offsets = PackedFloat32Array(0, 1)
 colors = PackedColorArray(0.85, 0.75, 0.65, 0.8, 0.85, 0.75, 0.65, 0)
 
-[node name="FxPoeira" type="CPUParticles2D"]
-emitting = true
+[node name="FxPoeira" type="CPUParticles2D" unique_id=398279752]
+emitting = false
 amount = 12
 lifetime = 0.4
 one_shot = true
 explosiveness = 1.0
-local_coords = false
 direction = Vector2(0, -1)
 spread = 180.0
 gravity = Vector2(0, 0)

@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
+[ext_resource type="Texture2D" uid="uid://w87usl2v4fje" path="res://artes/placeholders/goat_do_mal.jpg" id="2_tex"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="3_fx"]
+
+[node name="CascaPulga" type="StaticBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_obj")
+vida = 2
+deslize = 14.0
+fx_hit = ExtResource("3_fx")
+fx_quebra = ExtResource("3_fx")
+tremor_quebra = 0.1
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+modulate = Color(0.3, 0.26, 0.32, 0.85)
+scale = Vector2(0.0367, 0.0309)
+texture = ExtResource("2_tex")

@@ -1,0 +1,72 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/formiga_operaria.gd" id="1_op"]
+[ext_resource type="PackedScene" path="res://cenas/fx_morte.tscn" id="2_fxm"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="3_fxp"]
+[ext_resource type="PackedScene" path="res://cenas/fx_migalhas.tscn" id="4_fxmig"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
+radius = 15.0
+
+[sub_resource type="PlaceholderTexture2D" id="Tex_corpo"]
+size = Vector2(34, 18)
+
+[sub_resource type="PlaceholderTexture2D" id="Tex_cabeca"]
+size = Vector2(9, 9)
+
+[sub_resource type="PlaceholderTexture2D" id="Tex_escudo"]
+size = Vector2(12, 30)
+
+[sub_resource type="PlaceholderTexture2D" id="Tex_trilha"]
+size = Vector2(128, 34)
+
+[node name="FormigaOperaria" type="CharacterBody2D" groups=["inimigos"]]
+collision_layer = 4
+collision_mask = 9
+motion_mode = 1
+script = ExtResource("1_op")
+vida = 5
+alcance_contato = 32.0
+tempo_atordoamento = 0.15
+resistencia_empurrao = 0.6
+raio_separacao = 44.0
+fx_morte = ExtResource("2_fxm")
+fx_poeira = ExtResource("3_fxp")
+fx_migalhas = ExtResource("4_fxmig")
+
+[node name="Trilha" type="Node2D" parent="."]
+top_level = true
+
+[node name="Area" type="Sprite2D" parent="Trilha"]
+modulate = Color(1, 0.2, 0.15, 0.22)
+texture = SubResource("Tex_trilha")
+centered = false
+offset = Vector2(0, -17)
+
+[node name="Preenchimento" type="Sprite2D" parent="Trilha"]
+modulate = Color(1, 0.15, 0.1, 0.5)
+scale = Vector2(0, 1)
+texture = SubResource("Tex_trilha")
+centered = false
+offset = Vector2(0, -17)
+
+[node name="Colisao" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_corpo")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Pivo" type="Node2D" parent="Visual"]
+
+[node name="Corpo" type="Sprite2D" parent="Visual/Pivo"]
+modulate = Color(0.5, 0.27, 0.1, 1)
+texture = SubResource("Tex_corpo")
+
+[node name="Cabeca" type="Sprite2D" parent="Visual/Pivo"]
+modulate = Color(1.8, 1.2, 0.8, 1)
+position = Vector2(16, 0)
+texture = SubResource("Tex_cabeca")
+
+[node name="Escudo" type="Sprite2D" parent="Visual/Pivo"]
+modulate = Color(1.5, 1.15, 0.6, 1)
+position = Vector2(25, 0)
+texture = SubResource("Tex_escudo")

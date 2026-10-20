@@ -1,0 +1,40 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
+[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="2_fx"]
+
+[sub_resource type="PlaceholderTexture2D" id="TexCorpo"]
+size = Vector2(30, 16)
+
+[sub_resource type="PlaceholderTexture2D" id="TexCabeca"]
+size = Vector2(8, 8)
+
+[sub_resource type="CircleShape2D" id="Forma"]
+radius = 16.0
+
+[node name="FormigaMorta" type="StaticBody2D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_obj")
+quebra_no_dash = true
+fx_quebra = ExtResource("2_fx")
+tremor_quebra = 0.0
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+modulate = Color(0.18, 0.1, 0.08, 0.9)
+texture = SubResource("TexCorpo")
+
+[node name="Cabeca" type="Sprite2D" parent="Visual/Sprite"]
+modulate = Color(1.6, 1.2, 1, 1)
+position = Vector2(13, 0)
+texture = SubResource("TexCabeca")
+
+[node name="Contato" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="Forma" type="CollisionShape2D" parent="Contato"]
+shape = SubResource("Forma")

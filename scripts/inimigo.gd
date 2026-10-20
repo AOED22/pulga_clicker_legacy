@@ -1,7 +1,6 @@
 class_name Inimigo
 extends CharacterBody2D
 
-# avisa quando morre (a arena usa para contar os inimigos da onda)
 signal morreu
 
 @export_group("Atributos")
@@ -13,6 +12,7 @@ signal morreu
 @export_group("Reacao ao dano")
 @export var tempo_atordoamento := 0.18
 @export var atrito_impulso := 900.0
+@export var resistencia_empurrao := 1.0
 @export var atordoamento_spawn := 0.6
 
 @export_group("Separacao")
@@ -34,7 +34,6 @@ var jogador: Jogador
 
 func _ready() -> void:
 	jogador = get_tree().get_first_node_in_group("jogador")
-	# nasce pequeno, cresce e fica parado por um instante
 	visual.scale = Vector2.ZERO
 	atordoado = atordoamento_spawn
 
@@ -55,10 +54,9 @@ func _physics_process(delta: float) -> void:
 	_atualizar_visual(delta)
 
 
-# devolve true se morreu
 func receber_dano(dano: int, empurrao: Vector2) -> bool:
 	vida -= dano
-	impulso = empurrao
+	impulso = empurrao * resistencia_empurrao
 	atordoado = tempo_atordoamento
 	flash = 0.1
 	visual.scale = Vector2(1.4, 0.65)
@@ -76,16 +74,22 @@ func enfraquecido() -> bool:
 	return vida <= 1
 
 
+func bloqueia(_direcao_golpe: Vector2) -> bool:
+	return false
+
+
+func receber_bloqueio(_empurrao: Vector2) -> void:
+	pass
+
+
 func _jogador_vivo() -> bool:
 	return is_instance_valid(jogador) and not jogador.morto
 
 
-# cada inimigo escreve o seu (devolve a velocidade desejada)
 func _comportamento(_delta: float) -> Vector2:
 	return Vector2.ZERO
 
 
-# levar dano cancela o que estava fazendo
 func _ao_ser_atingido() -> void:
 	pass
 
@@ -94,7 +98,14 @@ func _atualizar_visual(_delta: float) -> void:
 	pass
 
 
-# afasta dos outros inimigos para nao ficarem empilhados
+func _cor_com_status(cor: Color, ignorar_fraco := false) -> Color:
+	if enfraquecido() and not ignorar_fraco:
+		cor = Color.WHITE.lerp(Color(1.6, 1.4, 0.6), 0.5 + 0.5 * sin(tempo * 12.0))
+	if flash > 0.0:
+		cor = Color(3.0, 3.0, 3.0)
+	return cor
+
+
 func _separacao() -> Vector2:
 	var empurrao := Vector2.ZERO
 	for outro: Inimigo in get_tree().get_nodes_in_group("inimigos"):

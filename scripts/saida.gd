@@ -1,6 +1,5 @@
 extends Area2D
 
-# para onde vai quando a fase termina
 @export_file("*.tscn") var proxima_cena := "res://cenas/main.tscn"
 
 var usada := false

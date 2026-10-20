@@ -25,7 +25,6 @@ func _ready() -> void:
 func _ao_vida_mudar(valor: int, maximo: int) -> void:
 	barra_vida.max_value = maximo
 	barra_vida.value = valor
-	# Pisca a tela em vermelho ao perder vida
 	if vida_anterior >= 0 and valor < vida_anterior:
 		_piscar_dano()
 	vida_anterior = valor
@@ -33,7 +32,6 @@ func _ao_vida_mudar(valor: int, maximo: int) -> void:
 
 func _ao_poder_mudar(valor: float) -> void:
 	barra_poder.value = valor
-	# A barra muda de cor quando a habilidade ja pode ser usada
 	if valor >= jogador.custo_habilidade:
 		barra_poder.modulate = cor_poder_pronto
 	else:
