@@ -1,5 +1,5 @@
 78098b89c88a74ebe8c20117b8754620
-::res://::1792494550
+::res://::1795484308
 ::res://artes/::1791917607
 ::res://artes/placeholders/::1791917607
 goat_do_mal.jpg::CompressedTexture2D::1614258649236426402::1792465154::1792465187::1::::<><><>0<>0<>8b25153c895d262cfcb5e1e8c2c12d81<>res://.godot/imported/goat_do_mal.jpg-d28e61468e98f7aa583510b020b3a590.ctex::
@@ -22,7 +22,7 @@ fx_poeira.tscn::PackedScene::9191299489659851860::1792465998::0::1::::<><><>0<>0
 fx_sangue.tscn::PackedScene::2086729975286522814::1792465998::0::1::::<><><>0<>0<><>::uid://cx2w3ehw0gul3::::res://scripts/fx_particulas.gd
 gota_acida.tscn::PackedScene::-1::1792465154::0::1::::<><><>0<>0<><>::res://scripts/gota_acida.gd<>res://cenas/fx_acido.tscn
 hud.tscn::PackedScene::6999825045744941112::1792465154::0::1::::<><><>0<>0<><>::uid://dox6jpwj5k8g8::::res://scripts/hud.gd
-jogador.tscn::PackedScene::1330092549995032279::1792465154::0::1::::<><><>0<>0<><>::uid://do67yqq8ggf1e::::res://scripts/jogador.gd<>res://cenas/anel_choque.tscn<>uid://w87usl2v4fje::::res://artes/placeholders/goat_do_mal.jpg<>uid://cjfmdc6g8xhfr::::res://scripts/camera_jogador.gd<>res://cenas/fx_hit.tscn<>res://cenas/fx_sangue.tscn<>res://cenas/fx_poeira.tscn
+jogador.tscn::PackedScene::1330092549995032279::1795481423::0::1::::<><><>0<>0<><>::uid://do67yqq8ggf1e::::res://scripts/jogador.gd<>res://cenas/anel_choque.tscn<>uid://w87usl2v4fje::::res://artes/placeholders/goat_do_mal.jpg<>uid://cjfmdc6g8xhfr::::res://scripts/camera_jogador.gd<>res://cenas/fx_hit.tscn<>res://cenas/fx_sangue.tscn<>res://cenas/fx_poeira.tscn<>res://scripts/arco_ataque.gd
 main.tscn::PackedScene::4195708231551972298::1792465154::0::1::::<><><>0<>0<><>::uid://2tiyc3lsofn5::::res://scripts/main.gd<>res://cenas/jogador.tscn<>res://cenas/acaro.tscn<>res://cenas/obstaculo.tscn<>res://cenas/hud.tscn<>res://cenas/fx_poeira.tscn<>res://cenas/formiga_atiradora.tscn
 nota.tscn::PackedScene::-1::1792465154::0::1::::<><><>0<>0<><>::res://scripts/nota.gd
 obstaculo.tscn::PackedScene::-1::1792465154::0::1::::<><><>0<>0<><>::
@@ -40,10 +40,11 @@ fungo.tscn::PackedScene::-1::1792465154::0::1::::<><><>0<>0<><>::res://scripts/o
 migalha.tscn::PackedScene::-1::1792465153::0::1::::<><><>0<>0<><>::res://scripts/objeto_cenario.gd<>res://cenas/fx_migalhas.tscn
 migalha_grande.tscn::PackedScene::-1::1792465153::0::1::::<><><>0<>0<><>::res://scripts/objeto_cenario.gd<>res://cenas/fx_migalhas.tscn<>res://cenas/fx_migalhas.tscn
 tufo_pelo.tscn::PackedScene::-1::1792465153::0::1::::<><><>0<>0<><>::res://scripts/objeto_cenario.gd<>res://cenas/fx_pelos.tscn
-::res://scripts/::1792464044
+::res://scripts/::1795481483
 acaro.gd::GDScript::2230081343709020070::1792465154::0::1::::Acaro<>Inimigo<><>0<>0<><>::
 acaro_grande.gd::GDScript::2275740434564586047::1792465154::0::1::::AcaroGrande<>Inimigo<><>0<>0<><>::
 anel_choque.gd::GDScript::457061956158514119::1792465154::0::1::::AnelChoque<>Node2D<><>0<>0<><>::
+arco_ataque.gd::GDScript::8065704315732227160::1795481987::0::1::::ArcoAtaque<>Node2D<><>0<>0<><>::
 arena.gd::GDScript::867536984672985369::1792465154::0::1::::<>Area2D<><>0<>0<><>::
 camera_jogador.gd::GDScript::5415596963446965791::1792465154::0::1::::CameraJogador<>Camera2D<><>0<>0<><>::
 checkpoint.gd::GDScript::3724641216635124038::1792465154::0::1::::Checkpoint<>Area2D<><>0<>0<><>::
@@ -52,11 +53,11 @@ efeitos.gd::GDScript::7420266887716112040::1792465154::0::1::::<>Node<><>0<>0<><
 formiga.gd::GDScript::3260619218912666115::1791950640::0::1::::Formiga<>Inimigo<><>0<>0<><>::
 formiga_atiradora.gd::GDScript::9132219543939311406::1792465154::0::1::::FormigaAtiradora<>Inimigo<><>0<>0<><>::
 formiga_operaria.gd::GDScript::7596113075144271374::1792465154::0::1::::FormigaOperaria<>Inimigo<><>0<>0<><>::
-fx_particulas.gd::GDScript::6444308968431038754::1792465154::0::1::::<>CPUParticles2D<><>0<>0<><>::
+fx_particulas.gd::GDScript::6444308968431038754::1795481031::0::1::::<>CPUParticles2D<><>0<>0<><>::
 gota_acida.gd::GDScript::7757971173769603098::1792465154::0::1::::GotaAcida<>Area2D<><>0<>0<><>::
 hud.gd::GDScript::8191285671561425473::1792465154::0::1::::<>CanvasLayer<><>0<>0<><>::
 inimigo.gd::GDScript::3103685785606018939::1792465154::0::1::::Inimigo<>CharacterBody2D<><>0<>0<><>::
-jogador.gd::GDScript::8207888241807956412::1792465154::0::1::::Jogador<>CharacterBody2D<><>0<>0<><>::
+jogador.gd::GDScript::8207888241807956412::1795481986::0::1::::Jogador<>CharacterBody2D<><>0<>0<><>::
 luz_pulsante.gd::GDScript::3927745255967921148::1792465154::0::1::::<>PointLight2D<><>0<>0<><>::
 main.gd::GDScript::1934850699375483484::1792465154::0::1::::<>Node2D<><>0<>0<><>::
 nota.gd::GDScript::2867150095911078931::1792465154::0::1::::<>Node2D<><>0<>0<><>::
