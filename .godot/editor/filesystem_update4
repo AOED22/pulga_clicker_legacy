@@ -1,7 +1,4 @@
-res://cenas/poca_acida.tscn
-res://scripts/luta_rainha.gd
-res://scripts/camera_jogador.gd
-res://cenas/tapete_velho.tscn
+res://cenas/rainha_formiga.tscn
 res://artes/acaro/acaro_frames.tres
 res://artes/acaro/acaro_grande_frames.tres
 res://artes/acaro/acaro_grande_frames_furia.tres
@@ -15,3 +12,6 @@ res://artes/formiga/escudo_biscoito_frames.tres
 res://artes/rainha/poca_frames.tres
 res://artes/rainha/rainha_frames.tres
 res://artes/rainha/rainha_frames_furia.tres
+res://scripts/luta_rainha.gd
+res://scripts/rainha_formiga.gd
+res://cenas/luta_rainha.tscn

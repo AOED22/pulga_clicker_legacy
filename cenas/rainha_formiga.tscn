@@ -1,44 +1,40 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://ffktmgiq28ub"]
 
-[ext_resource type="Script" path="res://scripts/rainha_formiga.gd" id="1_rai"]
-[ext_resource type="Script" path="res://scripts/aviso_ataque.gd" id="2_avi"]
-[ext_resource type="PackedScene" path="res://cenas/fx_morte.tscn" id="3_fxm"]
-[ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="4_fxp"]
-[ext_resource type="PackedScene" path="res://cenas/fx_migalhas.tscn" id="5_fxmig"]
+[ext_resource type="Script" uid="uid://5o8eqp21cq7g" path="res://scripts/rainha_formiga.gd" id="1_rai"]
+[ext_resource type="Script" uid="uid://bji1fmmcbpi38" path="res://scripts/aviso_ataque.gd" id="2_avi"]
+[ext_resource type="PackedScene" uid="uid://bh34facd4xkki" path="res://cenas/fx_morte.tscn" id="3_fxm"]
+[ext_resource type="PackedScene" uid="uid://d37lmh314j6hs" path="res://cenas/fx_poeira.tscn" id="4_fxp"]
+[ext_resource type="PackedScene" uid="uid://bouop607c4yrk" path="res://cenas/fx_migalhas.tscn" id="5_fxmig"]
 [ext_resource type="PackedScene" path="res://cenas/anel_choque.tscn" id="6_anel"]
 [ext_resource type="PackedScene" path="res://cenas/gota_rainha.tscn" id="7_gota"]
-[ext_resource type="PackedScene" path="res://cenas/acaro.tscn" id="8_acaro"]
+[ext_resource type="PackedScene" uid="uid://d0c02m54jnxih" path="res://cenas/acaro.tscn" id="8_acaro"]
 [ext_resource type="PackedScene" path="res://cenas/formiga_atiradora.tscn" id="9_atir"]
 [ext_resource type="PackedScene" path="res://cenas/formiga_operaria.tscn" id="10_oper"]
 [ext_resource type="PackedScene" path="res://cenas/acaro_grande.tscn" id="11_grande"]
 [ext_resource type="PackedScene" path="res://cenas/poca_acida.tscn" id="12_poca"]
 [ext_resource type="PackedScene" path="res://cenas/fx_splat_acido.tscn" id="13_fxa"]
+[ext_resource type="SpriteFrames" uid="uid://brl6f2r21tgiq" path="res://artes/rainha/rainha_frames.tres" id="14_frames"]
+[ext_resource type="SpriteFrames" uid="uid://djq7tkvhuf08l" path="res://artes/rainha/rainha_frames_furia.tres" id="15_framesf"]
 [ext_resource type="PackedScene" path="res://cenas/globulo_acido.tscn" id="16_glob"]
-
-[ext_resource type="SpriteFrames" path="res://artes/rainha/rainha_frames.tres" id="14_frames"]
-[ext_resource type="SpriteFrames" path="res://artes/rainha/rainha_frames_furia.tres" id="15_framesf"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
 radius = 44.0
 
 [sub_resource type="Gradient" id="Gradient_sombra"]
-offsets = PackedFloat32Array(0, 1)
 colors = PackedColorArray(0, 0, 0, 0.5, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_sombra"]
 gradient = SubResource("Gradient_sombra")
-width = 64
-height = 64
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[sub_resource type="Gradient" id="Gradient_escudo"]
-offsets = PackedFloat32Array(0, 0.8, 0.92, 1)
-colors = PackedColorArray(0.5, 0.8, 1, 0.1, 0.5, 0.8, 1, 0.18, 0.7, 0.95, 1, 0.9, 0.7, 0.95, 1, 0)
+[sub_resource type="Gradient" id="Gradient_aura"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(1, 1, 1, 0.7, 1, 1, 1, 0.25, 1, 1, 1, 0)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_escudo"]
-gradient = SubResource("Gradient_escudo")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_aura"]
+gradient = SubResource("Gradient_aura")
 width = 128
 height = 128
 fill = 1
@@ -57,32 +53,23 @@ fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[sub_resource type="Gradient" id="Gradient_aura"]
-offsets = PackedFloat32Array(0, 0.6, 1)
-colors = PackedColorArray(1, 1, 1, 0.7, 1, 1, 1, 0.25, 1, 1, 1, 0)
+[sub_resource type="Gradient" id="Gradient_escudo"]
+offsets = PackedFloat32Array(0, 0.8, 0.92, 1)
+colors = PackedColorArray(0.5, 0.8, 1, 0.1, 0.5, 0.8, 1, 0.18, 0.7, 0.95, 1, 0.9, 0.7, 0.95, 1, 0)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_aura"]
-gradient = SubResource("Gradient_aura")
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_escudo"]
+gradient = SubResource("Gradient_escudo")
 width = 128
 height = 128
 fill = 1
 fill_from = Vector2(0.5, 0.5)
 fill_to = Vector2(1, 0.5)
 
-[node name="RainhaFormiga" type="CharacterBody2D" groups=["inimigos"]]
+[node name="RainhaFormiga" type="CharacterBody2D" unique_id=1945830035 groups=["inimigos"]]
 collision_layer = 4
 collision_mask = 9
 motion_mode = 1
 script = ExtResource("1_rai")
-vida = 50
-dano_contato = 1
-alcance_contato = 58.0
-recarga_contato = 1.0
-tempo_atordoamento = 0.0
-atrito_impulso = 1800.0
-resistencia_empurrao = 0.05
-atordoamento_spawn = 0.3
-fx_morte = ExtResource("3_fxm")
 cena_acaro = ExtResource("8_acaro")
 cena_acaro_grande = ExtResource("11_grande")
 cena_atiradora = ExtResource("9_atir")
@@ -95,40 +82,47 @@ fx_poeira = ExtResource("4_fxp")
 fx_migalhas = ExtResource("5_fxmig")
 fx_acido = ExtResource("13_fxa")
 frames_furia = ExtResource("15_framesf")
+vida = 50
+alcance_contato = 58.0
+tempo_atordoamento = 0.0
+atrito_impulso = 1800.0
+resistencia_empurrao = 0.05
+atordoamento_spawn = 0.3
+fx_morte = ExtResource("3_fxm")
 
-[node name="Colisao" type="CollisionShape2D" parent="."]
+[node name="Colisao" type="CollisionShape2D" parent="." unique_id=523792287]
 shape = SubResource("CircleShape2D_corpo")
 
-[node name="Sombra" type="Sprite2D" parent="."]
+[node name="Sombra" type="Sprite2D" parent="." unique_id=583854297]
 position = Vector2(-4, 36)
 scale = Vector2(2.8, 1.1)
 texture = SubResource("GradientTexture2D_sombra")
 
-[node name="Aviso" type="Node2D" parent="."]
+[node name="Aviso" type="Node2D" parent="." unique_id=1833244542]
 top_level = true
 script = ExtResource("2_avi")
 
-[node name="Visual" type="Node2D" parent="."]
+[node name="Visual" type="Node2D" parent="." unique_id=1599772160]
 
-[node name="Aura" type="Sprite2D" parent="Visual"]
+[node name="Aura" type="Sprite2D" parent="Visual" unique_id=1970779670]
 modulate = Color(1, 0.3, 0.15, 0)
 position = Vector2(-8, 0)
 scale = Vector2(2.4, 1.9)
 texture = SubResource("GradientTexture2D_aura")
 
-[node name="Corpo" type="AnimatedSprite2D" parent="Visual"]
+[node name="Corpo" type="AnimatedSprite2D" parent="Visual" unique_id=49404412]
 texture_filter = 1
 sprite_frames = ExtResource("14_frames")
 animation = &"parada"
 autoplay = "parada"
 
-[node name="Brilho" type="Sprite2D" parent="Visual"]
+[node name="Brilho" type="Sprite2D" parent="Visual" unique_id=1624259254]
 modulate = Color(1.6, 1.2, 0.4, 0)
 position = Vector2(-44, -4)
 scale = Vector2(0.9, 0.8)
 texture = SubResource("GradientTexture2D_brilho")
 
-[node name="Escudo" type="Sprite2D" parent="."]
+[node name="Escudo" type="Sprite2D" parent="." unique_id=1772463713]
 visible = false
 position = Vector2(-4, -2)
 scale = Vector2(1.5, 1.5)

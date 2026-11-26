@@ -1,21 +1,6 @@
 class_name RainhaFormiga
 extends Inimigo
 
-# Boss 01 - Rainha das Formigas
-#
-# FASE 1 (100% -> 50%): ela fica parada e invoca ondas de formigas.
-#   Enquanto houver minion vivo ela esta protegida (escudo azul) e BOMBARDEIA o chao com acido.
-#   Quando o ultimo minion morre ela fica exposta (brilho dourado) por pouco tempo.
-# TRANSICAO: ao chegar em 50% a luta pausa, a camera da zoom e ela ruge.
-# FASE 2 (50% -> 0%): ela mesma ataca, com telegrafo em todos os ataques e combos encadeados.
-#   Fica furiosa aos 25%.
-#
-# Mapa de estados (nomes do GDD):
-#   SUMMONING = INVOCANDO | PROTECTED = PROTEGIDA | EXPOSED = EXPOSTA
-#   PHASE_TRANSITION = TRANSICAO | CHASE = PERSEGUINDO
-#   MELEE / DASH / RANGED / SUMMON_MINIONS = PREPARANDO (+ INVESTINDO / SALTANDO / DISPARANDO)
-#   RECOVERY = RECUPERANDO (e ATORDOADA quando ela bate na parede)
-
 signal vida_mudou(valor: int, maximo: int)
 signal fase_mudou(fase: int)
 signal exposta_mudou(exposta: bool)
@@ -205,7 +190,6 @@ func _ready() -> void:
 	aura.modulate.a = 0.0
 
 
-# chamada pela cena da luta quando a intro termina
 func iniciar_luta() -> void:
 	if estado != Estado.INATIVA:
 		return
@@ -214,7 +198,6 @@ func iniciar_luta() -> void:
 	_mudar_estado(Estado.INVOCANDO)
 
 
-# ---------------------------------------------------------------- dano
 
 func receber_dano(dano: int, empurrao: Vector2) -> bool:
 	if not _pode_receber_dano():
@@ -222,7 +205,6 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 		return false
 
 	if fase == 1:
-		# na fase 1 o dano para exatamente em 50% (a transicao nao pode ser pulada)
 		dano = mini(dano, vida - vida_transicao)
 		if dano <= 0:
 			return false
@@ -239,7 +221,6 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 
 
 func _ao_ser_atingido() -> void:
-	# a Rainha nao e interrompida por golpes (so pisca)
 	atordoado = 0.0
 	vida_mudou.emit(vida, vida_max)
 	if fase == 1:
@@ -256,7 +237,6 @@ func _pode_receber_dano() -> bool:
 	return true
 
 
-# quando esta protegida o golpe do jogador "bate no escudo" (mesmo sistema da operaria)
 func bloqueia(_direcao_golpe: Vector2) -> bool:
 	return not _pode_receber_dano()
 
@@ -278,7 +258,6 @@ func enfraquecido() -> bool:
 	return vida <= 1 and fase == 2
 
 
-# contato so machuca na fase 2 e fora da transicao/atordoamento/salto
 func _checar_contato() -> void:
 	if fase == 1 or estado == Estado.TRANSICAO or estado == Estado.ATORDOADA:
 		return
@@ -287,7 +266,6 @@ func _checar_contato() -> void:
 	super()
 
 
-# ---------------------------------------------------------------- comportamento
 
 func _comportamento(delta: float) -> Vector2:
 	recarga_invocacao = maxf(recarga_invocacao - delta, 0.0)
@@ -312,7 +290,6 @@ func _comportamento(delta: float) -> Vector2:
 
 		Estado.PROTEGIDA:
 			olhando = _girar(olhando, direcao, giro_fase1 * delta)
-			# protegida nao quer dizer parada: ela bombardeia o chao enquanto os minions lutam
 			recarga_bombardeio -= delta
 			if recarga_bombardeio <= 0.0 and minions_vivos > 0:
 				recarga_bombardeio = intervalo_bombardeio_fase1
@@ -342,7 +319,6 @@ func _comportamento(delta: float) -> Vector2:
 		Estado.PREPARANDO:
 			tempo_estado -= delta
 			var progresso := clampf(1.0 - tempo_estado / duracao_estado, 0.0, 1.0)
-			# a mira acompanha o jogador e trava perto do fim (da tempo de reagir)
 			if tempo_estado > tempo_travar_mira:
 				olhando = _girar(olhando, direcao, giro_preparo * delta)
 				direcao_travada = olhando
@@ -350,7 +326,6 @@ func _comportamento(delta: float) -> Vector2:
 			if tempo_estado <= 0.0:
 				_executar_ataque()
 				return Vector2.ZERO
-			# na investida ela recua o corpo antes de disparar
 			if ataque == Ataque.INVESTIDA or ataque == Ataque.INVESTIDA_FURIOSA:
 				return -direcao_travada * 30.0
 
@@ -359,7 +334,6 @@ func _comportamento(delta: float) -> Vector2:
 				_bater()
 				return Vector2.ZERO
 			if tempo_contato > 0.0:
-				# acertou o jogador: a investida acaba
 				_terminar_investida(false)
 				return Vector2.ZERO
 			var total := _distancia_da_investida()
@@ -371,7 +345,6 @@ func _comportamento(delta: float) -> Vector2:
 			if tempo_poeira <= 0.0:
 				tempo_poeira = 0.06
 				Efeitos.criar(fx_poeira, global_position - direcao_investida * 40.0, direcao_investida.angle() + PI)
-			# furiosa: a investida deixa um rastro de acido no chao
 			if furiosa and percorrido - ultima_poca >= 120.0:
 				ultima_poca = percorrido
 				_criar_poca(global_position - direcao_investida * 40.0, 34.0)
@@ -385,7 +358,6 @@ func _comportamento(delta: float) -> Vector2:
 			if tempo_estado <= 0.0:
 				_aterrissar()
 				return Vector2.ZERO
-			# velocidade calculada para chegar exatamente no alvo quando o tempo acabar
 			return (alvo_salto - global_position) / maxf(tempo_estado, delta)
 
 		Estado.DISPARANDO:
@@ -454,7 +426,6 @@ func _mudar_estado(novo: Estado) -> void:
 		exposta_mudou.emit(novo == Estado.EXPOSTA)
 
 
-# depois de um ataque: volta a perseguir, mas ataques curtos podem encadear combo
 func _fim_do_ataque(permite_combo: bool) -> void:
 	recarga_ataque = intervalo_ataque * (ritmo_furia if furiosa else 1.0)
 	var curto := ataque == Ataque.MORDIDA or ataque == Ataque.PATAS or ataque == Ataque.CUSPE or ataque == Ataque.BOMBARDEIO
@@ -464,7 +435,6 @@ func _fim_do_ataque(permite_combo: bool) -> void:
 	_mudar_estado(Estado.PERSEGUINDO)
 
 
-# ---------------------------------------------------------------- fase 1: ondas
 
 func _montar_onda() -> Array:
 	match mini(onda, 4):
@@ -499,7 +469,6 @@ func _ao_minion_morrer() -> void:
 	minions_vivos = maxi(minions_vivos - 1, 0)
 
 
-# pontos de spawn: Marker2D no grupo "spawn_boss" dentro da cena da luta
 func _posicao_spawn(indice: int) -> Vector2:
 	var pontos := get_tree().get_nodes_in_group("spawn_boss")
 	if pontos.is_empty():
@@ -531,7 +500,6 @@ func _quebrar_escudo() -> void:
 	Efeitos.hit_stop(0.05, 0.1)
 
 
-# bombardeio da fase 1: marca o chao onde o jogador esta (e onde ele vai estar)
 func _bombardeio_fase1() -> void:
 	var quantidade := 1 if onda < 3 else 2
 	for i in quantidade:
@@ -543,7 +511,6 @@ func _bombardeio_fase1() -> void:
 	Efeitos.tremer(0.1)
 
 
-# ---------------------------------------------------------------- transicao
 
 func _transicao() -> void:
 	_mudar_estado(Estado.TRANSICAO)
@@ -551,7 +518,6 @@ func _transicao() -> void:
 	_eliminar_minions()
 	_limpar_arena()
 
-	# o jogador perde o controle durante a cena
 	jogador.set_physics_process(false)
 	jogador.invencibilidade = 5.0
 	var camera := jogador.camera
@@ -559,14 +525,12 @@ func _transicao() -> void:
 
 	await _esperar(0.4)
 
-	# camera vai ate a Rainha
 	camera.foco = self
 	var tween := create_tween().set_parallel()
 	tween.tween_property(camera, "foco_forca", 1.0, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_property(camera, "zoom", zoom_base * 1.45, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await tween.finished
 
-	# ruge de raiva
 	var tween_rugido := create_tween()
 	tween_rugido.tween_property(self, "rugido", 1.0, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await _esperar(0.6)
@@ -580,12 +544,10 @@ func _transicao() -> void:
 	Efeitos.hit_stop(0.12, 0.05)
 	await _esperar(0.9)
 
-	# abandona a postura defensiva
 	fase = 2
 	fase_mudou.emit(2)
 	await _esperar(0.5)
 
-	# camera volta
 	var tween_volta := create_tween().set_parallel()
 	tween_volta.tween_property(camera, "foco_forca", 0.0, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween_volta.tween_property(camera, "zoom", zoom_base, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -613,7 +575,6 @@ func _enfurecer() -> void:
 	Efeitos.criar(fx_poeira, global_position)
 
 
-# ---------------------------------------------------------------- fase 2: escolha de ataque
 
 func _escolher_ataque(distancia: float) -> int:
 	var opcoes := {}
@@ -638,7 +599,6 @@ func _escolher_ataque(distancia: float) -> int:
 	if recarga_invocacao <= 0.0 and minions_vivos < max_minions_fase2:
 		opcoes[Ataque.INVOCACAO] = 6.0
 
-	# nunca repete o mesmo ataque duas vezes seguidas
 	opcoes.erase(ultimo_ataque)
 	if opcoes.is_empty():
 		return -1
@@ -714,7 +674,6 @@ func _tempo_preparo() -> float:
 			base = preparo_bombardeio
 		Ataque.SALTO:
 			base = preparo_salto
-	# a segunda investida da furiosa sai mais rapido
 	if ataque == Ataque.INVESTIDA_FURIOSA and investidas_restantes == 1:
 		base *= 0.5
 	return base * (preparo_furia if furiosa else 1.0)
@@ -743,12 +702,9 @@ func _tempo_recuperacao() -> float:
 	return 0.9
 
 
-# so os ataques mais pesados deixam a Rainha vulneravel (dano +1) enquanto ela se recupera
 func _ataque_pesado() -> bool:
 	return ataque == Ataque.PANCADA or ataque == Ataque.TERREMOTO or ataque == Ataque.SALTO or ataque == Ataque.INVESTIDA or ataque == Ataque.INVESTIDA_FURIOSA
 
-
-# ---------------------------------------------------------------- telegrafos
 
 func _configurar_aviso() -> void:
 	var rotacao_aviso := direcao_travada.angle()
@@ -780,7 +736,6 @@ func _atualizar_aviso(progresso: float) -> void:
 		Ataque.PANCADA, Ataque.TERREMOTO:
 			aviso.mirar(global_position, 0.0)
 		Ataque.SALTO, Ataque.CUSPE:
-			# a marca segue o jogador e trava um pouco antes do pulo
 			if tempo_estado > tempo_travar_mira + 0.15:
 				aviso.mirar(jogador.global_position, 0.0)
 		Ataque.INVOCACAO, Ataque.BOMBARDEIO:
@@ -796,7 +751,6 @@ func _distancia_da_investida() -> float:
 	return distancia_investida * (1.2 if ataque == Ataque.INVESTIDA_FURIOSA else 1.0)
 
 
-# zonas de aviso independentes (varias ao mesmo tempo): usadas pelo bombardeio e pelo terremoto
 func _nova_zona() -> AvisoAtaque:
 	var zona := AvisoAtaque.new()
 	zona.add_to_group("zonas_boss")
@@ -817,7 +771,6 @@ func _criar_poca(ponto: Vector2, raio: float) -> void:
 	get_tree().current_scene.add_child(poca)
 
 
-# ---------------------------------------------------------------- ataques
 
 func _mordida() -> void:
 	var centro := global_position + direcao_travada * distancia_mordida
@@ -857,8 +810,6 @@ func _pancada() -> void:
 	_mudar_estado(Estado.RECUPERANDO)
 
 
-# terremoto: a pancada e seguida de uma onda em anel -> depois do golpe o jogador precisa
-# ENTRAR na area vermelha (ou pular/dar dash) em vez de fugir para longe
 func _terremoto() -> void:
 	_acertar_circulo(global_position, raio_pancada, dano_pancada)
 	_efeito_impacto_central(0.8)
@@ -905,7 +856,6 @@ func _acertar_circulo(centro: Vector2, raio: float, dano: int) -> void:
 			objeto.atingido(distancia.normalized())
 
 
-# salto: ela some no ar e despenca em cima da marca (marca segue o jogador e trava no fim)
 func _iniciar_salto() -> void:
 	alvo_salto = _ponto_livre(aviso.global_position)
 	aviso.mirar(alvo_salto, 0.0)
@@ -931,7 +881,6 @@ func _aterrissar() -> void:
 	_mudar_estado(Estado.RECUPERANDO)
 
 
-# acha um ponto sem parede/pilar perto de "ponto" (para ela nao pousar dentro de um pilar)
 func _ponto_livre(ponto: Vector2) -> Vector2:
 	for distancia: float in [0.0, 70.0, 130.0, 190.0]:
 		for i in 8:
@@ -951,7 +900,6 @@ func _espaco_livre(ponto: Vector2) -> bool:
 	return get_world_2d().direct_space_state.intersect_shape(consulta, 1).is_empty()
 
 
-# bombardeio: varias marcas de acido caem no chao (uma no jogador, outras onde ele vai estar)
 func _bombardeio() -> void:
 	var quantidade := zonas_bombardeio + (2 if furiosa else 0)
 	var alvo := jogador.global_position
@@ -966,7 +914,6 @@ func _bombardeio() -> void:
 	_mudar_estado(Estado.RECUPERANDO)
 
 
-# lanca um glob de acido em parabola: marca verde no chao + projetil voando da boca ate la
 func _lancar_acido(destino: Vector2, duracao: float, raio: float, dano: int) -> void:
 	var zona := _nova_zona()
 	zona.circulo(destino, raio, COR_ACIDO)
@@ -991,7 +938,6 @@ func _impacto_acido(zona: AvisoAtaque, ponto: Vector2, raio: float, dano: int) -
 	if ate.length() <= raio and jogador.pode_ser_atingido():
 		jogador.receber_dano(dano, ate.normalized() if ate.length() > 1.0 else Vector2.DOWN)
 	_criar_poca(ponto, raio * 0.9)
-	# respingos do splash de acido do jogo espalhados pela area do impacto
 	Efeitos.criar(fx_acido, ponto)
 	for i in 4:
 		var angulo := TAU / 4.0 * i + randf() * 0.8
@@ -1010,7 +956,6 @@ func _terminar_investida(completou: bool) -> void:
 	dano_contato = dano_normal
 	investidas_restantes -= 1
 	if completou and investidas_restantes > 0:
-		# investida furiosa: segunda investida, mira de novo
 		direcao_travada = (jogador.global_position - global_position).normalized()
 		olhando = direcao_travada
 		_mudar_estado(Estado.PREPARANDO)
@@ -1019,7 +964,6 @@ func _terminar_investida(completou: bool) -> void:
 		_mudar_estado(Estado.RECUPERANDO)
 
 
-# bateu em parede ou obstaculo: fica tonta e leva dano extra
 func _bater() -> void:
 	var objeto := get_slide_collision(0).get_collider()
 	if objeto is ObjetoCenario:
@@ -1045,7 +989,6 @@ func _cuspe() -> void:
 	_mudar_estado(Estado.RECUPERANDO)
 
 
-# a chuva e uma varredura de gotas em leque (o numero e impar: a do meio vai no jogador)
 func _iniciar_chuva() -> void:
 	disparos_restantes = gotas_chuva + (4 if furiosa else 0)
 	tempo_disparo = 0.0
@@ -1085,7 +1028,6 @@ func _invocar_fase2() -> void:
 	_mudar_estado(Estado.RECUPERANDO)
 
 
-# ---------------------------------------------------------------- morte
 
 func _morrer() -> void:
 	vida = 0
@@ -1115,7 +1057,6 @@ func _sequencia_morte() -> void:
 	queue_free()
 
 
-# ---------------------------------------------------------------- utilidades
 
 func _esperar(segundos: float) -> void:
 	await get_tree().create_timer(segundos, true, false, true).timeout
@@ -1135,7 +1076,6 @@ func _passos(delta: float) -> void:
 		Efeitos.tremer(0.05)
 
 
-# ---------------------------------------------------------------- visual
 
 func _atualizar_visual(delta: float) -> void:
 	var suavizacao := 1.0 - exp(-14.0 * delta)
@@ -1159,7 +1099,6 @@ func _atualizar_visual(delta: float) -> void:
 		Estado.PROTEGIDA:
 			escudo_alvo = 1.0
 		Estado.EXPOSTA:
-			# o brilho dourado mostra que da pra bater (pisca no fim)
 			brilho_alvo = 1.0
 			if tempo_estado < 1.2 and int(tempo * 14.0) % 2 == 0:
 				brilho_alvo = 0.15
@@ -1203,13 +1142,11 @@ func _atualizar_visual(delta: float) -> void:
 
 	cor = _cor_com_status(cor, estado == Estado.PREPARANDO)
 
-	# sem squash/stretch: o visual nunca muda de escala (so sobe/desce e treme um pouco)
 	var rapido := 1.0 - exp(-(30.0 if estado == Estado.SALTANDO else 14.0) * delta)
 	visual.scale = Vector2.ONE
 	visual.position = Vector2(sin(tempo * 70.0) * tremida, lerpf(visual.position.y, -altura_alvo, rapido))
 	visual.modulate = cor
 
-	# ela so fica virada para a esquerda ou para a direita (com folga para nao ficar trocando)
 	if absf(olhando.x) > 0.2:
 		lado = signf(olhando.x)
 	var anim := _animacao()
@@ -1221,7 +1158,6 @@ func _atualizar_visual(delta: float) -> void:
 	elif furiosa and anim == "andar":
 		rapida = 1.5
 	elif anim == "cuspir_preparo":
-		# as 3 quadros do preparo (6 fps) terminam exatamente quando o ataque sai
 		rapida = 0.5 / maxf(duracao_estado, 0.1)
 	corpo.speed_scale = rapida
 	corpo.flip_h = lado < 0.0
@@ -1243,9 +1179,7 @@ func _atualizar_visual(delta: float) -> void:
 	sombra.scale = escala_sombra * (1.0 - clampf(altura_alvo / 150.0, 0.0, 0.5))
 
 
-# qual animacao do AnimatedSprite2D toca em cada estado
 func _animacao() -> String:
-	# na fase 1 ela cospe os globs sem sair do lugar
 	if tempo_cuspe_visual > 0.0:
 		return "cuspir_disparo"
 	match estado:

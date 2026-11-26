@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cc262icfk2073"]
 
 [ext_resource type="Script" uid="uid://dq2j82pwd2r1k" path="res://scripts/luta_rainha.gd" id="1_luta"]
-[ext_resource type="PackedScene" path="res://cenas/rainha_formiga.tscn" id="2_rainha"]
+[ext_resource type="PackedScene" uid="uid://ffktmgiq28ub" path="res://cenas/rainha_formiga.tscn" id="2_rainha"]
 [ext_resource type="PackedScene" uid="uid://s7kovbrw6wnn" path="res://cenas/jogador.tscn" id="3_jog"]
 [ext_resource type="PackedScene" uid="uid://c6y1di07u2vlw" path="res://cenas/hud.tscn" id="4_hud"]
 [ext_resource type="PackedScene" path="res://cenas/barra_boss.tscn" id="5_barra"]
@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" path="res://objetos/cenarios/tufo_pelo.tscn" id="8_tufo"]
 [ext_resource type="Script" uid="uid://b267244fm5w8h" path="res://scripts/painel_dica.gd" id="9_1v7uy"]
 [ext_resource type="PackedScene" path="res://objetos/cenarios/migalha.tscn" id="9_migalha"]
-[ext_resource type="Texture2D" path="res://artes/cenario/arena_chao.png" id="10_chao"]
+[ext_resource type="Texture2D" uid="uid://cs1cnrtdux3an" path="res://artes/cenario/arena_chao.png" id="10_chao"]
 
 [sub_resource type="Gradient" id="GradMarca"]
 offsets = PackedFloat32Array(0, 0.8, 1)

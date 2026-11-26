@@ -1,5 +1,5 @@
 78098b89c88a74ebe8c20117b8754620
-::res://::1795683619
+::res://::1795685107
 ::res://artes/::1795668120
 ::res://artes/acaro/::1795684229
 acaro_frames.tres::SpriteFrames::8906098037751947360::1795684229::0::1::::<><><>0<>0<><>::uid://bf2ocabco2yo::::res://artes/acaro/acaro_sheet.png
@@ -68,7 +68,7 @@ rainha_frames.tres::SpriteFrames::3604231782233978128::1795684230::0::1::::<><><
 rainha_frames_furia.tres::SpriteFrames::7825969119758666329::1795684230::0::1::::<><><>0<>0<><>::uid://dt3aax1eb8r36::::res://artes/rainha/rainha_furia.png
 rainha_furia.png::CompressedTexture2D::8550653905701956019::1795694018::1795683620::1::::<><><>0<>0<>c5b7d78200ebf37862bbe66d60315190<>res://.godot/imported/rainha_furia.png-7495459f127b06cc122ece34ab204bd6.ctex::
 rainha_normal.png::CompressedTexture2D::5159480368223758824::1795694016::1795683620::1::::<><><>0<>0<>22fbf04bb9480a54dcae748d65763bf9<>res://.godot/imported/rainha_normal.png-5800ac1072ec190949a30ae1503ebffa.ctex::
-::res://artes/ui/::1795668128
+::res://artes/ui/::1795684784
 bar_charge_fill.png::CompressedTexture2D::6752839386390450336::1795667696::1795667714::1::::<><><>0<>0<>58258d046610091d02fcdd46c94bc11b<>res://.godot/imported/bar_charge_fill.png-48010e6e7600dbc83fc44732ef232d4b.ctex::
 bar_charge_frame.png::CompressedTexture2D::8882345884693615325::1795667696::1795667714::1::::<><><>0<>0<>02e3d14639691527a102cefaa138f9ee<>res://.godot/imported/bar_charge_frame.png-367506083a60556b5df2df88d135fd6f.ctex::
 bar_charge_track.png::CompressedTexture2D::130597398600219068::1795667696::1795667714::1::::<><><>0<>0<>1518df859dd15065fbffe06f3bbe1e2b<>res://.godot/imported/bar_charge_track.png-fa5caedefa3429a6f5250afb71f344e2.ctex::

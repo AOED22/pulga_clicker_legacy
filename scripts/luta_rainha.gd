@@ -21,7 +21,6 @@ var dicas_exposta := 0
 
 
 func _ready() -> void:
-	# o chao fica abaixo de tudo; as pocas de acido (z_index -1) ficam acima do chao e abaixo dos personagens
 	$Chao.z_index = -10
 	$Manchas.z_index = -9
 	jogador.definir_limites(limites)
@@ -121,7 +120,6 @@ func _dica(texto: String, duracao: float) -> void:
 	painel.esconder(self)
 
 
-# ---------------------------------------------------------------- vitoria
 
 func _ao_rainha_morrer() -> void:
 	barra.esconder()
