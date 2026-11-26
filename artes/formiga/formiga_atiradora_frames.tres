@@ -1,0 +1,225 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cm0he0ks7rbx6"]
+
+[ext_resource type="Texture2D" uid="uid://b7mbalhgbaj3f" path="res://artes/formiga/formiga_atiradora_sheet.png" id="1_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_andar_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 32, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_andar_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 32, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_andar_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(96, 32, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_andar_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(144, 32, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_andar_4"]
+atlas = ExtResource("1_sheet")
+region = Rect2(192, 32, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_andar_5"]
+atlas = ExtResource("1_sheet")
+region = Rect2(240, 32, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuspir_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 96, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuspir_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 96, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuspir_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(96, 96, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuspir_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(144, 96, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dano_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 128, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dano_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 128, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(96, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(144, 0, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mirar_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 64, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mirar_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 64, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mirar_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(96, 64, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mirar_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(144, 64, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 160, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 160, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(96, 160, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(144, 160, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_4"]
+atlas = ExtResource("1_sheet")
+region = Rect2(192, 160, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_5"]
+atlas = ExtResource("1_sheet")
+region = Rect2(240, 160, 48, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_morte_6"]
+atlas = ExtResource("1_sheet")
+region = Rect2(288, 160, 48, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_andar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_andar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_andar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_andar_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_andar_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_andar_5")
+}],
+"loop": 1,
+"name": &"andar",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuspir_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuspir_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuspir_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuspir_3")
+}],
+"loop": 0,
+"name": &"cuspir",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dano_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dano_1")
+}],
+"loop": 0,
+"name": &"dano",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_3")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mirar_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mirar_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mirar_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mirar_3")
+}],
+"loop": 0,
+"name": &"mirar",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_morte_6")
+}],
+"loop": 0,
+"name": &"morte",
+"speed": 14.0
+}]

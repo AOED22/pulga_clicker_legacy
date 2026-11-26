@@ -44,9 +44,13 @@ var escudo_vida := 0
 var dano_normal := 0
 var tremida_escudo := 0.0
 var flash_escudo := 0.0
+var tempo_dano := 0.0
 
+const DISTANCIA_ESCUDO := 28.0
+
+@onready var sprite: AnimatedSprite2D = $Visual/Sprite
 @onready var pivo: Node2D = $Visual/Pivo
-@onready var escudo: Sprite2D = $Visual/Pivo/Escudo
+@onready var escudo: AnimatedSprite2D = $Visual/Pivo/Escudo
 @onready var trilha: Node2D = $Trilha
 @onready var trilha_area: Sprite2D = $Trilha/Area
 @onready var trilha_preenche: Sprite2D = $Trilha/Preenchimento
@@ -61,6 +65,7 @@ func _ready() -> void:
 		olhando = (jogador.global_position - global_position).normalized()
 	trilha_area.scale.x = distancia_investida / trilha_area.texture.get_size().x
 	trilha.visible = false
+	_atualizar_quadro_escudo()
 
 
 func bloqueia(direcao_golpe: Vector2) -> bool:
@@ -87,8 +92,18 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 
 func _ao_ser_atingido() -> void:
 	recarga = maxf(recarga, 0.6)
+	tempo_dano = 0.25
+	sprite.stop()
+	sprite.play(&"dano")
 	if estado != Estado.TONTA:
 		_mudar_estado(Estado.ANDANDO)
+
+
+func _ao_morrer() -> void:
+	_deixar_corpo(sprite)
+	if escudo.visible:
+		Efeitos.criar(fx_migalhas, global_position + olhando * 24.0, olhando.angle())
+		_soltar_escudo()
 
 
 func _comportamento(delta: float) -> Vector2:
@@ -186,8 +201,9 @@ func _bater() -> void:
 func _rachar_escudo() -> void:
 	escudo_vida -= 1
 	if escudo_vida > 0:
+		_atualizar_quadro_escudo()
 		return
-	escudo.visible = false
+	_soltar_escudo()
 	Efeitos.criar(fx_migalhas, global_position + olhando * 24.0, olhando.angle())
 	Efeitos.criar(fx_migalhas, global_position + olhando * 24.0, olhando.angle() + 0.8)
 	Efeitos.criar(fx_migalhas, global_position + olhando * 24.0, olhando.angle() - 0.8)
@@ -199,6 +215,25 @@ func _rachar_escudo() -> void:
 		_mudar_estado(Estado.ANDANDO)
 
 
+
+func _atualizar_quadro_escudo() -> void:
+	var perdido := escudo_max - escudo_vida
+	escudo.frame = clampi(floori(float(perdido) * 3.0 / float(escudo_max)), 0, 2)
+
+
+
+func _soltar_escudo() -> void:
+	escudo.visible = false
+	var cacos := AnimatedSprite2D.new()
+	cacos.sprite_frames = escudo.sprite_frames
+	cacos.texture_filter = escudo.texture_filter
+	cacos.position = escudo.global_position
+	cacos.rotation = pivo.rotation
+	get_tree().current_scene.add_child(cacos)
+	cacos.animation_finished.connect(cacos.queue_free)
+	cacos.play(&"quebrar")
+
+
 func _atualizar_visual(delta: float) -> void:
 	var suavizacao := 1.0 - exp(-16.0 * delta)
 	var escala_alvo := Vector2.ONE
@@ -206,24 +241,21 @@ func _atualizar_visual(delta: float) -> void:
 	var pulinho := 0.0
 	var tremida := 0.0
 	var balanco := 0.0
+	tempo_dano = maxf(tempo_dano - delta, 0.0)
 	flash_escudo = maxf(flash_escudo - delta, 0.0)
 	tremida_escudo = move_toward(tremida_escudo, 0.0, 40.0 * delta)
 
 	match estado:
 		Estado.ANDANDO:
-			if velocity.length() > 10.0:
-				pulinho = absf(sin(tempo * 10.0)) * 1.5
+			if velocity.length() > 10.0 and tempo_dano <= 0.0:
+				pulinho = absf(sin(tempo * 10.0)) * 0.8
 		Estado.PREPARANDO:
 			var progresso := 1.0 - tempo_estado / duracao_preparo
-			escala_alvo = Vector2(0.85, 1.2)
 			tremida = progresso * 1.5
 			cor = Color.WHITE.lerp(Color(1.6, 0.8, 0.6), progresso)
 		Estado.INVESTINDO:
-			escala_alvo = Vector2(1.3, 0.8)
-		Estado.RECUPERANDO:
-			escala_alvo = Vector2(0.9, 1.1)
+			escala_alvo = Vector2(1.08, 0.94)
 		Estado.TONTA:
-			escala_alvo = Vector2(0.9, 1.1)
 			balanco = sin(tempo * 10.0) * 0.18
 			cor = Color(0.85, 0.85, 1.0)
 
@@ -231,16 +263,15 @@ func _atualizar_visual(delta: float) -> void:
 		cor = cor * Color(1.3, 0.85, 0.7)
 	cor = _cor_com_status(cor, estado == Estado.PREPARANDO)
 
-	pivo.scale = pivo.scale.lerp(escala_alvo, suavizacao)
+	sprite.scale = sprite.scale.lerp(escala_alvo, suavizacao)
 	pivo.rotation = olhando.angle() + balanco
 	visual.scale = visual.scale.lerp(Vector2.ONE, suavizacao)
 	visual.position = Vector2(sin(tempo * 70.0) * tremida, -pulinho)
 	visual.modulate = cor
+	_atualizar_animacao()
 
-	var fracao := float(escudo_vida) / float(escudo_max)
-	escudo.scale = escudo.scale.lerp(Vector2.ONE * lerpf(0.6, 1.0, fracao), suavizacao)
-	escudo.position.x = 25.0 - tremida_escudo
-	escudo.modulate = Color(3.0, 3.0, 3.0) if flash_escudo > 0.0 else Color(1.5, 1.15, 0.6)
+	escudo.position.x = DISTANCIA_ESCUDO - tremida_escudo
+	escudo.modulate = Color(3.0, 3.0, 3.0) if flash_escudo > 0.0 else Color.WHITE
 
 	trilha.visible = estado == Estado.PREPARANDO
 	if trilha.visible:
@@ -249,3 +280,40 @@ func _atualizar_visual(delta: float) -> void:
 		trilha.rotation = olhando.angle()
 		trilha_preenche.scale.x = trilha_area.scale.x * progresso_trilha
 		trilha.modulate.a = 1.0 if tempo_estado <= tempo_travar else 0.55
+
+
+func _atualizar_animacao() -> void:
+	if absf(olhando.x) > 0.1:
+		sprite.flip_h = olhando.x < 0.0
+
+	match estado:
+		Estado.PREPARANDO:
+			_quadro_por_progresso(&"preparar", 1.0 - tempo_estado / duracao_preparo)
+		Estado.INVESTINDO:
+			_tocar(&"investida", 1.0)
+		Estado.RECUPERANDO:
+			_quadro_por_progresso(&"recuperar", 1.0 - tempo_estado / tempo_recuperacao)
+		Estado.TONTA:
+			_tocar(&"dano" if tempo_dano > 0.0 else &"tonta", 1.0)
+		_:
+			if tempo_dano > 0.0:
+				_tocar(&"dano", 1.0)
+			elif velocity.length() > velocidade * 0.15 and atordoado <= 0.0:
+				_tocar(&"andar", clampf(velocity.length() / velocidade, 0.6, 1.25))
+			else:
+				_tocar(&"idle", 1.0)
+
+
+func _tocar(nome: StringName, velocidade_anim: float) -> void:
+	sprite.speed_scale = velocidade_anim
+	var mudou := sprite.animation != nome
+	if mudou or (not sprite.is_playing() and sprite.sprite_frames.get_animation_loop(nome)):
+		sprite.play(nome)
+
+
+func _quadro_por_progresso(nome: StringName, progresso: float) -> void:
+	var total := sprite.sprite_frames.get_frame_count(nome)
+	if sprite.animation != nome:
+		sprite.animation = nome
+	sprite.pause()
+	sprite.frame = clampi(int(progresso * total), 0, total - 1)

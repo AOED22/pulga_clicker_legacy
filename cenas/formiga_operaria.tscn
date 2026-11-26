@@ -4,18 +4,11 @@
 [ext_resource type="PackedScene" path="res://cenas/fx_morte.tscn" id="2_fxm"]
 [ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="3_fxp"]
 [ext_resource type="PackedScene" path="res://cenas/fx_migalhas.tscn" id="4_fxmig"]
+[ext_resource type="SpriteFrames" path="res://artes/formiga/formiga_operaria_frames.tres" id="5_frames"]
+[ext_resource type="SpriteFrames" path="res://artes/formiga/escudo_biscoito_frames.tres" id="6_escudo"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
 radius = 15.0
-
-[sub_resource type="PlaceholderTexture2D" id="Tex_corpo"]
-size = Vector2(34, 18)
-
-[sub_resource type="PlaceholderTexture2D" id="Tex_cabeca"]
-size = Vector2(9, 9)
-
-[sub_resource type="PlaceholderTexture2D" id="Tex_escudo"]
-size = Vector2(12, 30)
 
 [sub_resource type="PlaceholderTexture2D" id="Tex_trilha"]
 size = Vector2(128, 34)
@@ -55,18 +48,17 @@ shape = SubResource("CircleShape2D_corpo")
 
 [node name="Visual" type="Node2D" parent="."]
 
+[node name="Sprite" type="AnimatedSprite2D" parent="Visual"]
+position = Vector2(0, -2)
+texture_filter = 1
+sprite_frames = ExtResource("5_frames")
+animation = &"idle"
+autoplay = "idle"
+
 [node name="Pivo" type="Node2D" parent="Visual"]
 
-[node name="Corpo" type="Sprite2D" parent="Visual/Pivo"]
-modulate = Color(0.5, 0.27, 0.1, 1)
-texture = SubResource("Tex_corpo")
-
-[node name="Cabeca" type="Sprite2D" parent="Visual/Pivo"]
-modulate = Color(1.8, 1.2, 0.8, 1)
-position = Vector2(16, 0)
-texture = SubResource("Tex_cabeca")
-
-[node name="Escudo" type="Sprite2D" parent="Visual/Pivo"]
-modulate = Color(1.5, 1.15, 0.6, 1)
-position = Vector2(25, 0)
-texture = SubResource("Tex_escudo")
+[node name="Escudo" type="AnimatedSprite2D" parent="Visual/Pivo"]
+position = Vector2(28, 0)
+texture_filter = 1
+sprite_frames = ExtResource("6_escudo")
+animation = &"estado"

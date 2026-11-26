@@ -1,0 +1,246 @@
+[gd_scene format=3 uid="uid://cc262icfk2073"]
+
+[ext_resource type="Script" uid="uid://dq2j82pwd2r1k" path="res://scripts/luta_rainha.gd" id="1_luta"]
+[ext_resource type="PackedScene" path="res://cenas/rainha_formiga.tscn" id="2_rainha"]
+[ext_resource type="PackedScene" uid="uid://s7kovbrw6wnn" path="res://cenas/jogador.tscn" id="3_jog"]
+[ext_resource type="PackedScene" uid="uid://c6y1di07u2vlw" path="res://cenas/hud.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://cenas/barra_boss.tscn" id="5_barra"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/livros_arena.tscn" id="7_obst"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/tufo_pelo.tscn" id="8_tufo"]
+[ext_resource type="Script" uid="uid://b267244fm5w8h" path="res://scripts/painel_dica.gd" id="9_1v7uy"]
+[ext_resource type="PackedScene" path="res://objetos/cenarios/migalha.tscn" id="9_migalha"]
+[ext_resource type="Texture2D" path="res://artes/cenario/arena_chao.png" id="10_chao"]
+
+[sub_resource type="Gradient" id="GradMarca"]
+offsets = PackedFloat32Array(0, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 0.35, 1, 1, 1, 0.35, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="TexMarca"]
+gradient = SubResource("GradMarca")
+width = 200
+height = 200
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="RectangleShape2D" id="Forma_horizontal"]
+size = Vector2(1400, 100)
+
+[sub_resource type="RectangleShape2D" id="Forma_vertical"]
+size = Vector2(100, 900)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_painel"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.05, 0.03, 0.05, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="LutaRainha" type="Node2D" unique_id=1958009669]
+script = ExtResource("1_luta")
+texto_abertura = "A Formiga Rainha"
+texto_final = "Obrigado por jogar essa beta!!! 
+Mais atualizações no futuro"
+
+[node name="Ambiente" type="CanvasModulate" parent="." unique_id=380196564]
+color = Color(0.86, 0.78, 0.88, 1)
+
+[node name="Chao" type="Sprite2D" parent="." unique_id=1448301569]
+texture_filter = 1
+position = Vector2(-100, -100)
+texture = ExtResource("10_chao")
+centered = false
+
+[node name="Manchas" type="Node2D" parent="." unique_id=426237493]
+
+[node name="ManchaNinho" type="Sprite2D" parent="Manchas" unique_id=827501470]
+modulate = Color(0.08, 0.02, 0.05, 0.55)
+position = Vector2(1010, 360)
+scale = Vector2(3.2, 2.6)
+texture = SubResource("TexMarca")
+
+[node name="ManchaClara" type="Sprite2D" parent="Manchas" unique_id=2119553900]
+modulate = Color(0.9, 0.75, 0.5, 0.3)
+position = Vector2(420, 360)
+scale = Vector2(2.4, 2)
+texture = SubResource("TexMarca")
+
+[node name="ManchaEscura" type="Sprite2D" parent="Manchas" unique_id=108802542]
+modulate = Color(0.05, 0.02, 0.04, 0.45)
+position = Vector2(700, 600)
+scale = Vector2(2.2, 1.2)
+texture = SubResource("TexMarca")
+
+[node name="Paredes" type="StaticBody2D" parent="." unique_id=880841211]
+collision_mask = 0
+
+[node name="Topo" type="CollisionShape2D" parent="Paredes" unique_id=766773074]
+position = Vector2(600, -50)
+shape = SubResource("Forma_horizontal")
+
+[node name="Base" type="CollisionShape2D" parent="Paredes" unique_id=1755340926]
+position = Vector2(600, 770)
+shape = SubResource("Forma_horizontal")
+
+[node name="Esquerda" type="CollisionShape2D" parent="Paredes" unique_id=134681575]
+position = Vector2(-50, 360)
+shape = SubResource("Forma_vertical")
+
+[node name="Direita" type="CollisionShape2D" parent="Paredes" unique_id=1538956835]
+position = Vector2(1250, 360)
+shape = SubResource("Forma_vertical")
+
+[node name="Detalhes" type="Node2D" parent="." unique_id=1573907987]
+
+[node name="Tufo1" parent="Detalhes" unique_id=1675422999 instance=ExtResource("8_tufo")]
+position = Vector2(80, 90)
+rotation = 0.4
+scale = Vector2(1.2, 1.2)
+
+[node name="Tufo2" parent="Detalhes" unique_id=519985413 instance=ExtResource("8_tufo")]
+position = Vector2(110, 640)
+rotation = -0.3
+scale = Vector2(1.3, 1.3)
+
+[node name="Tufo3" parent="Detalhes" unique_id=62657249 instance=ExtResource("8_tufo")]
+position = Vector2(600, 60)
+rotation = 1.8
+
+[node name="Tufo4" parent="Detalhes" unique_id=89666925 instance=ExtResource("8_tufo")]
+position = Vector2(620, 670)
+rotation = -1.2
+scale = Vector2(1.1, 1.1)
+
+[node name="Migalha1" parent="Detalhes" unique_id=1186702576 instance=ExtResource("9_migalha")]
+position = Vector2(300, 420)
+rotation = 2.8
+scale = Vector2(0.5, 0.5)
+
+[node name="Migalha2" parent="Detalhes" unique_id=561469455 instance=ExtResource("9_migalha")]
+position = Vector2(860, 300)
+rotation = 1.3
+scale = Vector2(0.45, 0.45)
+
+[node name="Pilares" type="Node2D" parent="." unique_id=1406143024]
+
+[node name="Pilar1" parent="Pilares" unique_id=828270896 instance=ExtResource("7_obst")]
+position = Vector2(420, 210)
+
+[node name="Pilar2" parent="Pilares" unique_id=606689794 instance=ExtResource("7_obst")]
+position = Vector2(420, 510)
+
+[node name="Pilar3" parent="Pilares" unique_id=1581017283 instance=ExtResource("7_obst")]
+position = Vector2(760, 210)
+
+[node name="Pilar4" parent="Pilares" unique_id=222694066 instance=ExtResource("7_obst")]
+position = Vector2(760, 510)
+
+[node name="Spawns" type="Node2D" parent="." unique_id=1020288394]
+
+[node name="Spawn1" type="Marker2D" parent="Spawns" unique_id=1494089705 groups=["spawn_boss"]]
+position = Vector2(560, 110)
+
+[node name="Spawn2" type="Marker2D" parent="Spawns" unique_id=91205690 groups=["spawn_boss"]]
+position = Vector2(560, 610)
+
+[node name="Spawn3" type="Marker2D" parent="Spawns" unique_id=1401231399 groups=["spawn_boss"]]
+position = Vector2(900, 130)
+
+[node name="Spawn4" type="Marker2D" parent="Spawns" unique_id=1725667065 groups=["spawn_boss"]]
+position = Vector2(900, 590)
+
+[node name="Spawn5" type="Marker2D" parent="Spawns" unique_id=1417752477 groups=["spawn_boss"]]
+position = Vector2(260, 140)
+
+[node name="Spawn6" type="Marker2D" parent="Spawns" unique_id=786207100 groups=["spawn_boss"]]
+position = Vector2(260, 580)
+
+[node name="Spawn7" type="Marker2D" parent="Spawns" unique_id=1022918455 groups=["spawn_boss"]]
+position = Vector2(590, 360)
+
+[node name="RainhaFormiga" parent="." unique_id=1907769988 instance=ExtResource("2_rainha")]
+position = Vector2(1010, 360)
+
+[node name="Jogador" parent="." unique_id=1215762576 instance=ExtResource("3_jog")]
+position = Vector2(150, 360)
+
+[node name="Poeira" type="CPUParticles2D" parent="." unique_id=1955067521]
+position = Vector2(600, 360)
+amount = 140
+lifetime = 10.0
+preprocess = 10.0
+emission_shape = 3
+emission_rect_extents = Vector2(600, 360)
+spread = 180.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 12.0
+scale_amount_min = 1.5
+scale_amount_max = 2.5
+color = Color(1, 0.92, 0.75, 0.25)
+
+[node name="Hud" parent="." unique_id=464264246 instance=ExtResource("4_hud")]
+
+[node name="BarraBoss" parent="." unique_id=719489292 instance=ExtResource("5_barra")]
+
+[node name="PainelDica" type="CanvasLayer" parent="." unique_id=1497582673 groups=["painel_dica"]]
+layer = 2
+script = ExtResource("9_1v7uy")
+
+[node name="Margem" type="MarginContainer" parent="PainelDica" unique_id=1435819199]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/margin_bottom = 36
+
+[node name="Centro" type="CenterContainer" parent="PainelDica/Margem" unique_id=597208065]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Painel" type="PanelContainer" parent="PainelDica/Margem/Centro" unique_id=2063593208]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_painel")
+
+[node name="Texto" type="RichTextLabel" parent="PainelDica/Margem/Centro/Painel" unique_id=246342045]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/normal_font_size = 18
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Musica" type="AudioStreamPlayer" parent="." unique_id=36463437]
+
+[node name="Transicao" type="CanvasLayer" parent="." unique_id=191657026]
+layer = 10
+
+[node name="Fade" type="ColorRect" parent="Transicao" unique_id=1190970460]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Titulo" type="Label" parent="Transicao" unique_id=346811965]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.8, 1)
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+vertical_alignment = 1

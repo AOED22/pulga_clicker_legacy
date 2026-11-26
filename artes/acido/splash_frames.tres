@@ -1,0 +1,46 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://7m0ga7vocla2"]
+
+[ext_resource type="Texture2D" uid="uid://c6f3jqdnm208v" path="res://artes/acido/splash_sheet.png" id="1_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_splash_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_splash_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_splash_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_splash_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_splash_4"]
+atlas = ExtResource("1_sheet")
+region = Rect2(128, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_splash_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_splash_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_splash_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_splash_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_splash_4")
+}],
+"loop": 0,
+"name": &"splash",
+"speed": 16.0
+}]

@@ -2,11 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/portao.gd" id="1_por"]
 [ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="2_fxp"]
+[ext_resource type="Texture2D" path="res://artes/props/portao_lapis.png" id="3_tex"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_portao"]
-size = Vector2(24, 160)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_portao"]
 size = Vector2(24, 160)
 
 [node name="Portao" type="StaticBody2D"]
@@ -22,5 +20,5 @@ disabled = true
 [node name="Visual" type="Node2D" parent="."]
 
 [node name="Sprite" type="Sprite2D" parent="Visual"]
-modulate = Color(0.55, 0.36, 0.22, 1)
-texture = SubResource("PlaceholderTexture2D_portao")
+texture_filter = 1
+texture = ExtResource("3_tex")

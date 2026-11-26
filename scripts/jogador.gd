@@ -9,9 +9,6 @@ signal acao_feita(nome: StringName)
 
 enum Estado { LIVRE, DASH, CARGA, PULO }
 
-const LARGURA_AGULHA := 72.0
-
-
 @export_group("Movimento")
 @export var velocidade := 230.0
 @export var velocidade_carga := 70.0
@@ -53,6 +50,8 @@ const LARGURA_AGULHA := 72.0
 @export var finalizador_escala := 1.3
 @export var finalizador_forca := 1.6
 @export var ataque_forca := 320.0
+@export var agulha_recuo := 12.0
+@export var corte_escala := 1.0
 @export var ataque_avanco := 150.0
 @export var poder_por_golpe := 10.0
 @export var poder_por_execucao := 15.0
@@ -70,11 +69,12 @@ const LARGURA_AGULHA := 72.0
 @export_group("Cenas")
 @export var cena_anel: PackedScene
 @export var fx_hit: PackedScene
+@export var fx_impacto: PackedScene
 @export var fx_sangue: PackedScene
 @export var fx_poeira: PackedScene
 
 @export_group("Visual")
-@export var girar_sprite := true
+@export var girar_sprite := false
 @export var cor_carga := Color(1.0, 1.0, 0.4)
 @export var cor_carga_cheia := Color(1.0, 1.0, 1.0)
 
@@ -138,16 +138,18 @@ var atordoado := 0.0
 var flash := 0.0
 
 var tempo_andando := 0.0
+var anim_acao: StringName = &""
+var tempo_acao := 0.0
 var luz_base := 0.3
 
 
 @onready var colisao: CollisionShape2D = $Colisao
 @onready var visual: Node2D = $Visual
-@onready var sprite: Node2D = $Visual/Sprite
+@onready var sprite: AnimatedSprite2D = $Visual/Sprite
 @onready var indicador_carga: Node2D = $Visual/IndicadorCarga
 @onready var sombra: Node2D = $Sombra
-@onready var efeito_ataque: Node2D = $EfeitoAtaque
-@onready var arco_ataque: ArcoAtaque = $ArcoAtaque
+@onready var agulha: Sprite2D = $Agulha
+@onready var corte: AnimatedSprite2D = $Corte
 @onready var poeira: CPUParticles2D = $Poeira
 @onready var camera: CameraJogador = $Camera2D
 @onready var luz: PointLight2D = $Luz
@@ -157,6 +159,8 @@ var luz_base := 0.3
 func _ready() -> void:
 	mascara_base = collision_mask
 	vida = vida_max
+	agulha.offset = Vector2(-agulha_recuo, -agulha.texture.get_height() / 2.0)
+	corte.animation_finished.connect(_esconder_corte)
 
 
 func _physics_process(delta: float) -> void:
@@ -233,6 +237,7 @@ func receber_dano(dano: int, direcao: Vector2) -> void:
 	flash = 0.1
 	velocity = direcao * recuo_forca
 	visual.scale = Vector2(1.35, 0.7)
+	_tocar_acao(&"dano")
 
 	if estado == Estado.CARGA:
 		estado = Estado.LIVRE
@@ -249,9 +254,14 @@ func receber_dano(dano: int, direcao: Vector2) -> void:
 func _morrer() -> void:
 	morto = true
 	_cancelar_swing()
-	visual.visible = false
-	sombra.visible = false
 	luz.visible = false
+	indicador_carga.visible = false
+	visual.modulate = Color.WHITE
+	visual.scale = Vector2.ONE
+	visual.position.y = 0.0
+	sprite.speed_scale = 1.0
+	sprite.stop()
+	sprite.play(&"morte")
 
 	Efeitos.criar(fx_sangue, global_position)
 	Efeitos.tremer(1.0)
@@ -291,6 +301,7 @@ func _mover(alvo: Vector2, delta: float) -> void:
 func _iniciar_dash(entrada: Vector2) -> void:
 	direcao_dash = entrada.normalized() if entrada != Vector2.ZERO else olhando
 	_cancelar_swing()
+	tempo_acao = 0.0
 
 	estado = Estado.DASH
 	tempo_estado = dash_duracao
@@ -321,11 +332,15 @@ func _criar_fantasma(delta: float) -> void:
 		return
 	tempo_fantasma = fantasma_intervalo
 
-	var fantasma: Node2D = sprite.duplicate()
+	var fantasma := Sprite2D.new()
+	fantasma.texture = sprite.sprite_frames.get_frame_texture(sprite.animation, sprite.frame)
+	fantasma.flip_h = sprite.flip_h
+	fantasma.offset = sprite.offset
+	fantasma.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	get_parent().add_child(fantasma)
 	get_parent().move_child(fantasma, get_index())
 	fantasma.global_transform = sprite.global_transform
-	fantasma.modulate = Color(1.0, 1.0, 1.0, 0.45)
+	fantasma.modulate = Color(1.0, 1.0, 1.0, 0.65)
 
 	var tween := fantasma.create_tween()
 	tween.tween_property(fantasma, "modulate:a", 0.0, 0.25)
@@ -347,6 +362,7 @@ func _iniciar_pulo(entrada: Vector2) -> void:
 	direcao_pulo = entrada.normalized() if entrada != Vector2.ZERO else olhando
 	distancia_pulo = lerpf(pulo_distancia_min, pulo_distancia_max, carga / carga_max)
 	_cancelar_swing()
+	tempo_acao = 0.0
 
 	estado = Estado.PULO
 	tempo_estado = 0.0
@@ -382,7 +398,8 @@ func _aterrissar() -> void:
 	velocity *= 0.3
 	collision_mask = mascara_base
 	_sair_de_obstaculo()
-	visual.scale = Vector2(1.5, 0.55)
+	visual.scale = Vector2(1.3, 0.7)
+	_tocar_acao(&"pouso")
 
 	Efeitos.criar(fx_poeira, global_position)
 	Efeitos.tremer(0.55)
@@ -440,6 +457,11 @@ func _atacar() -> void:
 
 	if ataque_alternar_sentido:
 		swing_sentido = -swing_sentido
+	if swing_final:
+		_tocar_acao(&"ataque_final")
+	else:
+		_tocar_acao(&"ataque_a" if combo % 2 == 1 else &"ataque_b")
+
 	swing_ativo = true
 	swing_tempo = 0.0
 	swing_angulo_inicio = direcao_ataque.angle() - swing_arco * swing_sentido
@@ -467,8 +489,7 @@ func _atualizar_swing(delta: float) -> void:
 	var offset := lerpf(inicio, swing_arco * swing_sentido, progresso)
 	var angulo := direcao_ataque.angle() + offset
 
-	efeito_ataque.rotation = angulo
-	arco_ataque.definir(swing_angulo_inicio, angulo)
+	agulha.rotation = angulo
 	_golpear(minf(inicio, offset), maxf(inicio, offset))
 
 	if t >= 1.0:
@@ -479,14 +500,14 @@ func _terminar_swing() -> void:
 	swing_ativo = false
 	if swing_bloqueou and not swing_acertou:
 		acao_feita.emit(&"bloqueado")
-	_terminar_efeito_swing()
+	_terminar_efeito_swing(false)
 
 
 func _cancelar_swing() -> void:
 	if not swing_ativo:
 		return
 	swing_ativo = false
-	_terminar_efeito_swing()
+	_terminar_efeito_swing(true)
 
 
 func _golpear(de: float, ate: float) -> void:
@@ -508,6 +529,7 @@ func _golpear(de: float, ate: float) -> void:
 			continue
 		var dir_gota := _direcao_para(gota)
 		Efeitos.criar(fx_hit, gota.global_position, dir_gota.angle())
+		_criar_impacto(gota.global_position, dir_gota, 0.6)
 		gota.cortar()
 		if not swing_cortou:
 			acao_feita.emit(&"cortou")
@@ -530,6 +552,9 @@ func _golpear_inimigo(alvo: Inimigo) -> void:
 	var morreu := alvo.receber_dano(1, dir_golpe * swing_forca)
 
 	Efeitos.criar(fx_hit, alvo.global_position, dir_golpe.angle())
+	var forma := _forma_alvo(alvo)
+	var contato: Vector2 = alvo.global_position + (forma["centro"] as Vector2) - dir_golpe * (forma["raio"] as float) * 0.5
+	_criar_impacto(contato, dir_golpe, (1.0 + (swing_impacto - 1.0) * 0.8) * (1.25 if morreu else 1.0))
 	if morreu and not swing_final:
 		Efeitos.criar_anel(
 			cena_anel,
@@ -627,6 +652,7 @@ func _habilidade() -> void:
 	poder -= custo_habilidade
 
 	acao_feita.emit(&"habilidade")
+	_tocar_acao(&"habilidade")
 	visual.scale = Vector2(1.3, 0.8)
 	Efeitos.criar_anel(cena_anel, global_position, onda_raio)
 	Efeitos.tremer(0.5)
@@ -658,36 +684,51 @@ func _iniciar_efeito_swing() -> void:
 	if tween_ataque and tween_ataque.is_valid():
 		tween_ataque.kill()
 
-	efeito_ataque.rotation = swing_angulo_inicio
-	efeito_ataque.scale = Vector2(swing_alcance / LARGURA_AGULHA, 1.7 if swing_final else 1.3)
-	efeito_ataque.modulate = Color(1.0, 0.92, 0.6, 0.95) if swing_final else Color(0.95, 0.95, 1.0, 0.9)
-	efeito_ataque.visible = true
+	agulha.rotation = swing_angulo_inicio
+	agulha.modulate.a = 1.0
+	agulha.visible = true
 
-	arco_ataque.raio_externo = swing_alcance
-	arco_ataque.raio_interno = swing_alcance * 0.3
-	arco_ataque.cor = Color(1.0, 0.85, 0.45, 0.8) if swing_final else Color(0.85, 0.9, 1.0, 0.65)
-	arco_ataque.modulate.a = 1.0
-	arco_ataque.definir(swing_angulo_inicio, swing_angulo_inicio)
-	arco_ataque.visible = true
+	corte.stop()
+	corte.rotation = direcao_ataque.angle()
+	corte.scale = Vector2(corte_escala, corte_escala * swing_sentido)
+	corte.modulate.a = 1.0
+	corte.speed_scale = 1.0 / (swing_duracao * 1.3)
+	corte.visible = true
+	corte.play(&"final" if swing_final else &"normal")
 
 
-func _terminar_efeito_swing() -> void:
+func _terminar_efeito_swing(cancelado: bool) -> void:
 	if tween_ataque and tween_ataque.is_valid():
 		tween_ataque.kill()
 
 	tween_ataque = create_tween().set_parallel()
-	tween_ataque.tween_property(efeito_ataque, "modulate:a", 0.0, 0.1)
-	tween_ataque.tween_property(arco_ataque, "modulate:a", 0.0, 0.14)
+	tween_ataque.tween_property(agulha, "modulate:a", 0.0, 0.08).set_delay(0.03)
+	if cancelado:
+		tween_ataque.tween_property(corte, "modulate:a", 0.0, 0.08)
 	tween_ataque.chain().tween_callback(_esconder_efeito_ataque)
 
 
 func _esconder_efeito_ataque() -> void:
-	efeito_ataque.hide()
-	arco_ataque.hide()
+	agulha.hide()
+	if corte.modulate.a < 0.1:
+		_esconder_corte()
+
+
+func _esconder_corte() -> void:
+	corte.stop()
+	corte.hide()
+
+
+func _criar_impacto(posicao: Vector2, direcao: Vector2, escala: float) -> void:
+	var impacto := Efeitos.criar(fx_impacto, posicao, direcao.angle() + randf_range(-0.25, 0.25))
+	if impacto:
+		impacto.scale = Vector2.ONE * escala
 
 
 func _atualizar_visual(delta: float) -> void:
 	var suavizacao := 1.0 - exp(-18.0 * delta)
+
+	_atualizar_animacao(delta)
 
 	visual.position.y = -altura - _balanco_andando(delta)
 	sombra.scale = escala_sombra * maxf(1.0 - altura / (pulo_altura * 2.0), 0.5)
@@ -695,7 +736,7 @@ func _atualizar_visual(delta: float) -> void:
 	var escala_alvo := Vector2.ONE
 	if estado == Estado.CARGA:
 		var forca := carga / carga_max
-		escala_alvo = Vector2(1.0 + 0.2 * forca, 1.0 - 0.3 * forca)
+		escala_alvo = Vector2(1.0 + 0.08 * forca, 1.0 - 0.1 * forca)
 	visual.scale = visual.scale.lerp(escala_alvo, suavizacao)
 
 	if girar_sprite:
@@ -721,10 +762,54 @@ func _atualizar_visual(delta: float) -> void:
 	poeira.emitting = estado == Estado.LIVRE and velocity.length() > velocidade * 0.5
 
 
+func _tocar_acao(nome: StringName) -> void:
+	var frames := sprite.sprite_frames
+	anim_acao = nome
+	tempo_acao = frames.get_frame_count(nome) / frames.get_animation_speed(nome)
+	sprite.speed_scale = 1.0
+	sprite.stop()
+	sprite.play(nome)
+
+
+func _atualizar_animacao(delta: float) -> void:
+	if absf(olhando.x) > 0.1:
+		sprite.flip_h = olhando.x < 0.0
+
+	tempo_acao = maxf(tempo_acao - delta, 0.0)
+
+	if estado == Estado.PULO:
+		var t := clampf(tempo_estado / pulo_duracao, 0.0, 0.999)
+		var quadro := 0 if t < 0.15 else (1 if t < 0.45 else (2 if t < 0.8 else 3))
+		if sprite.animation != &"pulo":
+			sprite.animation = &"pulo"
+		sprite.pause()
+		sprite.frame = quadro
+		return
+
+	var nome: StringName = &"idle"
+	var velocidade_anim := 1.0
+	match estado:
+		Estado.DASH:
+			nome = &"dash"
+		Estado.CARGA:
+			nome = &"carga"
+		_:
+			if tempo_acao > 0.0:
+				nome = anim_acao
+			elif velocity.length() > velocidade * 0.15 and atordoado <= 0.0:
+				nome = &"andar"
+				velocidade_anim = clampf(velocity.length() / velocidade, 0.6, 1.25)
+
+	sprite.speed_scale = velocidade_anim
+	var ciclica := nome != anim_acao or tempo_acao <= 0.0
+	if sprite.animation != nome or (ciclica and not sprite.is_playing()):
+		sprite.play(nome)
+
+
 func _balanco_andando(delta: float) -> float:
 	if estado != Estado.LIVRE or altura > 0.0:
 		return 0.0
 
 	var ritmo := minf(velocity.length() / velocidade, 1.0)
 	tempo_andando += delta * 14.0 * ritmo
-	return absf(sin(tempo_andando)) * 2.0 * ritmo
+	return absf(sin(tempo_andando)) * 0.5 * ritmo

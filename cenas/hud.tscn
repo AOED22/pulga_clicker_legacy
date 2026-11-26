@@ -1,11 +1,23 @@
 [gd_scene format=3 uid="uid://c6y1di07u2vlw"]
 
 [ext_resource type="Script" uid="uid://dox6jpwj5k8g8" path="res://scripts/hud.gd" id="1_hud"]
+[ext_resource type="Texture2D" path="res://artes/ui/icon_life.png" id="2_icon_life"]
+[ext_resource type="Texture2D" path="res://artes/ui/icon_power.png" id="3_icon_power"]
+[ext_resource type="Texture2D" path="res://artes/ui/icon_charge.png" id="4_icon_charge"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_life_track.png" id="5_life_track"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_life_fill.png" id="6_life_fill"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_life_frame.png" id="7_life_frame"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_power_track.png" id="8_power_track"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_power_fill.png" id="9_power_fill"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_power_frame.png" id="10_power_frame"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_charge_track.png" id="11_charge_track"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_charge_fill.png" id="12_charge_fill"]
+[ext_resource type="Texture2D" path="res://artes/ui/bar_charge_frame.png" id="13_charge_frame"]
 
-[node name="Hud" type="CanvasLayer" unique_id=317264249]
+[node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_hud")
 
-[node name="Painel" type="Control" parent="." unique_id=206549622]
+[node name="Root" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +26,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="FlashDano" type="ColorRect" parent="Painel" unique_id=281997393]
+[node name="DamageFlash" type="ColorRect" parent="Root"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,24 +36,80 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0.9, 0.1, 0.1, 0)
 
-[node name="BarraVida" type="ProgressBar" parent="Painel" unique_id=2008934208]
-modulate = Color(0.9, 0.25, 0.3, 1)
-layout_mode = 0
-offset_left = 20.0
-offset_top = 20.0
-offset_right = 240.0
-offset_bottom = 38.0
-max_value = 10.0
-step = 1.0
-value = 10.0
-show_percentage = false
+[node name="Bars" type="Control" parent="Root"]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 16.0
+offset_bottom = 12.0
+scale = Vector2(2, 2)
+mouse_filter = 2
 
-[node name="BarraPoder" type="ProgressBar" parent="Painel" unique_id=566347662]
-modulate = Color(0.4, 0.6, 1, 1)
+[node name="LifeIcon" type="TextureRect" parent="Root/Bars"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 2.0
+offset_right = 16.0
+offset_bottom = 20.0
+mouse_filter = 2
+texture = ExtResource("2_icon_life")
+
+[node name="LifeBar" type="TextureProgressBar" parent="Root/Bars"]
 layout_mode = 0
 offset_left = 20.0
-offset_top = 46.0
-offset_right = 240.0
-offset_bottom = 60.0
-step = 1.0
-show_percentage = false
+offset_top = 2.0
+offset_right = 140.0
+offset_bottom = 18.0
+mouse_filter = 2
+max_value = 112.0
+value = 112.0
+texture_under = ExtResource("5_life_track")
+texture_over = ExtResource("7_life_frame")
+texture_progress = ExtResource("6_life_fill")
+texture_progress_offset = Vector2(4, 4)
+
+[node name="PowerIcon" type="TextureRect" parent="Root/Bars"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 21.0
+offset_right = 19.0
+offset_bottom = 36.0
+mouse_filter = 2
+texture = ExtResource("3_icon_power")
+
+[node name="PowerBar" type="TextureProgressBar" parent="Root/Bars"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 21.0
+offset_right = 120.0
+offset_bottom = 35.0
+mouse_filter = 2
+max_value = 92.0
+texture_under = ExtResource("8_power_track")
+texture_over = ExtResource("10_power_frame")
+texture_progress = ExtResource("9_power_fill")
+texture_progress_offset = Vector2(4, 4)
+
+[node name="ChargeIcon" type="TextureRect" parent="Root/Bars"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 38.0
+offset_right = 19.0
+offset_bottom = 53.0
+mouse_filter = 2
+texture = ExtResource("4_icon_charge")
+
+[node name="ChargeBar" type="TextureProgressBar" parent="Root/Bars"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 38.0
+offset_right = 120.0
+offset_bottom = 52.0
+mouse_filter = 2
+max_value = 92.0
+texture_under = ExtResource("11_charge_track")
+texture_over = ExtResource("13_charge_frame")
+texture_progress = ExtResource("12_charge_fill")
+texture_progress_offset = Vector2(4, 4)

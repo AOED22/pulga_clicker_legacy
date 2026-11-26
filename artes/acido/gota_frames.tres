@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://daf0k7805yjuh"]
+
+[ext_resource type="Texture2D" uid="uid://c2lt1lhk5yebj" path="res://artes/acido/gota_sheet.png" id="1_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_voo_0"]
+atlas = ExtResource("1_sheet")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_voo_1"]
+atlas = ExtResource("1_sheet")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_voo_2"]
+atlas = ExtResource("1_sheet")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_voo_3"]
+atlas = ExtResource("1_sheet")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_voo_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_voo_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_voo_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_voo_3")
+}],
+"loop": 1,
+"name": &"voo",
+"speed": 14.0
+}]

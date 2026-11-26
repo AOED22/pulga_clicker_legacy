@@ -3,15 +3,11 @@
 [ext_resource type="Script" path="res://scripts/checkpoint.gd" id="1_check"]
 [ext_resource type="PackedScene" path="res://cenas/anel_choque.tscn" id="2_anel"]
 [ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="3_fxp"]
+[ext_resource type="Texture2D" path="res://artes/props/checkpoint_agulha.png" id="4_agulha"]
+[ext_resource type="Texture2D" path="res://artes/props/checkpoint_fio.png" id="5_fio"]
 
 [sub_resource type="RectangleShape2D" id="Forma"]
 size = Vector2(40, 600)
-
-[sub_resource type="PlaceholderTexture2D" id="TexHaste"]
-size = Vector2(30, 3)
-
-[sub_resource type="PlaceholderTexture2D" id="TexCabo"]
-size = Vector2(7, 7)
 
 [sub_resource type="Gradient" id="GradBrasa"]
 offsets = PackedFloat32Array(0, 1)
@@ -41,14 +37,14 @@ fx_ativar = ExtResource("3_fxp")
 shape = SubResource("Forma")
 
 [node name="Haste" type="Sprite2D" parent="."]
-modulate = Color(0.78, 0.8, 0.9, 0.95)
 rotation = -1.1
-texture = SubResource("TexHaste")
+texture_filter = 1
+texture = ExtResource("4_agulha")
 
 [node name="Cabo" type="Sprite2D" parent="Haste"]
-modulate = Color(1.4, 1.1, 0.5, 1)
-position = Vector2(-15, 0)
-texture = SubResource("TexCabo")
+position = Vector2(-14, 1)
+texture_filter = 1
+texture = ExtResource("5_fio")
 
 [node name="Luz" type="PointLight2D" parent="."]
 color = Color(1, 0.78, 0.45, 1)

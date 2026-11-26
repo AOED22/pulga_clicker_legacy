@@ -3,11 +3,9 @@
 [ext_resource type="Script" path="res://scripts/objeto_cenario.gd" id="1_obj"]
 [ext_resource type="PackedScene" path="res://cenas/fx_poeira.tscn" id="2_hit"]
 [ext_resource type="PackedScene" path="res://cenas/fx_migalhas.tscn" id="3_que"]
+[ext_resource type="Texture2D" path="res://artes/props/caixa.png" id="4_tex"]
 
 [sub_resource type="RectangleShape2D" id="Forma"]
-size = Vector2(32, 32)
-
-[sub_resource type="PlaceholderTexture2D" id="Tex"]
 size = Vector2(32, 32)
 
 [node name="Caixa" type="StaticBody2D"]
@@ -25,5 +23,6 @@ shape = SubResource("Forma")
 [node name="Visual" type="Node2D" parent="."]
 
 [node name="Sprite" type="Sprite2D" parent="Visual"]
-modulate = Color(0.55, 0.4, 0.25, 1)
-texture = SubResource("Tex")
+texture_filter = 1
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_tex")

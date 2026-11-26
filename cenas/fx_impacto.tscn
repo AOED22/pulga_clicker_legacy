@@ -1,0 +1,54 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/fx_impacto.gd" id="1_fx"]
+[ext_resource type="Texture2D" path="res://artes/ataque/impacto.png" id="2_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impacto_0"]
+atlas = ExtResource("2_sheet")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impacto_1"]
+atlas = ExtResource("2_sheet")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impacto_2"]
+atlas = ExtResource("2_sheet")
+region = Rect2(96, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impacto_3"]
+atlas = ExtResource("2_sheet")
+region = Rect2(144, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_impacto_4"]
+atlas = ExtResource("2_sheet")
+region = Rect2(192, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_impacto"]
+animations = [{
+"frames": [{
+"duration": 1.5,
+"texture": SubResource("AtlasTexture_impacto_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impacto_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impacto_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impacto_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_impacto_4")
+}],
+"loop": false,
+"name": &"impacto",
+"speed": 28.0
+}]
+
+[node name="FxImpacto" type="AnimatedSprite2D"]
+z_index = 20
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_impacto")
+animation = &"impacto"
+script = ExtResource("1_fx")

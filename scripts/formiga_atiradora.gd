@@ -24,8 +24,9 @@ var tempo_estado := 0.0
 var recarga := 1.0
 var lado := 1.0
 var olhando := Vector2.RIGHT
+var tempo_dano := 0.0
 
-@onready var sprite: Node2D = $Visual/Sprite
+@onready var sprite: AnimatedSprite2D = $Visual/Sprite
 @onready var mira: Sprite2D = $Mira
 
 
@@ -38,6 +39,13 @@ func _ready() -> void:
 func _ao_ser_atingido() -> void:
 	recarga = maxf(recarga, 0.9)
 	estado = Estado.ANDANDO
+	tempo_dano = 0.25
+	sprite.stop()
+	sprite.play(&"dano")
+
+
+func _ao_morrer() -> void:
+	_deixar_corpo(sprite)
 
 
 func _comportamento(delta: float) -> Vector2:
@@ -90,7 +98,7 @@ func _cuspir() -> void:
 	recarga = recarga_cuspe
 	lado = -lado
 	impulso = -olhando * recuo_cuspe
-	visual.scale = Vector2(1.3, 0.7)
+	visual.scale = Vector2(1.12, 0.9)
 	Efeitos.tremer(0.1)
 	var gota: GotaAcida = cena_gota.instantiate()
 	gota.direcao = olhando
@@ -100,28 +108,59 @@ func _cuspir() -> void:
 
 func _atualizar_visual(delta: float) -> void:
 	var suavizacao := 1.0 - exp(-16.0 * delta)
-	var escala_alvo := Vector2.ONE
 	var cor := Color.WHITE
 	var pulinho := 0.0
 
+	tempo_dano = maxf(tempo_dano - delta, 0.0)
+
 	match estado:
 		Estado.ANDANDO:
-			if velocity.length() > 10.0:
-				pulinho = absf(sin(tempo * 14.0)) * 1.5
+			if velocity.length() > 10.0 and tempo_dano <= 0.0:
+				pulinho = absf(sin(tempo * 14.0)) * 0.8
 		Estado.MIRANDO:
-			escala_alvo = Vector2(0.85, 1.3)
 			if int(tempo * 20.0) % 2 == 0:
 				cor = Color(0.8, 1.7, 0.7)
-		Estado.RECUPERANDO:
-			escala_alvo = Vector2(1.2, 0.8)
 
 	cor = _cor_com_status(cor, estado == Estado.MIRANDO)
 
-	visual.scale = visual.scale.lerp(escala_alvo, suavizacao)
+	visual.scale = visual.scale.lerp(Vector2.ONE, suavizacao)
 	visual.position.y = -pulinho
 	visual.modulate = cor
-	sprite.rotation = lerp_angle(sprite.rotation, olhando.angle(), suavizacao)
+	_atualizar_animacao()
 
 	mira.visible = estado == Estado.MIRANDO
 	mira.rotation = olhando.angle()
 	mira.modulate.a = 1.0 if tempo_estado <= tempo_travar_mira else 0.45
+
+
+func _atualizar_animacao() -> void:
+	if absf(olhando.x) > 0.1:
+		sprite.flip_h = olhando.x < 0.0
+
+	match estado:
+		Estado.MIRANDO:
+			_quadro_por_progresso(&"mirar", 1.0 - tempo_estado / tempo_mira)
+		Estado.RECUPERANDO:
+			_quadro_por_progresso(&"cuspir", 1.0 - tempo_estado / tempo_recuperacao)
+		_:
+			if tempo_dano > 0.0:
+				_tocar(&"dano", 1.0)
+			elif velocity.length() > velocidade * 0.15 and atordoado <= 0.0:
+				_tocar(&"andar", clampf(velocity.length() / velocidade, 0.6, 1.25))
+			else:
+				_tocar(&"idle", 1.0)
+
+
+func _tocar(nome: StringName, velocidade_anim: float) -> void:
+	sprite.speed_scale = velocidade_anim
+	var mudou := sprite.animation != nome
+	if mudou or (not sprite.is_playing() and sprite.sprite_frames.get_animation_loop(nome)):
+		sprite.play(nome)
+
+
+func _quadro_por_progresso(nome: StringName, progresso: float) -> void:
+	var total := sprite.sprite_frames.get_frame_count(nome)
+	if sprite.animation != nome:
+		sprite.animation = nome
+	sprite.pause()
+	sprite.frame = clampi(int(progresso * total), 0, total - 1)

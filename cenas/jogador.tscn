@@ -2,12 +2,14 @@
 
 [ext_resource type="Script" uid="uid://do67yqq8ggf1e" path="res://scripts/jogador.gd" id="1_jog"]
 [ext_resource type="PackedScene" path="res://cenas/anel_choque.tscn" id="2_anel"]
-[ext_resource type="Texture2D" uid="uid://w87usl2v4fje" path="res://artes/placeholders/goat_do_mal.jpg" id="3_w41yl"]
+[ext_resource type="SpriteFrames" path="res://artes/pulga/pulga_frames.tres" id="3_pulga"]
 [ext_resource type="Script" uid="uid://cjfmdc6g8xhfr" path="res://scripts/camera_jogador.gd" id="4_cam"]
 [ext_resource type="PackedScene" uid="uid://vkhp36rpmit4" path="res://cenas/fx_hit.tscn" id="5_fxh"]
 [ext_resource type="PackedScene" uid="uid://4y3exk2a55wk" path="res://cenas/fx_sangue.tscn" id="6_fxs"]
 [ext_resource type="PackedScene" uid="uid://d37lmh314j6hs" path="res://cenas/fx_poeira.tscn" id="7_fxp"]
-[ext_resource type="Script" uid="uid://dm6c8bimg7bk7" path="res://scripts/arco_ataque.gd" id="8_arco"]
+[ext_resource type="SpriteFrames" path="res://artes/ataque/corte_frames.tres" id="8_corte"]
+[ext_resource type="Texture2D" path="res://artes/ataque/agulha.png" id="9_agulha"]
+[ext_resource type="PackedScene" path="res://cenas/fx_impacto.tscn" id="10_fxi"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
 
@@ -29,24 +31,20 @@ fill_to = Vector2(1, 0.5)
 [sub_resource type="Gradient" id="Gradient_poeira"]
 colors = PackedColorArray(0.85, 0.75, 0.65, 0.7, 0.85, 0.75, 0.65, 0)
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_cabeca"]
-size = Vector2(6, 6)
-
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_carga"]
 size = Vector2(24, 4)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ataque"]
-size = Vector2(72, 8)
 
 [node name="Jogador" type="CharacterBody2D" unique_id=1589772580 groups=["jogador"]]
 collision_layer = 2
 collision_mask = 9
 motion_mode = 1
 script = ExtResource("1_jog")
+vida_max = 6
 ataque_alcance = 60.0
 finalizador_escala = 1.2
 cena_anel = ExtResource("2_anel")
 fx_hit = ExtResource("5_fxh")
+fx_impacto = ExtResource("10_fxi")
 fx_sangue = ExtResource("6_fxs")
 fx_poeira = ExtResource("7_fxp")
 
@@ -80,16 +78,12 @@ color_ramp = SubResource("Gradient_poeira")
 
 [node name="Visual" type="Node2D" parent="." unique_id=831834246]
 
-[node name="Sprite" type="Sprite2D" parent="Visual" unique_id=1359117410]
-position = Vector2(5.9604645e-08, 0.50000024)
-rotation = 1.5823911
-scale = Vector2(0.0367, 0.0309)
-texture = ExtResource("3_w41yl")
-
-[node name="Cabeca" type="Sprite2D" parent="Visual/Sprite" unique_id=1349318156]
-modulate = Color(0.6, 0.12, 0.1, 1)
-position = Vector2(8, 0)
-texture = SubResource("PlaceholderTexture2D_cabeca")
+[node name="Sprite" type="AnimatedSprite2D" parent="Visual" unique_id=1359117410]
+position = Vector2(0, -1)
+texture_filter = 1
+sprite_frames = ExtResource("3_pulga")
+animation = &"idle"
+autoplay = "idle"
 
 [node name="IndicadorCarga" type="Sprite2D" parent="Visual" unique_id=118987822]
 visible = false
@@ -98,15 +92,19 @@ position = Vector2(-12, -20)
 texture = SubResource("PlaceholderTexture2D_carga")
 centered = false
 
-[node name="ArcoAtaque" type="Node2D" parent="." unique_id=2092540824]
+[node name="Corte" type="AnimatedSprite2D" parent="." unique_id=2092540824]
 visible = false
-script = ExtResource("8_arco")
+texture_filter = 1
+sprite_frames = ExtResource("8_corte")
+animation = &"normal"
+centered = false
+offset = Vector2(4, -81)
 
-[node name="EfeitoAtaque" type="Sprite2D" parent="." unique_id=1735544171]
+[node name="Agulha" type="Sprite2D" parent="." unique_id=1735544171]
 visible = false
-modulate = Color(0.9, 0.9, 1, 0.7)
-texture = SubResource("PlaceholderTexture2D_ataque")
-offset = Vector2(36, 0)
+texture_filter = 1
+texture = ExtResource("9_agulha")
+centered = false
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=761999861 groups=["camera"]]
 zoom = Vector2(1.6, 1.6)

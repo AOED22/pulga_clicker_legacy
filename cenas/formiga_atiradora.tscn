@@ -3,15 +3,10 @@
 [ext_resource type="Script" path="res://scripts/formiga_atiradora.gd" id="1_for"]
 [ext_resource type="PackedScene" path="res://cenas/fx_morte.tscn" id="2_fxm"]
 [ext_resource type="PackedScene" path="res://cenas/gota_acida.tscn" id="3_gota"]
+[ext_resource type="SpriteFrames" path="res://artes/formiga/formiga_atiradora_frames.tres" id="4_frames"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_corpo"]
 radius = 12.0
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_corpo"]
-size = Vector2(30, 16)
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_cabeca"]
-size = Vector2(8, 8)
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_mira"]
 size = Vector2(112, 3)
@@ -30,14 +25,12 @@ shape = SubResource("CircleShape2D_corpo")
 
 [node name="Visual" type="Node2D" parent="."]
 
-[node name="Sprite" type="Sprite2D" parent="Visual"]
-modulate = Color(0.3, 0.12, 0.08, 1)
-texture = SubResource("PlaceholderTexture2D_corpo")
-
-[node name="Cabeca" type="Sprite2D" parent="Visual/Sprite"]
-modulate = Color(2, 1.2, 1, 1)
-position = Vector2(13, 0)
-texture = SubResource("PlaceholderTexture2D_cabeca")
+[node name="Sprite" type="AnimatedSprite2D" parent="Visual"]
+position = Vector2(0, -2)
+texture_filter = 1
+sprite_frames = ExtResource("4_frames")
+animation = &"idle"
+autoplay = "idle"
 
 [node name="Mira" type="Sprite2D" parent="."]
 visible = false

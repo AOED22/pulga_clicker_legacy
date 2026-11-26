@@ -63,6 +63,7 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 	_ao_ser_atingido()
 	if vida <= 0:
 		remove_from_group("inimigos")
+		_ao_morrer()
 		Efeitos.criar(fx_morte, global_position)
 		morreu.emit()
 		queue_free()
@@ -92,6 +93,25 @@ func _comportamento(_delta: float) -> Vector2:
 
 func _ao_ser_atingido() -> void:
 	pass
+
+
+func _ao_morrer() -> void:
+	pass
+
+
+func _deixar_corpo(sprite: AnimatedSprite2D, animacao := &"morte") -> void:
+	if sprite == null or not sprite.sprite_frames.has_animation(animacao):
+		return
+	var corpo := AnimatedSprite2D.new()
+	corpo.sprite_frames = sprite.sprite_frames
+	corpo.texture_filter = sprite.texture_filter
+	corpo.flip_h = sprite.flip_h
+	corpo.position = global_position + sprite.position
+	corpo.modulate = Color(3.0, 3.0, 3.0)
+	get_tree().current_scene.add_child(corpo)
+	corpo.animation_finished.connect(corpo.queue_free)
+	corpo.play(animacao)
+	create_tween().tween_property(corpo, "modulate", Color.WHITE, 0.12)
 
 
 func _atualizar_visual(_delta: float) -> void:

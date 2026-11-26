@@ -10,6 +10,10 @@ extends Camera2D
 var tremida := 0.0
 var olhar := Vector2.ZERO
 
+# foco: faz a camera olhar para outro no (ex: a Rainha na transicao). 0 = normal, 1 = centrada no alvo
+var foco: Node2D = null
+var foco_forca := 0.0
+
 
 func adicionar_tremida(valor: float) -> void:
 	tremida = minf(tremida + valor, 1.0)
@@ -31,4 +35,7 @@ func _process(delta: float) -> void:
 	var alvo := (get_viewport().get_mouse_position() - centro) / zoom.x * olhar_fator
 	olhar = olhar.lerp(alvo.limit_length(olhar_max), 1.0 - exp(-olhar_suavidade * delta))
 
-	offset = olhar + tremor
+	var alvo_olhar := olhar
+	if foco_forca > 0.0 and is_instance_valid(foco):
+		alvo_olhar = olhar.lerp(foco.global_position - global_position, foco_forca)
+	offset = alvo_olhar + tremor

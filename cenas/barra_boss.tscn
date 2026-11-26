@@ -1,0 +1,98 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/barra_boss.gd" id="1_barra"]
+[ext_resource type="Texture2D" path="res://artes/ui/boss_crown.png" id="2_crown"]
+[ext_resource type="Texture2D" path="res://artes/ui/boss_plate.png" id="3_plate"]
+[ext_resource type="Texture2D" path="res://artes/ui/boss_track.png" id="4_track"]
+[ext_resource type="Texture2D" path="res://artes/ui/boss_fill.png" id="5_fill"]
+[ext_resource type="Texture2D" path="res://artes/ui/boss_frame.png" id="6_frame"]
+[ext_resource type="Texture2D" path="res://artes/ui/boss_fill_phase2.png" id="7_fill2"]
+
+[node name="BarraBoss" type="CanvasLayer"]
+layer = 3
+script = ExtResource("1_barra")
+phase2_fill = ExtResource("7_fill2")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Holder" type="Control" parent="Root"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -348.0
+offset_top = 10.0
+offset_bottom = 62.0
+grow_horizontal = 2
+scale = Vector2(2, 2)
+mouse_filter = 2
+
+[node name="GhostBar" type="TextureProgressBar" parent="Root/Holder"]
+layout_mode = 0
+offset_top = 30.0
+offset_right = 348.0
+offset_bottom = 52.0
+mouse_filter = 2
+max_value = 300.0
+value = 300.0
+texture_under = ExtResource("4_track")
+texture_progress = ExtResource("5_fill")
+texture_progress_offset = Vector2(24, 5)
+tint_progress = Color(2.2, 2.2, 2.2, 1)
+
+[node name="Bar" type="TextureProgressBar" parent="Root/Holder"]
+layout_mode = 0
+offset_top = 30.0
+offset_right = 348.0
+offset_bottom = 52.0
+mouse_filter = 2
+max_value = 300.0
+value = 300.0
+texture_over = ExtResource("6_frame")
+texture_progress = ExtResource("5_fill")
+texture_progress_offset = Vector2(24, 5)
+
+[node name="Plate" type="NinePatchRect" parent="Root/Holder"]
+layout_mode = 0
+offset_left = 79.0
+offset_top = 10.0
+offset_right = 269.0
+offset_bottom = 25.0
+mouse_filter = 2
+texture = ExtResource("3_plate")
+patch_margin_left = 16
+patch_margin_right = 16
+
+[node name="Crown" type="TextureRect" parent="Root/Holder"]
+layout_mode = 0
+offset_left = 162.0
+offset_right = 187.0
+offset_bottom = 10.0
+mouse_filter = 2
+texture = ExtResource("2_crown")
+
+[node name="Name" type="Label" parent="Root"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 31.0
+offset_right = 280.0
+offset_bottom = 59.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(1, 0.92, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.04, 0.05, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 18
+text = "Rainha das Formigas"
+horizontal_alignment = 1
+vertical_alignment = 1

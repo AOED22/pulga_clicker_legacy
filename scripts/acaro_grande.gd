@@ -22,6 +22,7 @@ enum Estado { PERSEGUINDO, PREPARANDO, GOLPEANDO, RECUPERANDO }
 @export var raio_furia := 1.2
 
 @export_group("Cenas")
+@export var frames_furia: SpriteFrames
 @export var cena_anel: PackedScene
 @export var fx_poeira: PackedScene
 @export var fx_dano: PackedScene
@@ -33,11 +34,14 @@ var centro_golpe := Vector2.ZERO
 var tempo_passo := 0.0
 var avisou_furia := false
 var escala_sombra := Vector2.ONE
+var duracao_estado := 1.0
+var tempo_dano := 0.0
 
 @onready var alerta: Node2D = $Alerta
 @onready var alerta_area: Sprite2D = $Alerta/Area
 @onready var alerta_preenche: Sprite2D = $Alerta/Preenchimento
 @onready var sombra: Sprite2D = $Sombra
+@onready var sprite: AnimatedSprite2D = $Visual/Sprite
 
 
 func _ready() -> void:
@@ -59,8 +63,16 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 	return morreu
 
 
+func _ao_morrer() -> void:
+	_deixar_corpo(sprite)
+
+
 func _ao_ser_atingido() -> void:
 	Efeitos.criar(fx_dano, global_position)
+	if estado == Estado.PERSEGUINDO or estado == Estado.RECUPERANDO:
+		tempo_dano = 0.25
+		sprite.stop()
+		sprite.play(&"dano")
 	if estado == Estado.PREPARANDO or estado == Estado.GOLPEANDO:
 		atordoado = 0.0
 	if not avisou_furia and vida > 0 and vida <= vida_furia:
@@ -118,6 +130,7 @@ func _mudar_estado(novo: Estado) -> void:
 			tempo_estado = 0.07
 		Estado.RECUPERANDO:
 			tempo_estado = tempo_recuperacao
+	duracao_estado = maxf(tempo_estado, 0.01)
 
 
 func _passos(delta: float) -> void:
@@ -155,6 +168,10 @@ func _impacto() -> void:
 
 
 func _rugir() -> void:
+	if frames_furia != null:
+		var animacao := sprite.animation
+		sprite.sprite_frames = frames_furia
+		sprite.play(animacao)
 	visual.scale = Vector2(1.5, 0.7)
 	Efeitos.tremer(0.3)
 	Efeitos.hit_stop(0.06, 0.1)
@@ -194,7 +211,7 @@ func _atualizar_visual(delta: float) -> void:
 			inclinacao = sin(tempo * 9.0) * 0.06
 			cor = Color(0.85, 0.85, 0.95)
 
-	if _furioso() and estado != Estado.PREPARANDO:
+	if _furioso() and estado != Estado.PREPARANDO and frames_furia == null:
 		cor = cor * Color(1.25, 0.9, 0.9)
 	cor = _cor_com_status(cor, estado == Estado.PREPARANDO)
 
@@ -205,3 +222,49 @@ func _atualizar_visual(delta: float) -> void:
 	visual.modulate = cor
 	var folga := 1.0 - clampf(-visual.position.y / (altura_levantar * 3.0), 0.0, 0.4)
 	sombra.scale = escala_sombra * folga * clampf(visual.scale.x, 0.0, 1.0)
+	tempo_dano = maxf(tempo_dano - delta, 0.0)
+	_atualizar_animacao()
+
+
+func _atualizar_animacao() -> void:
+	if _jogador_vivo():
+		var olhar := jogador.global_position.x - global_position.x
+		if absf(olhar) > 0.1:
+			sprite.flip_h = olhar < 0.0
+
+	match estado:
+		Estado.PREPARANDO:
+			var progresso := 1.0 - tempo_estado / duracao_estado
+			if progresso < 0.25:
+				_quadro_por_progresso(&"preparar", progresso / 0.25)
+			else:
+				_quadro_por_progresso(&"idle", 0.0)
+		Estado.GOLPEANDO:
+			_quadro_por_progresso(&"golpe", 0.5)
+		Estado.RECUPERANDO:
+			if tempo_dano > 0.0:
+				_tocar(&"dano", 1.0)
+			else:
+				_tocar(&"recuperar", 1.0)
+		_:
+			if tempo_dano > 0.0:
+				_tocar(&"dano", 1.0)
+			elif velocity.length() > velocidade * 0.15 and atordoado <= 0.0:
+				_tocar(&"andar", clampf(velocity.length() / velocidade, 0.6, 1.25))
+			else:
+				_tocar(&"idle", 1.0)
+
+
+func _tocar(nome: StringName, velocidade_anim: float) -> void:
+	sprite.speed_scale = velocidade_anim
+	var mudou := sprite.animation != nome
+	if mudou or (not sprite.is_playing() and sprite.sprite_frames.get_animation_loop(nome)):
+		sprite.play(nome)
+
+
+func _quadro_por_progresso(nome: StringName, progresso: float) -> void:
+	var total := sprite.sprite_frames.get_frame_count(nome)
+	if sprite.animation != nome:
+		sprite.animation = nome
+	sprite.pause()
+	sprite.frame = clampi(int(progresso * total), 0, total - 1)
