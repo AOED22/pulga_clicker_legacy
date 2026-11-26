@@ -38,4 +38,24 @@ func _process(delta: float) -> void:
 	var alvo_olhar := olhar
 	if foco_forca > 0.0 and is_instance_valid(foco):
 		alvo_olhar = olhar.lerp(foco.global_position - global_position, foco_forca)
-	offset = alvo_olhar + tremor
+
+	# o Godot nao aplica os limites ao offset: sem isso o foco/olhar mostra o cinza fora do mapa.
+	# "base" e onde o Godot ja deixa a camera; o offset so pode ir ate onde a tela ainda cabe nos limites.
+	var base := _limitar_centro(global_position)
+	var desejado := _limitar_centro(global_position + alvo_olhar)
+	offset = (desejado - base) + tremor
+
+
+# centro da camera ajustado para a tela inteira ficar dentro dos limites do mapa
+func _limitar_centro(centro: Vector2) -> Vector2:
+	var meia := get_viewport_rect().size / zoom * 0.5
+	return Vector2(
+		_limitar_eixo(centro.x, limit_left + meia.x, limit_right - meia.x),
+		_limitar_eixo(centro.y, limit_top + meia.y, limit_bottom - meia.y)
+	)
+
+
+func _limitar_eixo(valor: float, minimo: float, maximo: float) -> float:
+	if minimo > maximo:
+		return (minimo + maximo) * 0.5
+	return clampf(valor, minimo, maximo)

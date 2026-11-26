@@ -1,14 +1,13 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/gota_rainha.gd" id="1_gota"]
-[ext_resource type="PackedScene" path="res://cenas/fx_acido.tscn" id="2_fxa"]
-[ext_resource type="PackedScene" path="res://cenas/poca_acida.tscn" id="3_poca"]
+[ext_resource type="PackedScene" path="res://cenas/fx_splat_acido.tscn" id="2_fxa"]
+[ext_resource type="SpriteFrames" path="res://artes/acido/gota_frames.tres" id="3_frames"]
+
+[ext_resource type="PackedScene" path="res://cenas/poca_acida.tscn" id="4_poca"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_gota"]
 radius = 7.0
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gota"]
-size = Vector2(20, 13)
 
 [sub_resource type="Gradient" id="Gradient_rastro"]
 offsets = PackedFloat32Array(0, 1)
@@ -19,9 +18,9 @@ collision_layer = 0
 collision_mask = 9
 monitorable = false
 script = ExtResource("1_gota")
-cena_poca = ExtResource("3_poca")
-velocidade = 300.0
-dano = 2
+cena_poca = ExtResource("4_poca")
+velocidade = 290.0
+dano = 1
 duracao = 2.2
 raio_acerto = 16.0
 fx_splat = ExtResource("2_fxa")
@@ -30,20 +29,22 @@ fx_splat = ExtResource("2_fxa")
 shape = SubResource("CircleShape2D_gota")
 
 [node name="Rastro" type="CPUParticles2D" parent="."]
-amount = 14
-lifetime = 0.3
+amount = 10
+lifetime = 0.25
 local_coords = false
 direction = Vector2(-1, 0)
 spread = 20.0
 gravity = Vector2(0, 0)
 initial_velocity_min = 10.0
 initial_velocity_max = 30.0
-scale_amount_min = 3.0
-scale_amount_max = 4.5
+scale_amount_min = 2.0
+scale_amount_max = 3.5
 color_ramp = SubResource("Gradient_rastro")
 
 [node name="Visual" type="Node2D" parent="."]
 
-[node name="Sprite" type="Sprite2D" parent="Visual"]
-modulate = Color(0.65, 1, 0.2, 1)
-texture = SubResource("PlaceholderTexture2D_gota")
+[node name="Sprite" type="AnimatedSprite2D" parent="Visual"]
+texture_filter = 1
+sprite_frames = ExtResource("3_frames")
+animation = &"voo"
+autoplay = "voo"

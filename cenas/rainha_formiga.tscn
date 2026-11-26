@@ -12,7 +12,8 @@
 [ext_resource type="PackedScene" path="res://cenas/formiga_operaria.tscn" id="10_oper"]
 [ext_resource type="PackedScene" path="res://cenas/acaro_grande.tscn" id="11_grande"]
 [ext_resource type="PackedScene" path="res://cenas/poca_acida.tscn" id="12_poca"]
-[ext_resource type="PackedScene" path="res://cenas/fx_acido.tscn" id="13_fxa"]
+[ext_resource type="PackedScene" path="res://cenas/fx_splat_acido.tscn" id="13_fxa"]
+[ext_resource type="PackedScene" path="res://cenas/globulo_acido.tscn" id="16_glob"]
 
 [ext_resource type="SpriteFrames" path="res://artes/rainha/rainha_frames.tres" id="14_frames"]
 [ext_resource type="SpriteFrames" path="res://artes/rainha/rainha_frames_furia.tres" id="15_framesf"]
@@ -87,6 +88,7 @@ cena_acaro_grande = ExtResource("11_grande")
 cena_atiradora = ExtResource("9_atir")
 cena_operaria = ExtResource("10_oper")
 cena_gota = ExtResource("7_gota")
+cena_globulo = ExtResource("16_glob")
 cena_poca = ExtResource("12_poca")
 cena_anel = ExtResource("6_anel")
 fx_poeira = ExtResource("4_fxp")
@@ -98,8 +100,8 @@ frames_furia = ExtResource("15_framesf")
 shape = SubResource("CircleShape2D_corpo")
 
 [node name="Sombra" type="Sprite2D" parent="."]
-position = Vector2(-10, 22)
-scale = Vector2(3.4, 1.7)
+position = Vector2(-4, 36)
+scale = Vector2(2.8, 1.1)
 texture = SubResource("GradientTexture2D_sombra")
 
 [node name="Aviso" type="Node2D" parent="."]
@@ -110,12 +112,11 @@ script = ExtResource("2_avi")
 
 [node name="Aura" type="Sprite2D" parent="Visual"]
 modulate = Color(1, 0.3, 0.15, 0)
-position = Vector2(-12, 0)
-scale = Vector2(2.9, 2.3)
+position = Vector2(-8, 0)
+scale = Vector2(2.4, 1.9)
 texture = SubResource("GradientTexture2D_aura")
 
 [node name="Corpo" type="AnimatedSprite2D" parent="Visual"]
-scale = Vector2(2, 2)
 texture_filter = 1
 sprite_frames = ExtResource("14_frames")
 animation = &"parada"
@@ -123,12 +124,12 @@ autoplay = "parada"
 
 [node name="Brilho" type="Sprite2D" parent="Visual"]
 modulate = Color(1.6, 1.2, 0.4, 0)
-position = Vector2(-48, 0)
-scale = Vector2(1.4, 1.1)
+position = Vector2(-44, -4)
+scale = Vector2(0.9, 0.8)
 texture = SubResource("GradientTexture2D_brilho")
 
 [node name="Escudo" type="Sprite2D" parent="."]
 visible = false
-position = Vector2(-10, 0)
-scale = Vector2(1.95, 1.95)
+position = Vector2(-4, -2)
+scale = Vector2(1.5, 1.5)
 texture = SubResource("GradientTexture2D_escudo")

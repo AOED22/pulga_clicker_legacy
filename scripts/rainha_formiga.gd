@@ -1,6 +1,21 @@
 class_name RainhaFormiga
 extends Inimigo
 
+# Boss 01 - Rainha das Formigas
+#
+# FASE 1 (100% -> 50%): ela fica parada e invoca ondas de formigas.
+#   Enquanto houver minion vivo ela esta protegida (escudo azul) e BOMBARDEIA o chao com acido.
+#   Quando o ultimo minion morre ela fica exposta (brilho dourado) por pouco tempo.
+# TRANSICAO: ao chegar em 50% a luta pausa, a camera da zoom e ela ruge.
+# FASE 2 (50% -> 0%): ela mesma ataca, com telegrafo em todos os ataques e combos encadeados.
+#   Fica furiosa aos 25%.
+#
+# Mapa de estados (nomes do GDD):
+#   SUMMONING = INVOCANDO | PROTECTED = PROTEGIDA | EXPOSED = EXPOSTA
+#   PHASE_TRANSITION = TRANSICAO | CHASE = PERSEGUINDO
+#   MELEE / DASH / RANGED / SUMMON_MINIONS = PREPARANDO (+ INVESTINDO / SALTANDO / DISPARANDO)
+#   RECOVERY = RECUPERANDO (e ATORDOADA quando ela bate na parede)
+
 signal vida_mudou(valor: int, maximo: int)
 signal fase_mudou(fase: int)
 signal exposta_mudou(exposta: bool)
@@ -83,7 +98,6 @@ const COR_TERREMOTO := Color(1.0, 0.5, 0.15)
 @export var tempo_tonta := 2.0
 
 @export_group("Acido")
-@export var velocidade_cuspe := 360.0
 @export var gotas_chuva := 11
 @export var arco_chuva := 90.0
 @export var intervalo_chuva := 0.1
@@ -93,6 +107,8 @@ const COR_TERREMOTO := Color(1.0, 0.5, 0.15)
 @export var duracao_salto := 0.75
 @export var raio_salto := 135.0
 @export var zonas_bombardeio := 3
+@export var raio_cuspe := 60.0
+@export var duracao_cuspe := 0.75
 @export var raio_bombardeio := 70.0
 @export var atraso_bombardeio := 0.9
 @export var raio_terremoto_externo := 310.0
@@ -108,6 +124,7 @@ const COR_TERREMOTO := Color(1.0, 0.5, 0.15)
 @export var cena_atiradora: PackedScene
 @export var cena_operaria: PackedScene
 @export var cena_gota: PackedScene
+@export var cena_globulo: PackedScene
 @export var cena_poca: PackedScene
 @export var cena_anel: PackedScene
 @export var fx_poeira: PackedScene
@@ -156,6 +173,8 @@ var passo_varredura := 0.0
 
 var tempo_poeira := 0.0
 var tempo_passo := 0.0
+var lado := -1.0
+var tempo_cuspe_visual := 0.0
 
 var rugido := 0.0
 var escudo_alfa := 0.0
@@ -174,6 +193,7 @@ var escala_sombra := Vector2.ONE
 
 func _ready() -> void:
 	super()
+	visual.scale = Vector2.ONE
 	vida_max = vida
 	vida_transicao = int(ceil(vida_max * fracao_transicao))
 	vida_furia = int(ceil(vida_max * fracao_furia))
@@ -185,7 +205,7 @@ func _ready() -> void:
 	aura.modulate.a = 0.0
 
 
-
+# chamada pela cena da luta quando a intro termina
 func iniciar_luta() -> void:
 	if estado != Estado.INATIVA:
 		return
@@ -194,7 +214,7 @@ func iniciar_luta() -> void:
 	_mudar_estado(Estado.INVOCANDO)
 
 
-
+# ---------------------------------------------------------------- dano
 
 func receber_dano(dano: int, empurrao: Vector2) -> bool:
 	if not _pode_receber_dano():
@@ -202,7 +222,7 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 		return false
 
 	if fase == 1:
-		
+		# na fase 1 o dano para exatamente em 50% (a transicao nao pode ser pulada)
 		dano = mini(dano, vida - vida_transicao)
 		if dano <= 0:
 			return false
@@ -213,11 +233,13 @@ func receber_dano(dano: int, empurrao: Vector2) -> bool:
 		_morrer()
 		return true
 
-	return super(dano, empurrao)
+	var resultado := super(dano, empurrao)
+	visual.scale = Vector2.ONE
+	return resultado
 
 
 func _ao_ser_atingido() -> void:
-	
+	# a Rainha nao e interrompida por golpes (so pisca)
 	atordoado = 0.0
 	vida_mudou.emit(vida, vida_max)
 	if fase == 1:
@@ -234,7 +256,7 @@ func _pode_receber_dano() -> bool:
 	return true
 
 
-
+# quando esta protegida o golpe do jogador "bate no escudo" (mesmo sistema da operaria)
 func bloqueia(_direcao_golpe: Vector2) -> bool:
 	return not _pode_receber_dano()
 
@@ -256,7 +278,7 @@ func enfraquecido() -> bool:
 	return vida <= 1 and fase == 2
 
 
-
+# contato so machuca na fase 2 e fora da transicao/atordoamento/salto
 func _checar_contato() -> void:
 	if fase == 1 or estado == Estado.TRANSICAO or estado == Estado.ATORDOADA:
 		return
@@ -265,6 +287,7 @@ func _checar_contato() -> void:
 	super()
 
 
+# ---------------------------------------------------------------- comportamento
 
 func _comportamento(delta: float) -> Vector2:
 	recarga_invocacao = maxf(recarga_invocacao - delta, 0.0)
@@ -319,7 +342,7 @@ func _comportamento(delta: float) -> Vector2:
 		Estado.PREPARANDO:
 			tempo_estado -= delta
 			var progresso := clampf(1.0 - tempo_estado / duracao_estado, 0.0, 1.0)
-			
+			# a mira acompanha o jogador e trava perto do fim (da tempo de reagir)
 			if tempo_estado > tempo_travar_mira:
 				olhando = _girar(olhando, direcao, giro_preparo * delta)
 				direcao_travada = olhando
@@ -327,7 +350,7 @@ func _comportamento(delta: float) -> Vector2:
 			if tempo_estado <= 0.0:
 				_executar_ataque()
 				return Vector2.ZERO
-			
+			# na investida ela recua o corpo antes de disparar
 			if ataque == Ataque.INVESTIDA or ataque == Ataque.INVESTIDA_FURIOSA:
 				return -direcao_travada * 30.0
 
@@ -336,7 +359,7 @@ func _comportamento(delta: float) -> Vector2:
 				_bater()
 				return Vector2.ZERO
 			if tempo_contato > 0.0:
-				
+				# acertou o jogador: a investida acaba
 				_terminar_investida(false)
 				return Vector2.ZERO
 			var total := _distancia_da_investida()
@@ -348,7 +371,7 @@ func _comportamento(delta: float) -> Vector2:
 			if tempo_poeira <= 0.0:
 				tempo_poeira = 0.06
 				Efeitos.criar(fx_poeira, global_position - direcao_investida * 40.0, direcao_investida.angle() + PI)
-			
+			# furiosa: a investida deixa um rastro de acido no chao
 			if furiosa and percorrido - ultima_poca >= 120.0:
 				ultima_poca = percorrido
 				_criar_poca(global_position - direcao_investida * 40.0, 34.0)
@@ -362,7 +385,7 @@ func _comportamento(delta: float) -> Vector2:
 			if tempo_estado <= 0.0:
 				_aterrissar()
 				return Vector2.ZERO
-			
+			# velocidade calculada para chegar exatamente no alvo quando o tempo acabar
 			return (alvo_salto - global_position) / maxf(tempo_estado, delta)
 
 		Estado.DISPARANDO:
@@ -373,7 +396,6 @@ func _comportamento(delta: float) -> Vector2:
 				_disparar_gota(angulo, dano_chuva, velocidade_chuva + randf_range(-30.0, 30.0))
 				angulo_varredura += passo_varredura
 				disparos_restantes -= 1
-				visual.scale = Vector2(1.15, 0.9)
 				Efeitos.tremer(0.06)
 				if disparos_restantes <= 0:
 					_mudar_estado(Estado.RECUPERANDO)
@@ -432,6 +454,7 @@ func _mudar_estado(novo: Estado) -> void:
 		exposta_mudou.emit(novo == Estado.EXPOSTA)
 
 
+# depois de um ataque: volta a perseguir, mas ataques curtos podem encadear combo
 func _fim_do_ataque(permite_combo: bool) -> void:
 	recarga_ataque = intervalo_ataque * (ritmo_furia if furiosa else 1.0)
 	var curto := ataque == Ataque.MORDIDA or ataque == Ataque.PATAS or ataque == Ataque.CUSPE or ataque == Ataque.BOMBARDEIO
@@ -441,6 +464,7 @@ func _fim_do_ataque(permite_combo: bool) -> void:
 	_mudar_estado(Estado.PERSEGUINDO)
 
 
+# ---------------------------------------------------------------- fase 1: ondas
 
 func _montar_onda() -> Array:
 	match mini(onda, 4):
@@ -455,7 +479,6 @@ func _montar_onda() -> Array:
 
 func _invocar_proximo() -> void:
 	var cena: PackedScene = fila_invocacao.pop_front()
-	visual.scale = Vector2(1.12, 0.9)
 	contador_spawn += 1
 	_invocar_um(cena, _posicao_spawn(contador_spawn))
 
@@ -476,6 +499,7 @@ func _ao_minion_morrer() -> void:
 	minions_vivos = maxi(minions_vivos - 1, 0)
 
 
+# pontos de spawn: Marker2D no grupo "spawn_boss" dentro da cena da luta
 func _posicao_spawn(indice: int) -> Vector2:
 	var pontos := get_tree().get_nodes_in_group("spawn_boss")
 	if pontos.is_empty():
@@ -494,12 +518,12 @@ func _eliminar_minions() -> void:
 func _limpar_arena() -> void:
 	get_tree().call_group("projeteis", "cortar")
 	get_tree().call_group("zonas_boss", "queue_free")
+	get_tree().call_group("globulos", "queue_free")
 	get_tree().call_group("pocas", "queue_free")
 
 
 func _quebrar_escudo() -> void:
 	escudo_pulso = 1.0
-	visual.scale = Vector2(1.35, 0.75)
 	Efeitos.criar_anel(cena_anel, global_position, 170.0, Color(0.6, 0.9, 1.0))
 	for angulo in [0.0, 2.1, -2.1]:
 		Efeitos.criar(fx_migalhas, global_position, angulo)
@@ -507,17 +531,19 @@ func _quebrar_escudo() -> void:
 	Efeitos.hit_stop(0.05, 0.1)
 
 
+# bombardeio da fase 1: marca o chao onde o jogador esta (e onde ele vai estar)
 func _bombardeio_fase1() -> void:
 	var quantidade := 1 if onda < 3 else 2
 	for i in quantidade:
 		var ponto := jogador.global_position
 		if i > 0:
 			ponto += jogador.velocity * 0.7
-		_bombardear(ponto, atraso_bombardeio + i * 0.25)
-	visual.scale = Vector2(0.9, 1.25)
+		_lancar_acido(ponto, 0.8 + i * 0.2, raio_bombardeio, dano_bombardeio)
+	tempo_cuspe_visual = 0.5
 	Efeitos.tremer(0.1)
 
 
+# ---------------------------------------------------------------- transicao
 
 func _transicao() -> void:
 	_mudar_estado(Estado.TRANSICAO)
@@ -525,6 +551,7 @@ func _transicao() -> void:
 	_eliminar_minions()
 	_limpar_arena()
 
+	# o jogador perde o controle durante a cena
 	jogador.set_physics_process(false)
 	jogador.invencibilidade = 5.0
 	var camera := jogador.camera
@@ -532,12 +559,14 @@ func _transicao() -> void:
 
 	await _esperar(0.4)
 
+	# camera vai ate a Rainha
 	camera.foco = self
 	var tween := create_tween().set_parallel()
 	tween.tween_property(camera, "foco_forca", 1.0, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_property(camera, "zoom", zoom_base * 1.45, 0.7).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	await tween.finished
 
+	# ruge de raiva
 	var tween_rugido := create_tween()
 	tween_rugido.tween_property(self, "rugido", 1.0, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await _esperar(0.6)
@@ -551,10 +580,12 @@ func _transicao() -> void:
 	Efeitos.hit_stop(0.12, 0.05)
 	await _esperar(0.9)
 
+	# abandona a postura defensiva
 	fase = 2
 	fase_mudou.emit(2)
 	await _esperar(0.5)
 
+	# camera volta
 	var tween_volta := create_tween().set_parallel()
 	tween_volta.tween_property(camera, "foco_forca", 0.0, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 	tween_volta.tween_property(camera, "zoom", zoom_base, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -576,13 +607,13 @@ func _enfurecer() -> void:
 		var atual := corpo.animation
 		corpo.sprite_frames = frames_furia
 		corpo.play(atual)
-	visual.scale = Vector2(1.5, 0.7)
 	Efeitos.tremer(0.45)
 	Efeitos.hit_stop(0.07, 0.08)
 	Efeitos.criar_anel(cena_anel, global_position, 190.0, Color(1.0, 0.3, 0.2))
 	Efeitos.criar(fx_poeira, global_position)
 
 
+# ---------------------------------------------------------------- fase 2: escolha de ataque
 
 func _escolher_ataque(distancia: float) -> int:
 	var opcoes := {}
@@ -600,13 +631,14 @@ func _escolher_ataque(distancia: float) -> int:
 			opcoes[Ataque.INVESTIDA_FURIOSA] = 3.0 if furiosa else 2.0
 	if distancia >= 120.0:
 		opcoes[Ataque.BOMBARDEIO] = 4.0 if furiosa else 3.0
-	if distancia >= 150.0 and _tem_visao():
+	if distancia >= 150.0:
 		opcoes[Ataque.CUSPE] = 3.0 + (2.0 if distancia > 300.0 else 0.0)
 	if distancia >= 230.0:
 		opcoes[Ataque.CHUVA] = 3.0 if furiosa else 2.0
 	if recarga_invocacao <= 0.0 and minions_vivos < max_minions_fase2:
 		opcoes[Ataque.INVOCACAO] = 6.0
 
+	# nunca repete o mesmo ataque duas vezes seguidas
 	opcoes.erase(ultimo_ataque)
 	if opcoes.is_empty():
 		return -1
@@ -682,6 +714,7 @@ func _tempo_preparo() -> float:
 			base = preparo_bombardeio
 		Ataque.SALTO:
 			base = preparo_salto
+	# a segunda investida da furiosa sai mais rapido
 	if ataque == Ataque.INVESTIDA_FURIOSA and investidas_restantes == 1:
 		base *= 0.5
 	return base * (preparo_furia if furiosa else 1.0)
@@ -710,10 +743,12 @@ func _tempo_recuperacao() -> float:
 	return 0.9
 
 
+# so os ataques mais pesados deixam a Rainha vulneravel (dano +1) enquanto ela se recupera
 func _ataque_pesado() -> bool:
 	return ataque == Ataque.PANCADA or ataque == Ataque.TERREMOTO or ataque == Ataque.SALTO or ataque == Ataque.INVESTIDA or ataque == Ataque.INVESTIDA_FURIOSA
 
 
+# ---------------------------------------------------------------- telegrafos
 
 func _configurar_aviso() -> void:
 	var rotacao_aviso := direcao_travada.angle()
@@ -731,7 +766,7 @@ func _configurar_aviso() -> void:
 		Ataque.INVESTIDA, Ataque.INVESTIDA_FURIOSA:
 			aviso.faixa(global_position, rotacao_aviso, _distancia_da_investida(), largura_investida, COR_ALERTA)
 		Ataque.CUSPE:
-			aviso.faixa(global_position, rotacao_aviso, 560.0, 16.0, COR_ACIDO)
+			aviso.circulo(jogador.global_position, raio_cuspe, COR_ACIDO)
 		Ataque.CHUVA:
 			aviso.setor(global_position, rotacao_aviso, 460.0, deg_to_rad(arco_chuva), COR_ACIDO)
 		_:
@@ -744,7 +779,8 @@ func _atualizar_aviso(progresso: float) -> void:
 			aviso.mirar(global_position + direcao_travada * distancia_mordida, 0.0)
 		Ataque.PANCADA, Ataque.TERREMOTO:
 			aviso.mirar(global_position, 0.0)
-		Ataque.SALTO:
+		Ataque.SALTO, Ataque.CUSPE:
+			# a marca segue o jogador e trava um pouco antes do pulo
 			if tempo_estado > tempo_travar_mira + 0.15:
 				aviso.mirar(jogador.global_position, 0.0)
 		Ataque.INVOCACAO, Ataque.BOMBARDEIO:
@@ -760,6 +796,7 @@ func _distancia_da_investida() -> float:
 	return distancia_investida * (1.2 if ataque == Ataque.INVESTIDA_FURIOSA else 1.0)
 
 
+# zonas de aviso independentes (varias ao mesmo tempo): usadas pelo bombardeio e pelo terremoto
 func _nova_zona() -> AvisoAtaque:
 	var zona := AvisoAtaque.new()
 	zona.add_to_group("zonas_boss")
@@ -780,12 +817,12 @@ func _criar_poca(ponto: Vector2, raio: float) -> void:
 	get_tree().current_scene.add_child(poca)
 
 
+# ---------------------------------------------------------------- ataques
 
 func _mordida() -> void:
 	var centro := global_position + direcao_travada * distancia_mordida
 	_acertar_circulo(centro, raio_mordida, dano_mordida)
 	impulso = direcao_travada * 260.0
-	visual.scale = Vector2(1.5, 0.65)
 	Efeitos.criar(fx_poeira, centro, direcao_travada.angle())
 	Efeitos.tremer(0.3)
 	Efeitos.hit_stop(0.04, 0.1)
@@ -806,7 +843,6 @@ func _patas() -> void:
 	for i in 3:
 		var angulo := direcao_travada.angle() + lerpf(-meio_arco, meio_arco, i / 2.0)
 		Efeitos.criar(fx_poeira, global_position + Vector2.RIGHT.rotated(angulo) * raio_patas * 0.8, angulo)
-	visual.scale = Vector2(1.4, 0.7)
 	Efeitos.criar_anel(cena_anel, global_position + direcao_travada * 70.0, 90.0, Color(1.0, 0.45, 0.4))
 	Efeitos.tremer(0.35)
 	Efeitos.hit_stop(0.04, 0.1)
@@ -820,6 +856,9 @@ func _pancada() -> void:
 	aviso.disparar()
 	_mudar_estado(Estado.RECUPERANDO)
 
+
+# terremoto: a pancada e seguida de uma onda em anel -> depois do golpe o jogador precisa
+# ENTRAR na area vermelha (ou pular/dar dash) em vez de fugir para longe
 func _terremoto() -> void:
 	_acertar_circulo(global_position, raio_pancada, dano_pancada)
 	_efeito_impacto_central(0.8)
@@ -846,7 +885,6 @@ func _impacto_anel(zona: AvisoAtaque, centro: Vector2, interno: float, externo: 
 
 
 func _efeito_impacto_central(tremor: float) -> void:
-	visual.scale = Vector2(1.5, 0.55)
 	Efeitos.criar_anel(cena_anel, global_position, raio_pancada * 1.3, Color(1.0, 0.45, 0.4))
 	Efeitos.criar(fx_poeira, global_position)
 	for i in 8:
@@ -882,7 +920,6 @@ func _aterrissar() -> void:
 	collision_mask = 9
 	global_position = alvo_salto
 	_acertar_circulo(alvo_salto, raio_salto, dano_salto)
-	visual.scale = Vector2(1.6, 0.5)
 	Efeitos.criar_anel(cena_anel, alvo_salto, raio_salto * 1.4, Color(1.0, 0.45, 0.4))
 	Efeitos.criar(fx_poeira, alvo_salto)
 	for i in 10:
@@ -894,6 +931,7 @@ func _aterrissar() -> void:
 	_mudar_estado(Estado.RECUPERANDO)
 
 
+# acha um ponto sem parede/pilar perto de "ponto" (para ela nao pousar dentro de um pilar)
 func _ponto_livre(ponto: Vector2) -> Vector2:
 	for distancia: float in [0.0, 70.0, 130.0, 190.0]:
 		for i in 8:
@@ -913,6 +951,7 @@ func _espaco_livre(ponto: Vector2) -> bool:
 	return get_world_2d().direct_space_state.intersect_shape(consulta, 1).is_empty()
 
 
+# bombardeio: varias marcas de acido caem no chao (uma no jogador, outras onde ele vai estar)
 func _bombardeio() -> void:
 	var quantidade := zonas_bombardeio + (2 if furiosa else 0)
 	var alvo := jogador.global_position
@@ -922,31 +961,49 @@ func _bombardeio() -> void:
 			ponto = alvo + jogador.velocity * 0.7
 		elif i > 0:
 			ponto = alvo + Vector2.RIGHT.rotated(randf() * TAU) * randf_range(80.0, 170.0)
-		_bombardear(ponto, atraso_bombardeio + i * 0.2)
-	visual.scale = Vector2(0.85, 1.3)
+		_lancar_acido(ponto, 0.75 + i * 0.18, raio_bombardeio, dano_bombardeio)
 	Efeitos.tremer(0.15)
 	_mudar_estado(Estado.RECUPERANDO)
 
 
-func _bombardear(ponto: Vector2, atraso: float) -> void:
+# lanca um glob de acido em parabola: marca verde no chao + projetil voando da boca ate la
+func _lancar_acido(destino: Vector2, duracao: float, raio: float, dano: int) -> void:
 	var zona := _nova_zona()
-	zona.circulo(ponto, raio_bombardeio, COR_ACIDO)
+	zona.circulo(destino, raio, COR_ACIDO)
 	var tween := zona.create_tween()
-	tween.tween_method(zona.atualizar, 0.0, 1.0, atraso)
-	tween.tween_callback(_impacto_bombardeio.bind(zona, ponto))
+	tween.tween_method(zona.atualizar, 0.0, 1.0, duracao)
+	if cena_globulo == null:
+		tween.tween_callback(_impacto_acido.bind(zona, destino, raio, dano))
+		return
+	var globulo: GlobuloAcido = cena_globulo.instantiate()
+	globulo.origem = _boca()
+	globulo.destino = destino
+	globulo.duracao = duracao
+	get_tree().current_scene.add_child(globulo)
+	globulo.aterrissou.connect(_impacto_acido.bind(zona, destino, raio, dano))
 
 
-func _impacto_bombardeio(zona: AvisoAtaque, ponto: Vector2) -> void:
+func _impacto_acido(zona: AvisoAtaque, ponto: Vector2, raio: float, dano: int) -> void:
 	if not is_instance_valid(zona):
 		return
 	zona.disparar()
 	var ate := jogador.global_position - ponto
-	if ate.length() <= raio_bombardeio and jogador.pode_ser_atingido():
-		jogador.receber_dano(dano_bombardeio, ate.normalized() if ate.length() > 1.0 else Vector2.DOWN)
-	_criar_poca(ponto, raio_bombardeio * 0.9)
+	if ate.length() <= raio and jogador.pode_ser_atingido():
+		jogador.receber_dano(dano, ate.normalized() if ate.length() > 1.0 else Vector2.DOWN)
+	_criar_poca(ponto, raio * 0.9)
+	# respingos do splash de acido do jogo espalhados pela area do impacto
 	Efeitos.criar(fx_acido, ponto)
+	for i in 4:
+		var angulo := TAU / 4.0 * i + randf() * 0.8
+		Efeitos.criar(fx_acido, ponto + Vector2.RIGHT.rotated(angulo) * raio * 0.6, angulo)
+	Efeitos.criar_anel(cena_anel, ponto, raio * 1.2, Color(0.55, 1.0, 0.25))
 	Efeitos.tremer(0.12)
 	_liberar_zona(zona)
+
+
+# boca da Rainha (ela so olha para a esquerda ou para a direita)
+func _boca() -> Vector2:
+	return global_position + Vector2(lado * 76.0, 8.0)
 
 
 func _terminar_investida(completou: bool) -> void:
@@ -962,6 +1019,7 @@ func _terminar_investida(completou: bool) -> void:
 		_mudar_estado(Estado.RECUPERANDO)
 
 
+# bateu em parede ou obstaculo: fica tonta e leva dano extra
 func _bater() -> void:
 	var objeto := get_slide_collision(0).get_collider()
 	if objeto is ObjetoCenario:
@@ -973,20 +1031,21 @@ func _bater() -> void:
 	Efeitos.tremer(0.7)
 	Efeitos.hit_stop(0.08, 0.05)
 	impulso = -direcao_investida * 200.0
-	visual.scale = Vector2(0.7, 1.35)
 	investidas_restantes = 0
 	_mudar_estado(Estado.ATORDOADA)
 
 
 func _cuspe() -> void:
-	_disparar_gota(direcao_travada, dano_cuspe, velocidade_cuspe)
-	impulso = -direcao_travada * 140.0
-	visual.scale = Vector2(1.3, 0.75)
-	Efeitos.tremer(0.2)
-	aviso.disparar()
+	# o glob cai onde a marca travou: da tempo de sair de la
+	var destino := aviso.global_position
+	aviso.esconder()
+	_lancar_acido(destino, duracao_cuspe, raio_cuspe, dano_cuspe)
+	impulso = -direcao_travada * 100.0
+	Efeitos.tremer(0.15)
 	_mudar_estado(Estado.RECUPERANDO)
 
 
+# a chuva e uma varredura de gotas em leque (o numero e impar: a do meio vai no jogador)
 func _iniciar_chuva() -> void:
 	disparos_restantes = gotas_chuva + (4 if furiosa else 0)
 	tempo_disparo = 0.0
@@ -1006,7 +1065,7 @@ func _disparar_gota(direcao: Vector2, dano: int, vel: float) -> void:
 	gota.dano = dano
 	gota.velocidade = vel
 	get_tree().current_scene.add_child(gota)
-	gota.global_position = global_position + direcao * 70.0
+	gota.global_position = _boca() + direcao * 20.0
 
 
 func _invocar_fase2() -> void:
@@ -1021,12 +1080,12 @@ func _invocar_fase2() -> void:
 			cena = cena_atiradora
 		contador_spawn += 1
 		_invocar_um(cena, _posicao_spawn(contador_spawn))
-	visual.scale = Vector2(0.8, 1.35)
 	Efeitos.criar_anel(cena_anel, global_position, 160.0, Color(0.9, 0.55, 0.25))
 	Efeitos.tremer(0.3)
 	_mudar_estado(Estado.RECUPERANDO)
 
 
+# ---------------------------------------------------------------- morte
 
 func _morrer() -> void:
 	vida = 0
@@ -1037,7 +1096,6 @@ func _morrer() -> void:
 	collision_mask = 9
 	aviso.esconder()
 	_mudar_estado(Estado.MORRENDO)
-	visual.scale = Vector2(1.5, 0.6)
 	Efeitos.tremer(0.8)
 	Efeitos.hit_stop(0.2, 0.03)
 	_sequencia_morte()
@@ -1049,7 +1107,6 @@ func _sequencia_morte() -> void:
 		Efeitos.criar(fx_morte, ponto)
 		Efeitos.criar(fx_poeira, ponto)
 		Efeitos.tremer(0.35)
-		visual.scale = Vector2(randf_range(0.9, 1.3), randf_range(0.75, 1.1))
 		await _esperar(0.17)
 	Efeitos.criar_anel(cena_anel, global_position, 320.0, Color(1.0, 0.9, 0.5))
 	Efeitos.criar(fx_morte, global_position)
@@ -1058,6 +1115,7 @@ func _sequencia_morte() -> void:
 	queue_free()
 
 
+# ---------------------------------------------------------------- utilidades
 
 func _esperar(segundos: float) -> void:
 	await get_tree().create_timer(segundos, true, false, true).timeout
@@ -1072,21 +1130,15 @@ func _passos(delta: float) -> void:
 	if tempo_passo > 0.0:
 		return
 	tempo_passo = 0.4
-	visual.scale = Vector2(1.08, 0.93)
 	Efeitos.criar(fx_poeira, global_position + Vector2(0, 16))
 	if global_position.distance_to(jogador.global_position) < 300.0:
 		Efeitos.tremer(0.05)
 
 
-func _tem_visao() -> bool:
-	var consulta := PhysicsRayQueryParameters2D.create(global_position, jogador.global_position, 9)
-	return get_world_2d().direct_space_state.intersect_ray(consulta).is_empty()
-
-
+# ---------------------------------------------------------------- visual
 
 func _atualizar_visual(delta: float) -> void:
 	var suavizacao := 1.0 - exp(-14.0 * delta)
-	var escala_alvo := Vector2.ONE
 	var altura_alvo := 0.0
 	var cor := Color.WHITE
 	var tremida := 0.0
@@ -1094,24 +1146,24 @@ func _atualizar_visual(delta: float) -> void:
 	var brilho_alvo := 0.0
 	var escudo_alvo := 0.0
 
+	tempo_cuspe_visual = maxf(tempo_cuspe_visual - delta, 0.0)
+
 	match estado:
 		Estado.INVOCANDO:
+			# ergue o abdomen e chama a colonia
 			var chamado := clampf(1.0 - tempo_estado / maxf(tempo_chamado, 0.01), 0.0, 1.0)
-			escala_alvo = Vector2(0.9, 1.22)
 			altura_alvo = 10.0 * chamado
 			tremida = chamado * 1.6
 			cor = Color.WHITE.lerp(Color(1.5, 1.15, 0.75), chamado)
 			escudo_alvo = 1.0
 		Estado.PROTEGIDA:
-			escala_alvo = Vector2.ONE * (1.0 + sin(tempo * 3.0) * 0.02)
 			escudo_alvo = 1.0
 		Estado.EXPOSTA:
-			escala_alvo = Vector2(1.12, 0.88)
+			# o brilho dourado mostra que da pra bater (pisca no fim)
 			brilho_alvo = 1.0
 			if tempo_estado < 1.2 and int(tempo * 14.0) % 2 == 0:
 				brilho_alvo = 0.15
 		Estado.TRANSICAO:
-			escala_alvo = Vector2(1.0 + rugido * 0.22, 1.0 - rugido * 0.18)
 			tremida = rugido * 4.0
 			cor = Color.WHITE.lerp(Color(1.8, 0.6, 0.5), rugido)
 			escudo_alvo = 1.0 - rugido
@@ -1123,74 +1175,60 @@ func _atualizar_visual(delta: float) -> void:
 			cor = Color.WHITE.lerp(Color(1.6, 0.7, 0.6), p)
 			tremida = p * 1.5
 			match ataque:
-				Ataque.MORDIDA:
-					escala_alvo = Vector2(1.2, 0.85)
-				Ataque.PATAS:
-					escala_alvo = Vector2(1.0, 1.1)
 				Ataque.PANCADA, Ataque.TERREMOTO:
-					escala_alvo = Vector2(0.95, 1.2)
 					altura_alvo = 14.0 * p
 					tremida = p * 2.5
 				Ataque.INVESTIDA, Ataque.INVESTIDA_FURIOSA:
-					escala_alvo = Vector2(0.85, 1.15)
 					recuo = 20.0 * p
-				Ataque.SALTO:
-					escala_alvo = Vector2(1.3, 0.75)
-					tremida = p * 2.2
 				Ataque.CUSPE, Ataque.CHUVA, Ataque.BOMBARDEIO:
-					escala_alvo = Vector2(0.9, 1.2)
-					tremida = p * 2.0
-					cor = Color.WHITE
-					if int(tempo * 20.0) % 2 == 0:
-						cor = Color(0.8, 1.7, 0.7)
+					tremida = p * 1.2
+					cor = Color.WHITE.lerp(Color(0.8, 1.5, 0.7), p)
 				Ataque.INVOCACAO:
-					escala_alvo = Vector2(0.9, 1.22)
 					altura_alvo = 10.0 * p
-		Estado.INVESTINDO:
-			escala_alvo = Vector2(1.3, 0.8)
 		Estado.SALTANDO:
 			var voo := clampf(1.0 - tempo_estado / maxf(duracao_salto, 0.01), 0.0, 1.0)
 			altura_alvo = sin(voo * PI) * 90.0
-			escala_alvo = Vector2(0.95, 1.12)
 		Estado.DISPARANDO:
-			escala_alvo = Vector2(0.9, 1.2)
 			tremida = 1.2
 			cor = Color(0.85, 1.4, 0.8)
 		Estado.RECUPERANDO:
-			escala_alvo = Vector2(1.15, 0.85)
 			if recuperacao_vulneravel:
 				cor = Color(0.85, 0.85, 0.95)
 		Estado.ATORDOADA:
-			escala_alvo = Vector2(0.9, 1.1)
 			tremida = 1.5
 			cor = Color(0.85, 0.85, 1.0)
 		Estado.MORRENDO:
 			tremida = 5.0
 			cor = Color.WHITE.lerp(Color(2.0, 2.0, 2.0), 0.5 + 0.5 * sin(tempo * 40.0))
 
-	if furiosa and estado != Estado.PREPARANDO and estado != Estado.MORRENDO:
-		cor = cor * Color(1.25, 0.88, 0.88)
 	cor = _cor_com_status(cor, estado == Estado.PREPARANDO)
 
+	# sem squash/stretch: o visual nunca muda de escala (so sobe/desce e treme um pouco)
 	var rapido := 1.0 - exp(-(30.0 if estado == Estado.SALTANDO else 14.0) * delta)
-	visual.scale = visual.scale.lerp(escala_alvo, suavizacao)
+	visual.scale = Vector2.ONE
 	visual.position = Vector2(sin(tempo * 70.0) * tremida, lerpf(visual.position.y, -altura_alvo, rapido))
 	visual.modulate = cor
 
+	# ela so fica virada para a esquerda ou para a direita (com folga para nao ficar trocando)
+	if absf(olhando.x) > 0.2:
+		lado = signf(olhando.x)
 	var anim := _animacao()
 	if corpo.animation != anim:
 		corpo.play(anim)
 	var rapida := 1.0
 	if estado == Estado.INVESTINDO:
 		rapida = 2.5
-	elif furiosa:
+	elif furiosa and anim == "andar":
 		rapida = 1.5
+	elif anim == "cuspir_preparo":
+		# as 3 quadros do preparo (6 fps) terminam exatamente quando o ataque sai
+		rapida = 0.5 / maxf(duracao_estado, 0.1)
 	corpo.speed_scale = rapida
-	corpo.rotation = olhando.angle()
-	corpo.flip_v = olhando.x < 0.0
-	corpo.position = corpo.position.lerp(-olhando * recuo, suavizacao)
-	brilho.position = -olhando * 55.0
+	corpo.flip_h = lado < 0.0
+	corpo.position = corpo.position.lerp(Vector2(-lado * recuo, 0.0), suavizacao)
+	brilho.position = Vector2(-lado * 44.0, -4.0)
 
+	# brilho de exposta, aura de furia e escudo
 	brilho.modulate.a = lerpf(brilho.modulate.a, brilho_alvo * (0.6 + 0.4 * sin(tempo * 8.0)), suavizacao)
 	var aura_alvo := 0.6 if furiosa and estado != Estado.MORRENDO else 0.0
 	aura.modulate.a = lerpf(aura.modulate.a, aura_alvo * (0.7 + 0.3 * sin(tempo * 6.0)), suavizacao)
@@ -1202,11 +1240,14 @@ func _atualizar_visual(delta: float) -> void:
 	escudo.modulate = Color(luz_escudo, luz_escudo, luz_escudo, minf(escudo_alfa + escudo_pulso * 0.3, 1.0))
 	escudo.scale = escala_escudo * (1.0 + sin(tempo * 4.0) * 0.025 + escudo_pulso * 0.12)
 
-	var folga := 1.0 - clampf(altura_alvo / 150.0, 0.0, 0.5)
-	sombra.scale = escala_sombra * folga * clampf(visual.scale.x, 0.0, 1.0)
+	sombra.scale = escala_sombra * (1.0 - clampf(altura_alvo / 150.0, 0.0, 0.5))
 
 
+# qual animacao do AnimatedSprite2D toca em cada estado
 func _animacao() -> String:
+	# na fase 1 ela cospe os globs sem sair do lugar
+	if tempo_cuspe_visual > 0.0:
+		return "cuspir_disparo"
 	match estado:
 		Estado.INVOCANDO:
 			return "invocar"
@@ -1221,12 +1262,17 @@ func _animacao() -> String:
 		Estado.SALTANDO:
 			return "salto"
 		Estado.DISPARANDO:
-			return "boca"
+			return "cuspir_chuva"
 		Estado.ATORDOADA:
 			return "tonta"
+		Estado.RECUPERANDO:
+			if ataque == Ataque.CUSPE or ataque == Ataque.BOMBARDEIO:
+				return "cuspir_disparo"
 		Estado.PREPARANDO:
 			match ataque:
-				Ataque.MORDIDA, Ataque.CUSPE, Ataque.CHUVA, Ataque.BOMBARDEIO:
+				Ataque.CUSPE, Ataque.CHUVA, Ataque.BOMBARDEIO:
+					return "cuspir_preparo"
+				Ataque.MORDIDA:
 					return "boca"
 				Ataque.PATAS, Ataque.PANCADA, Ataque.TERREMOTO:
 					return "patas"

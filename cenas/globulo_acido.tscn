@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/globulo_acido.gd" id="1_glob"]
+[ext_resource type="Texture2D" path="res://artes/rainha/globulo_acido.png" id="2_tex"]
+
+[sub_resource type="Gradient" id="Gradient_sombra"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0, 0, 0, 0.45, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_sombra"]
+gradient = SubResource("Gradient_sombra")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_rastro"]
+offsets = PackedFloat32Array(0, 1)
+colors = PackedColorArray(0.6, 1, 0.3, 0.9, 0.3, 0.7, 0.1, 0)
+
+[node name="GlobuloAcido" type="Node2D"]
+script = ExtResource("1_glob")
+
+[node name="Sombra" type="Sprite2D" parent="."]
+scale = Vector2(1.1, 0.5)
+texture = SubResource("GradientTexture2D_sombra")
+
+[node name="Visual" type="Node2D" parent="."]
+
+[node name="Rastro" type="CPUParticles2D" parent="Visual"]
+amount = 12
+lifetime = 0.35
+local_coords = false
+gravity = Vector2(0, 0)
+initial_velocity_min = 4.0
+initial_velocity_max = 14.0
+scale_amount_min = 2.0
+scale_amount_max = 3.5
+color_ramp = SubResource("Gradient_rastro")
+
+[node name="Sprite" type="Sprite2D" parent="Visual"]
+texture_filter = 1
+texture = ExtResource("2_tex")
+hframes = 2

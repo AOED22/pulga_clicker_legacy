@@ -21,6 +21,9 @@ var dicas_exposta := 0
 
 
 func _ready() -> void:
+	# o chao fica abaixo de tudo; as pocas de acido (z_index -1) ficam acima do chao e abaixo dos personagens
+	$Chao.z_index = -10
+	$Manchas.z_index = -9
 	jogador.definir_limites(limites)
 	barra.ligar(rainha)
 	rainha.morreu.connect(_ao_rainha_morrer)
@@ -91,6 +94,7 @@ func _tocar(stream: AudioStream) -> void:
 	musica.play()
 
 
+# ---------------------------------------------------------------- dicas (usa o PainelDica do jogo)
 
 func _ao_onda_iniciada(numero: int) -> void:
 	if numero == 1:
@@ -117,12 +121,14 @@ func _dica(texto: String, duracao: float) -> void:
 	painel.esconder(self)
 
 
- 
+# ---------------------------------------------------------------- vitoria
+
 func _ao_rainha_morrer() -> void:
 	barra.esconder()
 	Checkpoint.atual = -1
 	get_tree().call_group("pocas", "queue_free")
 	get_tree().call_group("zonas_boss", "queue_free")
+	get_tree().call_group("globulos", "queue_free")
 	jogador.invencibilidade = 99.0
 	await get_tree().create_timer(1.2, true, false, true).timeout
 	titulo.text = texto_final
